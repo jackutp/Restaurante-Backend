@@ -12,6 +12,9 @@
 	<groupId>com.Restaurant</groupId>
 	<artifactId>Restaurante-Backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+
+
+
     <packaging>pom</packaging>
 
 
@@ -26,6 +29,7 @@
 	</developers>
     <modules>
         <module>microservicio-inventario</module>
+		<module>microservicio-proveedor</module>
     </modules>
     <scm>
 		<connection/>
