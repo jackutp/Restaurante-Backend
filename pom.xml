@@ -30,6 +30,7 @@
     <modules>
         <module>microservicio-inventario</module>
 		<module>microservicio-proveedor</module>
+		<module>microservicio-pedidos</module>
     </modules>
     <scm>
 		<connection/>
