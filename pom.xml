@@ -8,10 +8,14 @@
 		<version>4.0.6</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>com.Restaurant</groupId>
 	<artifactId>Restaurante-Backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
+    <packaging>pom</packaging>
+
+
+    <name/>
 	<description/>
 	<url/>
 	<licenses>
@@ -20,7 +24,10 @@
 	<developers>
 		<developer/>
 	</developers>
-	<scm>
+    <modules>
+        <module>microservicio-inventario</module>
+    </modules>
+    <scm>
 		<connection/>
 		<developerConnection/>
 		<tag/>
