@@ -26,6 +26,10 @@
 		<tag/>
 		<url/>
 	</scm>
+	<modules>
+		<module>gateway</module>
+		<module>eureka</module>
+	</modules>
 	<properties>
 		<java.version>25</java.version>
 	</properties>
