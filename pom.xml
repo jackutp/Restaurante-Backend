@@ -22,11 +22,6 @@
 	<developers>
 		<developer/>
 	</developers>
-    <modules>
-        <module>microservicio-inventario</module>
-		<module>microservicio-proveedor</module>
-		<module>microservicio-pedidos</module>
-    </modules>
     <scm>
 		<connection/>
 		<developerConnection/>
@@ -37,6 +32,10 @@
 		<module>gateway</module>
 		<module>eureka</module>
 		<module>reserva</module>
+		<module>microservicio-inventario</module>
+		<module>microservicio-proveedor</module>
+		<module>microservicio-pedidos</module>
+		<module>users</module>
 	</modules>
 	<properties>
 		<java.version>25</java.version>
