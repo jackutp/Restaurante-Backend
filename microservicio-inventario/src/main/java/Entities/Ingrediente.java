@@ -69,4 +69,61 @@ public class Ingrediente {
             this.estado = EstadoIngrediente.DISPONIBLE;
         }
     }
+
+
+    public EstadoIngrediente getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoIngrediente estado) {
+        this.estado = estado;
+    }
+
+    public Long getIngredienteId() {
+        return ingredienteId;
+    }
+
+    public void setIngredienteId(Long ingredienteId) {
+        this.ingredienteId = ingredienteId;
+    }
+
+    public List<MermaInsumos> getMermas() {
+        return mermas;
+    }
+
+    public void setMermas(List<MermaInsumos> mermas) {
+        this.mermas = mermas;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public List<ProductoIngrediente> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<ProductoIngrediente> productos) {
+        this.productos = productos;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public UnidadMedida getUnidad() {
+        return unidad;
+    }
+
+    public void setUnidad(UnidadMedida unidad) {
+        this.unidad = unidad;
+    }
 }

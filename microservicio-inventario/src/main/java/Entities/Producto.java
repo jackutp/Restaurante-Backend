@@ -4,11 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
 @Entity
 @Table(name = "producto")
 @Data
@@ -16,7 +14,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Producto {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "producto_id")
@@ -47,5 +44,41 @@ public class Producto {
     public void removeIngrediente(ProductoIngrediente productoIngrediente) {
         ingredientes.remove(productoIngrediente);
         productoIngrediente.setProducto(null);
+    }
+    public CategoriaProducto getCategoria() {
+        return categoria;
+    }
+    public void setCategoria(CategoriaProducto categoria) {
+        this.categoria = categoria;
+    }
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+    public List<ProductoIngrediente> getIngredientes() {
+        return ingredientes;
+    }
+    public void setIngredientes(List<ProductoIngrediente> ingredientes) {
+        this.ingredientes = ingredientes;
+    }
+    public String getNombre() {
+        return nombre;
+    }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+    public Long getProductoId() {
+        return productoId;
+    }
+    public void setProductoId(Long productoId) {
+        this.productoId = productoId;
     }
 }

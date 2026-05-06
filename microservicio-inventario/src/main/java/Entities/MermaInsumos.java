@@ -35,4 +35,36 @@ public class MermaInsumos {
     protected void onCreate() {
         fecha = LocalDate.now();
     }
+
+    public LocalDate getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDate fecha) {
+        this.fecha = fecha;
+    }
+
+    public Ingrediente getIngrediente() {
+        return ingrediente;
+    }
+
+    public void setIngrediente(Ingrediente ingrediente) {
+        this.ingrediente = ingrediente;
+    }
+
+    public Long getMermaInsumoId() {
+        return mermaInsumoId;
+    }
+
+    public void setMermaInsumoId(Long mermaInsumoId) {
+        this.mermaInsumoId = mermaInsumoId;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public void setMotivo(String motivo) {
+        this.motivo = motivo;
+    }
 }

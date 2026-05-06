@@ -1,17 +1,14 @@
 package Controller;
 
-
 import Entities.Producto;
 import Services.ProductoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/productos")
 public class ProductoController {
 
     final private ProductoService service;
@@ -21,17 +18,33 @@ public class ProductoController {
     }
 
     @GetMapping
-    public ResponseEntity<?> list(){
-        return ResponseEntity.ok(this.service.findAll());
+    public ResponseEntity<?> list() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> details(@PathVariable Long id){
-        Optional<Producto> productoOptional=service.findById(id);
+    public ResponseEntity<?> details(@PathVariable Long id) {
+        Optional<Producto> opt = service.findById(id);
+        if (opt.isPresent()) return ResponseEntity.ok(opt.get());
+        return ResponseEntity.notFound().build();
+    }
 
-        if(productoOptional.isPresent() ){
-            return ResponseEntity.ok(productoOptional.orElseThrow());
-        }
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody Producto producto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.save(producto));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody Producto producto) {
+        Optional<Producto> opt = service.update(id, producto);
+        if (opt.isPresent()) return ResponseEntity.ok(opt.get());
+        return ResponseEntity.notFound().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        boolean deleted = service.deleteById(id);
+        if (deleted) return ResponseEntity.noContent().build();
         return ResponseEntity.notFound().build();
     }
 }

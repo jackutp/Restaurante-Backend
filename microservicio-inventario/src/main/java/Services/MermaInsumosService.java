@@ -1,0 +1,13 @@
+package Services;
+
+import Entities.MermaInsumos;
+import java.util.List;
+import java.util.Optional;
+
+public interface MermaInsumosService {
+    List<MermaInsumos> findAll();
+    Optional<MermaInsumos> findById(Long id);
+    Optional<MermaInsumos> save(Long ingredienteId, MermaInsumos merma);
+    List<MermaInsumos> findByIngrediente(Long ingredienteId);
+    boolean deleteById(Long id);
+}
