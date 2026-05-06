@@ -1,7 +1,7 @@
-package Repositories;
+package com.microservicio.inventario.Repositories;
 
-import Entities.ProductoIngrediente;
-import Entities.ProductoIngredienteId;
+import com.microservicio.inventario.Entities.ProductoIngrediente;
+import com.microservicio.inventario.Entities.ProductoIngredienteId;
 import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 

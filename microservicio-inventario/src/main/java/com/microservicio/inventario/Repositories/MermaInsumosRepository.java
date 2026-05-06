@@ -1,6 +1,6 @@
-package Repositories;
+package com.microservicio.inventario.Repositories;
 
-import Entities.MermaInsumos;
+import com.microservicio.inventario.Entities.MermaInsumos;
 import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 

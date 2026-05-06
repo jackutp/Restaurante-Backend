@@ -1,7 +1,7 @@
-package Controller;
+package com.microservicio.inventario.Controller;
 
-import Entities.Ingrediente;
-import Services.IngredienteService;
+import com.microservicio.inventario.Entities.Ingrediente;
+import com.microservicio.inventario.Services.IngredienteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

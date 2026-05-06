@@ -1,8 +1,8 @@
-package Services;
+package com.microservicio.inventario.Services;
 
-import Entities.MermaInsumos;
-import Repositories.IngredienteRepository;
-import Repositories.MermaInsumosRepository;
+import com.microservicio.inventario.Entities.MermaInsumos;
+import com.microservicio.inventario.Repositories.IngredienteRepository;
+import com.microservicio.inventario.Repositories.MermaInsumosRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;

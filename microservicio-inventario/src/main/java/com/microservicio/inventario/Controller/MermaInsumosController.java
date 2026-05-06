@@ -1,7 +1,7 @@
-package Controller;
+package com.microservicio.inventario.Controller;
 
-import Entities.MermaInsumos;
-import Services.MermaInsumosService;
+import com.microservicio.inventario.Entities.MermaInsumos;
+import com.microservicio.inventario.Services.MermaInsumosService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

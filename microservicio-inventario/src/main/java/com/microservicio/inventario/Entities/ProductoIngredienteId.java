@@ -1,4 +1,4 @@
-package Entities;
+package com.microservicio.inventario.Entities;
 
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;

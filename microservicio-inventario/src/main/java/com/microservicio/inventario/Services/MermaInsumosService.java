@@ -1,6 +1,6 @@
-package Services;
+package com.microservicio.inventario.Services;
 
-import Entities.MermaInsumos;
+import com.microservicio.inventario.Entities.MermaInsumos;
 import java.util.List;
 import java.util.Optional;
 

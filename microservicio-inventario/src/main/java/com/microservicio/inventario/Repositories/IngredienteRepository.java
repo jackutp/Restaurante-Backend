@@ -1,6 +1,6 @@
-package Repositories;
+package com.microservicio.inventario.Repositories;
 
-import Entities.Ingrediente;
+import com.microservicio.inventario.Entities.Ingrediente;
 import org.springframework.data.repository.CrudRepository;
 
 public interface IngredienteRepository extends CrudRepository<Ingrediente, Long> {

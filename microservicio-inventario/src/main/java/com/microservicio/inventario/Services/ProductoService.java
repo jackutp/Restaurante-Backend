@@ -1,6 +1,6 @@
-package Services;
+package com.microservicio.inventario.Services;
 
-import Entities.Producto;
+import com.microservicio.inventario.Entities.Producto;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,7 +1,7 @@
-package Services;
+package com.microservicio.inventario.Services;
 
-import Entities.Producto;
-import Repositories.ProductoRepository;
+import com.microservicio.inventario.Entities.Producto;
+import com.microservicio.inventario.Repositories.ProductoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
