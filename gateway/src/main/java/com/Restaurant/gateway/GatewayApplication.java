@@ -1,13 +1,13 @@
-package com.Restaurant.Restaurante_Backend;
+package com.Restaurant.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class RestauranteBackendApplication {
+public class GatewayApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(RestauranteBackendApplication.class, args);
+		SpringApplication.run(GatewayApplication.class, args);
 	}
 
 }

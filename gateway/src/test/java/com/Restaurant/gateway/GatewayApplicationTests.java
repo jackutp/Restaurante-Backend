@@ -1,10 +1,10 @@
-package com.Restaurant.Restaurante_Backend;
+package com.Restaurant.gateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class RestauranteBackendApplicationTests {
+class GatewayApplicationTests {
 
 	@Test
 	void contextLoads() {
