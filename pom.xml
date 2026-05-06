@@ -12,13 +12,8 @@
 	<groupId>com.Restaurant</groupId>
 	<artifactId>Restaurante-Backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
-
-
-    <packaging>pom</packaging>
-
-
-    <name/>
+	<packaging>pom</packaging>
+	<name/>
 	<description/>
 	<url/>
 	<licenses>
@@ -41,6 +36,7 @@
 	<modules>
 		<module>gateway</module>
 		<module>eureka</module>
+		<module>reserva</module>
 	</modules>
 	<properties>
 		<java.version>25</java.version>
