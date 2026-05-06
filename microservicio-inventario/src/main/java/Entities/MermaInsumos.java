@@ -1,49 +1,38 @@
 package Entities;
 
-import java.sql.Date;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
+@Entity
+@Table(name = "mermainsumos")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MermaInsumos {
-    private int mermaInsumoid;
-    private int ingrediente;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "merma_insumo_id")
+    private Long mermaInsumoId;
+
+    @ManyToOne
+    @JoinColumn(name = "ingrediente_fk", nullable = false)
+    private Ingrediente ingrediente;
+
+    @Column(name = "motivo", columnDefinition = "TEXT", nullable = false)
     private String motivo;
-    private Date fecha;
 
-    public MermaInsumos(Date fecha, int ingrediente, int mermaInsumoid, String motivo) {
-        this.fecha = fecha;
-        this.ingrediente = ingrediente;
-        this.mermaInsumoid = mermaInsumoid;
-        this.motivo = motivo;
-    }
+    @Column(name = "fecha", nullable = false)
+    private LocalDate fecha;
 
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(Date fecha) {
-        this.fecha = fecha;
-    }
-
-    public int getIngrediente() {
-        return ingrediente;
-    }
-
-    public void setIngrediente(int ingrediente) {
-        this.ingrediente = ingrediente;
-    }
-
-    public int getMermaInsumoid() {
-        return mermaInsumoid;
-    }
-
-    public void setMermaInsumoid(int mermaInsumoid) {
-        this.mermaInsumoid = mermaInsumoid;
-    }
-
-    public String getMotivo() {
-        return motivo;
-    }
-
-    public void setMotivo(String motivo) {
-        this.motivo = motivo;
+    @PrePersist
+    protected void onCreate() {
+        fecha = LocalDate.now();
     }
 }

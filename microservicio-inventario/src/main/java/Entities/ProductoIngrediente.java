@@ -1,37 +1,29 @@
 package Entities;
 
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Table(name = "productoingrediente")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductoIngrediente {
-    private int productoid;
-    private int ingredienteid;
-    private int cantidad;
 
-    public ProductoIngrediente(int cantidad, int ingredienteid, int productoid) {
-        this.cantidad = cantidad;
-        this.ingredienteid = ingredienteid;
-        this.productoid = productoid;
-    }
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "producto_fk", nullable = false)
+    private Producto producto;
 
-    public int getCantidad() {
-        return cantidad;
-    }
+    @Id
+    @ManyToOne
+    @JoinColumn(name = "ingrediente_fk", nullable = false)
+    private Ingrediente ingrediente;
 
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public int getIngredienteid() {
-        return ingredienteid;
-    }
-
-    public void setIngredienteid(int ingredienteid) {
-        this.ingredienteid = ingredienteid;
-    }
-
-    public int getProductoid() {
-        return productoid;
-    }
-
-    public void setProductoid(int productoid) {
-        this.productoid = productoid;
-    }
+    @Column(name = "cantidad", nullable = false)
+    private Integer cantidad;
 }

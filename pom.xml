@@ -6,7 +6,6 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>4.0.6</version>
-		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
 	<groupId>com.Restaurant</groupId>
@@ -14,11 +13,11 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 
-
+	<name/>
     <packaging>pom</packaging>
 
 
-    <name/>
+
 	<description/>
 	<url/>
 	<licenses>
@@ -31,6 +30,8 @@
         <module>microservicio-inventario</module>
 		<module>microservicio-proveedor</module>
 		<module>microservicio-pedidos</module>
+		<module>gateway</module>
+		<module>eureka</module>
     </modules>
     <scm>
 		<connection/>
@@ -38,10 +39,6 @@
 		<tag/>
 		<url/>
 	</scm>
-	<modules>
-		<module>gateway</module>
-		<module>eureka</module>
-	</modules>
 	<properties>
 		<java.version>25</java.version>
 	</properties>
@@ -82,14 +79,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
+				<version>4.0.6</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -1,50 +1,51 @@
 package Entities;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "producto")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Producto {
-    private int productiid;
-    private String nombreProducto;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "producto_id")
+    private Long productoId;
+
+    @Column(name = "nombre", length = 30, nullable = false)
+    private String nombre;
+
+    @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
-    private float precio;
-    public enum categoria{
-        PLATO, BEBIDA, POSTRE;
+
+    @Column(name = "precio", precision = 10, scale = 2, nullable = false)
+    private BigDecimal precio;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "categoria", nullable = false)
+    private CategoriaProducto categoria;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductoIngrediente> ingredientes = new ArrayList<>();
+
+    // Helper methods
+    public void addIngrediente(ProductoIngrediente productoIngrediente) {
+        ingredientes.add(productoIngrediente);
+        productoIngrediente.setProducto(this);
     }
 
-    public Producto(String descripcion, String nombreProducto, float precio, int productiid) {
-        this.descripcion = descripcion;
-        this.nombreProducto = nombreProducto;
-        this.precio = precio;
-        this.productiid = productiid;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getNombreProducto() {
-        return nombreProducto;
-    }
-
-    public void setNombreProducto(String nombreProducto) {
-        this.nombreProducto = nombreProducto;
-    }
-
-    public float getPrecio() {
-        return precio;
-    }
-
-    public void setPrecio(float precio) {
-        this.precio = precio;
-    }
-
-    public int getProductiid() {
-        return productiid;
-    }
-
-    public void setProductiid(int productiid) {
-        this.productiid = productiid;
+    public void removeIngrediente(ProductoIngrediente productoIngrediente) {
+        ingredientes.remove(productoIngrediente);
+        productoIngrediente.setProducto(null);
     }
 }
