@@ -21,13 +21,14 @@ public class ProductoController {
     }
 
     @GetMapping
-    public List<Producto> list(){
-        return this.service.findAll();
+    public ResponseEntity<?> list(){
+        return ResponseEntity.ok(this.service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> details(@PathVariable Long id){
+    public ResponseEntity<?> details(@PathVariable Long id){
         Optional<Producto> productoOptional=service.findById(id);
+
         if(productoOptional.isPresent() ){
             return ResponseEntity.ok(productoOptional.orElseThrow());
         }
