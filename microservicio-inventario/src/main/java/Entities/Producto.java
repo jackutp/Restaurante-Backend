@@ -1,10 +1,10 @@
 package Entities;
 
 public class Producto {
-    int productiid;
-    String nombreProducto;
-    String descripcion;
-    float precio;
+    private int productiid;
+    private String nombreProducto;
+    private String descripcion;
+    private float precio;
     public enum categoria{
         PLATO, BEBIDA, POSTRE;
     }

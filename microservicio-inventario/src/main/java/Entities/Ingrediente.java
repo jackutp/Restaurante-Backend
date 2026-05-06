@@ -1,7 +1,7 @@
 package Entities;
 
 public class Ingrediente {
-    int ingredienteid;
+    private int ingredienteid;
     String nombreIng;
 
     public enum unidad {
@@ -9,7 +9,7 @@ public class Ingrediente {
 
     }
 
-    int stock;
+    private int stock;
     public enum estado{
         DISPONIBLE, BAJO, VACIO;
     }

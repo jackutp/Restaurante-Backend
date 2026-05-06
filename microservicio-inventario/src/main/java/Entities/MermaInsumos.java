@@ -3,10 +3,10 @@ package Entities;
 import java.sql.Date;
 
 public class MermaInsumos {
-    int mermaInsumoid;
-    int ingrediente;
-    String motivo;
-    Date fecha;
+    private int mermaInsumoid;
+    private int ingrediente;
+    private String motivo;
+    private Date fecha;
 
     public MermaInsumos(Date fecha, int ingrediente, int mermaInsumoid, String motivo) {
         this.fecha = fecha;

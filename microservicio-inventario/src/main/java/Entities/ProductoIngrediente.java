@@ -1,9 +1,9 @@
 package Entities;
 
 public class ProductoIngrediente {
-    int productoid;
-    int ingredienteid;
-    int cantidad;
+    private int productoid;
+    private int ingredienteid;
+    private int cantidad;
 
     public ProductoIngrediente(int cantidad, int ingredienteid, int productoid) {
         this.cantidad = cantidad;
