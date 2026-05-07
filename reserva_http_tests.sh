@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_URL="http://localhost:8080/api/reservas"
+BASE_URL="http://localhost:8082/api/reservas"
 
 echo "==================================="
 echo "CREATE RESERVA"
@@ -24,7 +24,7 @@ echo "==================================="
 echo "GET ALL RESERVAS"
 echo "==================================="
 
-curl -s -X GET "$BASE_URL/all"
+curl -s -X GET "$BASE_URL/all" | jq
 
 echo ""
 echo ""
