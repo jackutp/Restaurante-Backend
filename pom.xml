@@ -11,13 +11,8 @@
 	<groupId>com.Restaurant</groupId>
 	<artifactId>Restaurante-Backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
-
+	<packaging>pom</packaging>
 	<name/>
-    <packaging>pom</packaging>
-
-
-
 	<description/>
 	<url/>
 	<licenses>
@@ -32,6 +27,7 @@
 		<module>microservicio-pedidos</module>
 		<module>gateway</module>
 		<module>eureka</module>
+		<module>reserva</module>
     </modules>
     <scm>
 		<connection/>
