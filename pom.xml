@@ -26,6 +26,9 @@
         <module>microservicio-inventario</module>
 		<module>microservicio-proveedor</module>
 		<module>microservicio-pedidos</module>
+		<module>gateway</module>
+		<module>eureka</module>
+		<module>reserva</module>
     </modules>
     <scm>
 		<connection/>
@@ -33,11 +36,6 @@
 		<tag/>
 		<url/>
 	</scm>
-	<modules>
-		<module>gateway</module>
-		<module>eureka</module>
-		<module>reserva</module>
-	</modules>
 	<properties>
 		<java.version>25</java.version>
 	</properties>
