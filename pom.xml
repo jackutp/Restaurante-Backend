@@ -28,6 +28,8 @@
 	</developers>
     <modules>
         <module>microservicio-inventario</module>
+		<module>microservicio-producto</module>
+		<module>microservicio-Insumos</module>
 		<module>microservicio-proveedor</module>
 		<module>microservicio-pedidos</module>
 		<module>gateway</module>
