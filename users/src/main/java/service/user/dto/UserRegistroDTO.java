@@ -1,12 +1,9 @@
 package service.user.dto;
 
-import service.user.model.tipoUser;
-
-public record userResponseDTO(
-        Integer idUsuario,
+public record UserRegistroDTO(
         String nombre,
         String apellido,
         String dni,
         String email,
-        tipoUser tipo
+        String clave
 ) {}

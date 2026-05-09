@@ -1,6 +1,6 @@
 package service.user.model;
 
-public enum tipoUser {
+public enum TipoUser {
     CLIENTE,
     MESERO,
     COCINERO,

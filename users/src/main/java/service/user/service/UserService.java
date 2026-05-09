@@ -1,12 +1,17 @@
 package service.user.service;
 
+import auth.jwt.JwtService;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import service.user.dto.userRegistroDTO;
-import service.user.dto.userResponseDTO;
+import service.user.dto.UserLoginRequestDTO;
+import service.user.dto.UserRegistroDTO;
+import service.user.dto.UserResponseDTO;
 import service.user.exception.resourceNotFoundException;
-import service.user.model.tipoUser;
-import service.user.model.user;
-import service.user.repository.userRepository;
+import service.user.model.User;
+import service.user.model.TipoUser;
+import service.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,13 +21,21 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class userService {
+public class UserService {
 
-    private final userRepository usuarioRepository;
+    private final UserRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder; // BCrypt
+    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
+    public UserResponseDTO login(UserLoginRequestDTO request){
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
+        UserDetails user = usuarioRepository.findByEmail(request.email()).orElseThrow();
+        String token = jwtService.getToken(user);
+        return toResponseDTO((User) user);
+    }
     // REGISTRO (solo clientes)
-    public userResponseDTO registrar(userRegistroDTO dto) {
+    public UserResponseDTO registrar(UserRegistroDTO dto) {
         if (usuarioRepository.existsByEmail(dto.email())) {
             throw new RuntimeException("El email ya está registrado");
         }
@@ -30,13 +43,13 @@ public class userService {
             throw new RuntimeException("El DNI ya está registrado");
         }
 
-        user usuario = user.builder()
+        User usuario = User.builder()
                 .nombre(dto.nombre())
                 .apellido(dto.apellido())
                 .dni(dto.dni())
                 .email(dto.email())
                 .clave(passwordEncoder.encode(dto.clave()))
-                .tipo(tipoUser.CLIENTE)
+                .tipo(TipoUser.CLIENTE)
                 .build();
 
         usuario = usuarioRepository.save(usuario);
@@ -45,9 +58,8 @@ public class userService {
     }
 
     // MODIFICAR (solo admins pueden cambiar rol)
-    public userResponseDTO actualizar(Integer id, userRegistroDTO dto, tipoUser nuevoTipo) {
-        user usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new resourceNotFoundException("Usuario no encontrado"));
+    public UserResponseDTO actualizar(Integer id, UserRegistroDTO dto, TipoUser nuevoTipo) {
+        User usuario = usuarioRepository.findById(id).orElseThrow(() -> new resourceNotFoundException("Usuario no encontrado"));
 
         // Solo se permite cambiar datos básicos + rol (rol solo por admin en BD o endpoint protegido)
         usuario.setNombre(dto.nombre());
@@ -74,27 +86,28 @@ public class userService {
     }
 
     // BUSCAR TODOS (solo admins)
-    public List<userResponseDTO> listarTodos() {
+    public List<UserResponseDTO> listarTodos() {
         return usuarioRepository.findAll().stream()
                 .map(this::toResponseDTO)
                 .toList();
     }
 
     // BUSCAR POR ID
-    public userResponseDTO buscarPorId(Integer id) {
-        user usuario = usuarioRepository.findById(id)
+    public UserResponseDTO buscarPorId(Integer id) {
+        User usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new resourceNotFoundException("Usuario no encontrado"));
         return toResponseDTO(usuario);
     }
 
-    private userResponseDTO toResponseDTO(user u) {
-        return new userResponseDTO(
+    private UserResponseDTO toResponseDTO(User u) {
+        return new UserResponseDTO(
                 u.getIdUsuario(),
                 u.getNombre(),
                 u.getApellido(),
                 u.getDni(),
                 u.getEmail(),
-                u.getTipo()
+                u.getTipo(),
+                jwtService.getToken(u)
         );
     }
 }
