@@ -19,13 +19,9 @@ public class ProductoMapper {
         dto.setImagenProducto(producto.getImagenProducto());
         dto.setCreatedAt(producto.getCreatedAt());
         dto.setUpdatedAt(producto.getUpdatedAt());
-
-        // Generar URL completa para la imagen
-        if (producto.getImagenProducto() != null) {
-            dto.setImagenUrl("/api/productos/" + producto.getProductoid() + "/imagen");
-        }
-
+        dto.setImagenUrl("/api/productos/" + producto.getProductoid() + "/imagen");
         return dto;
+
     }
 
     public Producto toEntity(ProductoDTO dto) {
