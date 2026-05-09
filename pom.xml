@@ -24,12 +24,15 @@
 
     <modules>
         <module>microservicio-inventario</module>
+		<module>microservicio-producto</module>
+		<module>microservicio-Insumos</module>
 		<module>microservicio-proveedor</module>
 		<module>microservicio-pedidos</module>
-		<module>gateway</module>
-		<module>eureka</module>
+		<module>Gateway-Server</module>
+		<module>eureka-server</module>
 		<module>reserva</module>
-  	<module>users</module>
+  	    <module>users</module>
+        <module>microservicio-Mermas</module>
     </modules>
     <scm>
 		<connection/>
