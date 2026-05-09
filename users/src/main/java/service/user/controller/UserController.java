@@ -1,5 +1,6 @@
 package service.user.controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import service.user.dto.UserLoginRequestDTO;
 import service.user.dto.UserRegistroDTO;
 import service.user.dto.UserResponseDTO;
@@ -32,6 +33,7 @@ public class UserController {
     }
 
     // PUT - Actualizar datos + rol (solo admins o endpoint protegido)
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @PutMapping("/{id}")
     public ResponseEntity<UserResponseDTO> actualizar(
             @PathVariable Integer id,
@@ -43,6 +45,7 @@ public class UserController {
     }
 
     // DELETE - Eliminar usuario
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         usuarioService.eliminar(id);
@@ -50,6 +53,7 @@ public class UserController {
     }
 
     // GET - Listar todos (solo admins en producción)
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> listarTodos() {
         return ResponseEntity.ok(usuarioService.listarTodos());
@@ -57,6 +61,8 @@ public class UserController {
 
     // GET - Buscar por ID
     @GetMapping("/{id}")
+    //Este GET SOLO requiere de un administrador porque ESTAMOS HACIENDO PRUEBAS
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<UserResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
