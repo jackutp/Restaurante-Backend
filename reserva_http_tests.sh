@@ -16,7 +16,7 @@ curl -s -X POST "$BASE_URL/create" \
   "hora": "15:30:00",
   "menu": "CARTA",
   "detalles": "Mesa cerca de ventana"
-}'
+}' | jq
 
 echo ""
 echo ""
@@ -32,7 +32,7 @@ echo "==================================="
 echo "GET RESERVA BY ID"
 echo "==================================="
 
-curl -s -X GET "$BASE_URL/search/1"
+curl -s -X GET "$BASE_URL/search/2" | jq
 
 echo ""
 echo ""
@@ -40,7 +40,7 @@ echo "==================================="
 echo "UPDATE RESERVA"
 echo "==================================="
 
-curl -s -X PATCH "$BASE_URL/update/1" \
+curl -s -X PATCH "$BASE_URL/update/3" \
 	-H "Content-Type: application/json" \
 	-d '{
   "mesaFk": 4,
@@ -50,7 +50,7 @@ curl -s -X PATCH "$BASE_URL/update/1" \
   "hora": "20:00:00",
   "menu": "DEGUSTACION",
   "detalles": "Actualizar reserva"
-}'
+}' | jq
 
 echo ""
 echo ""
@@ -58,7 +58,7 @@ echo "==================================="
 echo "DELETE RESERVA"
 echo "==================================="
 
-curl -s -X DELETE "$BASE_URL/delete/1"
+curl -s -X DELETE "$BASE_URL/delete/38" | jq
 
 echo ""
 echo ""

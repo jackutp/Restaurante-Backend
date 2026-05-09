@@ -1,9 +1,10 @@
 package service.user.controller;
 
-import service.user.dto.userRegistroDTO;
-import service.user.dto.userResponseDTO;
-import service.user.model.tipoUser;
-import service.user.service.userService;
+import service.user.dto.UserLoginRequestDTO;
+import service.user.dto.UserRegistroDTO;
+import service.user.dto.UserResponseDTO;
+import service.user.model.TipoUser;
+import service.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,25 +16,29 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
-public class userController {
+public class UserController {
 
-    private final userService usuarioService;
+    private final UserService usuarioService;
 
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDTO> login(@RequestBody UserLoginRequestDTO request){
+        return ResponseEntity.ok(usuarioService.login(request));
+    }
     // POST - Registro público (cualquier persona se registra como cliente)
     @PostMapping("/registro")
-    public ResponseEntity<userResponseDTO> registrar(@Valid @RequestBody userRegistroDTO dto) {
-        userResponseDTO respuesta = usuarioService.registrar(dto);
+    public ResponseEntity<UserResponseDTO> registrar(@Valid @RequestBody UserRegistroDTO dto) {
+        UserResponseDTO respuesta = usuarioService.registrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 
     // PUT - Actualizar datos + rol (solo admins o endpoint protegido)
     @PutMapping("/{id}")
-    public ResponseEntity<userResponseDTO> actualizar(
+    public ResponseEntity<UserResponseDTO> actualizar(
             @PathVariable Integer id,
-            @RequestBody userRegistroDTO dto,
-            @RequestParam(required = false) tipoUser tipo) { // opcional el tipo
+            @RequestBody UserRegistroDTO dto,
+            @RequestParam(required = false) TipoUser tipo) { // opcional el tipo
 
-        userResponseDTO actualizado = usuarioService.actualizar(id, dto, tipo);
+        UserResponseDTO actualizado = usuarioService.actualizar(id, dto, tipo);
         return ResponseEntity.ok(actualizado);
     }
 
@@ -46,13 +51,13 @@ public class userController {
 
     // GET - Listar todos (solo admins en producción)
     @GetMapping
-    public ResponseEntity<List<userResponseDTO>> listarTodos() {
+    public ResponseEntity<List<UserResponseDTO>> listarTodos() {
         return ResponseEntity.ok(usuarioService.listarTodos());
     }
 
     // GET - Buscar por ID
     @GetMapping("/{id}")
-    public ResponseEntity<userResponseDTO> buscarPorId(@PathVariable Integer id) {
+    public ResponseEntity<UserResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
 }

@@ -8,6 +8,12 @@ echo "==============================="
 
 curl -s -X GET "$BASE_URL" | jq
 
+echo "==============================="
+echo "TEST GET INGREDIENTES ID"
+echo "==============================="
+
+curl -s -X GET "$BASE_URL/2" | jq
+
 echo ""
 echo "==============================="
 echo "DONE"
