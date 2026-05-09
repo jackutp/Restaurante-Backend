@@ -1,4 +1,4 @@
-package auth.jwt;
+package service.user.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,12 +20,12 @@ import java.io.IOException;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final auth.jwt.JwtService jwtService;
+    private final service.user.jwt.JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     private String getTokenFromRequest(HttpServletRequest request){
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer")){
+        if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")){
             return authHeader.substring(7);
         }
         return null;

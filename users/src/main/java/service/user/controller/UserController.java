@@ -1,5 +1,6 @@
 package service.user.controller;
 
+import service.user.dto.UserLoginRequestDTO;
 import service.user.dto.UserRegistroDTO;
 import service.user.dto.UserResponseDTO;
 import service.user.model.TipoUser;
@@ -19,9 +20,9 @@ public class UserController {
 
     private final UserService usuarioService;
 
-    @PostMapping(value = "login")
-    public ResponseEntity<UserResponseDTO> login(String email, String password){
-        return ResponseEntity.ok(new UserResponseDTO());
+    @PostMapping("/login")
+    public ResponseEntity<UserResponseDTO> login(@RequestBody UserLoginRequestDTO request){
+        return ResponseEntity.ok(usuarioService.login(request));
     }
     // POST - Registro público (cualquier persona se registra como cliente)
     @PostMapping("/registro")

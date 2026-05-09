@@ -1,6 +1,6 @@
 package service.user.service;
 
-import auth.jwt.JwtService;
+import service.user.jwt.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,7 +31,6 @@ public class UserService {
     public UserResponseDTO login(UserLoginRequestDTO request){
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         UserDetails user = usuarioRepository.findByEmail(request.email()).orElseThrow();
-        String token = jwtService.getToken(user);
         return toResponseDTO((User) user);
     }
     // REGISTRO (solo clientes)
