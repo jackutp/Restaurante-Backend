@@ -15,6 +15,9 @@ public interface ProductoService {
     ProductoDTO update(Integer id, ProductoDTO productoDTO, MultipartFile imagen);
     void delete(Integer id);
 
+    // Metodo para actualizar solo el stock
+    ProductoDTO updateStock(Integer id, Integer nuevoStock);
+
     // Métodos específicos para imágenes
     byte[] getImagen(Integer id);
     void updateImagen(Integer id, MultipartFile imagen);

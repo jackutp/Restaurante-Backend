@@ -112,6 +112,23 @@ public class ProductoServiceImpl implements ProductoService {
         productoRepository.deleteById(id);
     }
 
+    // STOCK
+    @Override
+    public ProductoDTO updateStock(Integer id, Integer nuevoStock) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
+
+        // Validar que el stock no sea negativo
+        if (nuevoStock < 0) {
+            throw new RuntimeException("El stock no puede ser negativo");
+        }
+
+        producto.setStock(nuevoStock);
+        Producto updated = productoRepository.save(producto);
+
+        return productoMapper.toDTO(updated);
+    }
+
     @Override
     public byte[] getImagen(Integer id) {
         Producto producto = productoRepository.findById(id)

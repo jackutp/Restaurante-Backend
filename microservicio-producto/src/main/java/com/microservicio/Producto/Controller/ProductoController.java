@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/productos")
-@CrossOrigin(origins = "*")
+@RequestMapping("/productos")
+
 public class ProductoController {
 
     private final ProductoService productoService;
@@ -162,4 +162,30 @@ public class ProductoController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
+
+    // MODIFICACION STOCK :V
+    @PatchMapping("/{id}/stock")
+    public ResponseEntity<?> updateStock(
+            @PathVariable Integer id,
+            @RequestBody Map<String, Integer> request) {
+
+        try {
+            Integer nuevoStock = request.get("stock");
+            if (nuevoStock == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "El campo 'stock' es requerido"));
+            }
+
+            ProductoDTO updated = productoService.updateStock(id, nuevoStock);
+            return ResponseEntity.ok(updated);
+
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
 }

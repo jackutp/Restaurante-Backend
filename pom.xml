@@ -12,7 +12,6 @@
 	<artifactId>Restaurante-Backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-
 	<name/>
     <packaging>pom</packaging>
 
@@ -32,8 +31,10 @@
 		<module>microservicio-Insumos</module>
 		<module>microservicio-proveedor</module>
 		<module>microservicio-pedidos</module>
-		<module>gateway</module>
-		<module>eureka</module>
+		<module>eureka-server</module>
+		<module>Gateway-Server</module>
+		<module>microservicio-Mermas</module>
+
     </modules>
     <scm>
 		<connection/>

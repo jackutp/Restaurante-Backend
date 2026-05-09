@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 @RestController
-@RequestMapping("/api/proveedores")
+@RequestMapping("/proveedores")
 public class ProveedorController {
     final private ProveedorService proveedorService;
     public ProveedorController(ProveedorService proveedorService) {
