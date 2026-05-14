@@ -26,6 +26,7 @@
 		<developer/>
 	</developers>
     <modules>
+		<module>microservicio-eventos</module>
         <module>microservicio-inventario</module>
 		<module>microservicio-producto</module>
 		<module>microservicio-Insumos</module>

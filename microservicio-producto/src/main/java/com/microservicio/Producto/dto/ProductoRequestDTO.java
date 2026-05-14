@@ -1,10 +1,8 @@
 package com.microservicio.Producto.dto;
-
 import com.microservicio.Producto.Entities.Categoria;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import java.math.BigDecimal;
-
 @Data
 public class ProductoRequestDTO {
     @NotBlank(message = "El nombre es obligatorio")

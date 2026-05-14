@@ -39,8 +39,21 @@ public class InsumoServiceImpl implements InsumoService {
     }
 
     @Override
+    public List<InsumoDTO> findByNombre(String nombre) {
+        return insumoRepository.searchByNombre(nombre)
+                .stream()
+                .map(insumoMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public InsumoDTO save(InsumoRequestDTO insumoDTO) {
+        // Verificar nombre duplicado
+        if (insumoRepository.findByNombre(insumoDTO.getNombre()).isPresent()) {
+            throw new RuntimeException("Ya existe un insumo con el nombre: " + insumoDTO.getNombre());
+        }
+
         Insumos insumo = insumoMapper.toEntity(insumoDTO);
         Insumos saved = insumoRepository.save(insumo);
         return insumoMapper.toDTO(saved);
@@ -51,6 +64,15 @@ public class InsumoServiceImpl implements InsumoService {
     public InsumoDTO update(Integer id, InsumoRequestDTO insumoDTO) {
         Insumos existingInsumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Insumo no encontrado con id: " + id));
+
+        // Verificar nombre duplicado (si cambió el nombre)
+        if (!existingInsumo.getNombre().equals(insumoDTO.getNombre())) {
+            insumoRepository.findByNombre(insumoDTO.getNombre()).ifPresent(i -> {
+                if (!i.getInsumoid().equals(id)) {
+                    throw new RuntimeException("Ya existe otro insumo con el nombre: " + insumoDTO.getNombre());
+                }
+            });
+        }
 
         insumoMapper.updateEntity(existingInsumo, insumoDTO);
         Insumos updated = insumoRepository.save(existingInsumo);

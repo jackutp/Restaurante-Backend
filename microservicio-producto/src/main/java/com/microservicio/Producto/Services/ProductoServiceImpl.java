@@ -14,14 +14,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @Service
 public class ProductoServiceImpl implements ProductoService {
-
     private final ProductoRepository productoRepository;
     private final ProductoMapper productoMapper;
     private final ImageUtils imageUtils;
-
     public ProductoServiceImpl(ProductoRepository productoRepository,
                                ProductoMapper productoMapper,
                                ImageUtils imageUtils) {
@@ -29,7 +26,6 @@ public class ProductoServiceImpl implements ProductoService {
         this.productoMapper = productoMapper;
         this.imageUtils = imageUtils;
     }
-
     @Override
     @Transactional
     public List<ProductoDTO> findAll() {
@@ -38,13 +34,11 @@ public class ProductoServiceImpl implements ProductoService {
                 .map(productoMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
     @Override
     public Optional<ProductoDTO> findById(Integer id) {
         return productoRepository.findById(id)
                 .map(productoMapper::toDTO);
     }
-
     @Override
     @Transactional
     public ProductoDTO save(ProductoDTO productoDTO, MultipartFile imagen) {
@@ -66,19 +60,16 @@ public class ProductoServiceImpl implements ProductoService {
             throw new RuntimeException("Error al guardar el producto: " + e.getMessage());
         }
     }
-
     @Override
     @Transactional
     public ProductoDTO update(Integer id, ProductoDTO productoDTO, MultipartFile imagen) {
         Producto existingProducto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
-
         // Actualizar campos
         existingProducto.setNombre(productoDTO.getNombre());
         existingProducto.setDescripcion(productoDTO.getDescripcion());
         existingProducto.setPrecio(productoDTO.getPrecio());
         existingProducto.setCategoria(productoDTO.getCategoria());
-
         // Actualizar imagen si se envía una nueva
         if (imagen != null && !imagen.isEmpty()) {
             try {
@@ -93,17 +84,14 @@ public class ProductoServiceImpl implements ProductoService {
                 throw new RuntimeException("Error al actualizar la imagen: " + e.getMessage());
             }
         }
-
         Producto updated = productoRepository.save(existingProducto);
         return productoMapper.toDTO(updated);
     }
-
     @Override
     @Transactional
     public void delete(Integer id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
-
         // Eliminar la imagen asociada
         if (producto.getImagenProducto() != null) {
             imageUtils.eliminarImagen(producto.getImagenProducto());
@@ -111,48 +99,39 @@ public class ProductoServiceImpl implements ProductoService {
 
         productoRepository.deleteById(id);
     }
-
     // STOCK
     @Override
     public ProductoDTO updateStock(Integer id, Integer nuevoStock) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
-
         // Validar que el stock no sea negativo
         if (nuevoStock < 0) {
             throw new RuntimeException("El stock no puede ser negativo");
         }
-
         producto.setStock(nuevoStock);
         Producto updated = productoRepository.save(producto);
 
         return productoMapper.toDTO(updated);
     }
-
     @Override
     public byte[] getImagen(Integer id) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
-
         if (producto.getImagenProducto() == null) {
             throw new RuntimeException("El producto no tiene imagen asociada");
         }
-
         return imageUtils.obtenerImagen(producto.getImagenProducto());
     }
-
     @Override
     @Transactional
     public void updateImagen(Integer id, MultipartFile imagen) {
         Producto producto = productoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
-
         try {
             // Eliminar imagen anterior
             if (producto.getImagenProducto() != null) {
                 imageUtils.eliminarImagen(producto.getImagenProducto());
             }
-
             // Guardar nueva imagen
             String imagenPath = imageUtils.guardarImagen(imagen);
             producto.setImagenProducto(imagenPath);
@@ -162,7 +141,6 @@ public class ProductoServiceImpl implements ProductoService {
             throw new RuntimeException("Error al actualizar la imagen: " + e.getMessage());
         }
     }
-
     @Override
     @Transactional
     public void deleteImagen(Integer id) {
@@ -175,7 +153,6 @@ public class ProductoServiceImpl implements ProductoService {
             productoRepository.save(producto);
         }
     }
-
     @Override
     public List<ProductoDTO> findByCategoria(Categoria categoria) {
         return productoRepository.findByCategoria(categoria)
@@ -183,7 +160,6 @@ public class ProductoServiceImpl implements ProductoService {
                 .map(productoMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
     @Override
     public List<ProductoDTO> findByPrecioRange(Double min, Double max) {
         return productoRepository.findByPrecioBetween(

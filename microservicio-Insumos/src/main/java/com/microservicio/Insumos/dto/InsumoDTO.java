@@ -1,9 +1,7 @@
 package com.microservicio.Insumos.dto;
-
 import com.microservicio.Insumos.Entities.UnidadMedida;
 import com.microservicio.Insumos.Entities.EstadoInsumo;
 import lombok.Data;
-
 @Data
 public class InsumoDTO {
     private Integer insumoid;

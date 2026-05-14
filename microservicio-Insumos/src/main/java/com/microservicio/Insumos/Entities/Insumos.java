@@ -1,8 +1,6 @@
 package com.microservicio.Insumos.Entities;
-
 import jakarta.persistence.*;
 import lombok.*;
-
 @Setter
 @Getter
 @Entity
