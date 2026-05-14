@@ -1,11 +1,10 @@
-package com.microservicio.proveedor;
+package com.microservicio.eventos;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MicroservicioProveedorApplicationTests {
-
+class MicroservicioEventosApplicationTests {
 	@Test
 	void contextLoads() {
 	}

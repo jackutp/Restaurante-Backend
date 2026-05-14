@@ -13,7 +13,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/insumos")
-
 public class InsumoController {
 
     private final InsumoService insumoService;
@@ -36,6 +35,21 @@ public class InsumoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Insumo no encontrado con id: " + id));
         }
+    }
+
+    // NUEVO: Búsqueda por nombre
+    @GetMapping("/search")
+    public ResponseEntity<?> searchByNombre(@RequestParam String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "El parámetro 'nombre' es requerido"));
+        }
+        var resultados = insumoService.findByNombre(nombre);
+        if (resultados.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("message", "No se encontraron insumos con: " + nombre));
+        }
+        return ResponseEntity.ok(resultados);
     }
 
     @GetMapping("/estado/{estado}")

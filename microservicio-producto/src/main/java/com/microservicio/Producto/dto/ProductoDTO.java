@@ -1,3 +1,4 @@
+
 package com.microservicio.Producto.dto;
 import com.microservicio.Producto.Entities.Categoria;
 import lombok.Data;
@@ -16,3 +17,4 @@ public class ProductoDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
+
