@@ -75,6 +75,11 @@ spring:
               uri: lb://microservicio-reservas
               predicates:
                 - Path=/api/reservas/**
+
+            - id: microservicio-eventos
+              uri: lb://microservicio-eventos
+              predicates:
+                - Path=/api/eventos/**
               filters:
                 - StripPrefix=1
 eureka:
