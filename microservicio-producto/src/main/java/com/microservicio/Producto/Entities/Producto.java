@@ -25,7 +25,7 @@ public class Producto {
     @Column(name = "imagen_producto")
     private String imagenProducto;
     @Column(name = "stock", nullable = false)
-    private Integer stock = 0;  // 👈 NUEVO CAMPO
+    private Integer stock = 0;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "updated_at")

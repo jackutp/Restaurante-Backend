@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: microservicio-eventos
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5433/eventos_db
+    username: postgres
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: true
+  
+  # Configuración de Eureka (Service Discovery)
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
+
+server:
+  port: 8215
+
+# Configuración de CORS (override en Gateway)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
