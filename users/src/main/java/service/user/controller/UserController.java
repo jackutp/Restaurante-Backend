@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/usuarios")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -59,7 +59,6 @@ public class UserController {
     // GET - Buscar por ID
     @GetMapping("/{id}")
     //Este GET SOLO requiere de un administrador porque ESTAMOS HACIENDO PRUEBAS
-    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<UserResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
