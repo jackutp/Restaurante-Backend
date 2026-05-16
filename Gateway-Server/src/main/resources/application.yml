@@ -60,6 +60,12 @@ spring:
                 - Path=/api/mermas/**
               filters:
                 - StripPrefix=1
+            - id: microservicio-eventos
+              uri: lb://microservicio-eventos
+              predicates:
+                - Path=/api/eventos/**
+              filters:
+                - StripPrefix=1
 eureka:
   client:
     service-url:
