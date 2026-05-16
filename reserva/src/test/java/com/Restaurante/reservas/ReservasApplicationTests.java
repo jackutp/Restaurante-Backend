@@ -3,19 +3,25 @@ package com.Restaurante.reservas;
 import com.Restaurante.reservas.dto.ReservaRequestDTO;
 import com.Restaurante.reservas.dto.ReservaRespuestaDTO;
 import com.Restaurante.reservas.entities.Reserva;
-import com.Restaurante.reservas.service.ReservaService;
+import com.Restaurante.reservas.service.ReservaReadService;
+import com.Restaurante.reservas.service.ReservaWriteService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
 import java.sql.Date;
 import java.sql.Time;
 import java.util.List;
 
 @SpringBootTest
+@ActiveProfiles("local")
 class ReservasApplicationTests {
 	@Autowired
-	private ReservaService reservaService;
+	ReservaReadService reservaReadService;
+	@Autowired
+	ReservaWriteService reservaWriteService;
 
 	@Test
 	void contextLoads() {
@@ -23,7 +29,8 @@ class ReservasApplicationTests {
 
 	@Test
 	public void Repository_Save_ReturnSavePromotion(){
-		ReservaRequestDTO reservaRequest = new ReservaRequestDTO(3L,2, 4, Date.valueOf("2026-05-24"), Time.valueOf("15:30:00"), Reserva.menuTipo.CARTA, null); ReservaRespuestaDTO savedReserva = reservaService.save(reservaRequest);
+		ReservaRequestDTO reservaRequest = new ReservaRequestDTO(3L,2, 4, Date.valueOf("2026-05-24"), Time.valueOf("15:30:00"), Reserva.menuTipo.CARTA, null);
+		ReservaRespuestaDTO savedReserva = reservaWriteService.save(reservaRequest);
 		Assertions.assertThat(savedReserva).isNotNull();
 		Assertions.assertThat(savedReserva.cantidadClientes()).isNotNull();
 		Assertions.assertThat(savedReserva.fecha()).isNotNull();
@@ -34,35 +41,35 @@ class ReservasApplicationTests {
 	@Test
 	public void shouldFindReservaById(){
 		ReservaRequestDTO reservaRequest = new ReservaRequestDTO(3L,2, 4, Date.valueOf("2026-05-24"), Time.valueOf("15:30:00"), Reserva.menuTipo.CARTA, null);
-		ReservaRespuestaDTO r = reservaService.save(reservaRequest);
-		ReservaRespuestaDTO found = reservaService.findReservaById(r.reservaId());
+		ReservaRespuestaDTO r = reservaWriteService.save(reservaRequest);
+		ReservaRespuestaDTO found = reservaReadService.findReservaById(r.reservaId());
 		Assertions.assertThat(found).isNotNull();
 	}
 	@Test
 	public void shouldReturnAllReservas(){
-		List<ReservaRespuestaDTO> list = reservaService.findAll();
+		List<ReservaRespuestaDTO> list = reservaReadService.findAll();
 		Assertions.assertThat(list).isNotEmpty();
 	}
 	@Test
 	public void shouldDeleteReserva(){
 		ReservaRequestDTO reservaRequest = new ReservaRequestDTO(3L,2, 4, Date.valueOf("2026-05-24"), Time.valueOf("15:30:00"), Reserva.menuTipo.CARTA, null);
-		ReservaRespuestaDTO r = reservaService.save(reservaRequest);
-		boolean deleted = reservaService.deleteReservation(r.reservaId());
+		ReservaRespuestaDTO r = reservaWriteService.save(reservaRequest);
+		boolean deleted = reservaWriteService.deleteReservation(r.reservaId());
 		Assertions.assertThat(deleted).isTrue();
 	}
 	@Test
 	public void shouldThrowExceptionWhenMesaNotFound(){
 		ReservaRequestDTO reservaRequest = new ReservaRequestDTO(999L,2, 4, Date.valueOf("2026-05-24"), Time.valueOf("15:30:00"), Reserva.menuTipo.DEGUSTACION, null);
-		Assertions.assertThatThrownBy(() -> reservaService.save(reservaRequest)).isInstanceOf(RuntimeException.class);
+		Assertions.assertThatThrownBy(() -> reservaWriteService.save(reservaRequest)).isInstanceOf(RuntimeException.class);
 	}
 	@Test
 	public void shouldUpdateReserva(){
 		ReservaRequestDTO reservaRequest = new ReservaRequestDTO(3L,2, 4, Date.valueOf("2026-05-24"), Time.valueOf("15:30:00"), Reserva.menuTipo.CARTA, null);
-		ReservaRespuestaDTO r = reservaService.save(reservaRequest);
+		ReservaRespuestaDTO r = reservaWriteService.save(reservaRequest);
 		Assertions.assertThat(r.cantidadClientes()).isEqualTo(4);
 		Assertions.assertThat(r.hora()).isEqualTo(Time.valueOf("15:30:00"));
 		ReservaRequestDTO reservaUpdate = new ReservaRequestDTO(3L,2, 6, Date.valueOf("2026-05-24"), Time.valueOf("20:00:00"), Reserva.menuTipo.CARTA, null);
-		r = reservaService.updateReserva(r.reservaId(), reservaUpdate);
+		r = reservaWriteService.updateReserva(r.reservaId(), reservaUpdate);
 		Assertions.assertThat(r.cantidadClientes()).isEqualTo(6);
 		Assertions.assertThat(r.hora()).isEqualTo(Time.valueOf("20:00:00"));
 	}
