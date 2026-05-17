@@ -1,7 +1,3 @@
-logging:
-  level:
-    org.springframework.security: TRACE
-    org.springframework.cloud.gateway: TRACE
 server:
   port: 8090
 jwt:
@@ -65,17 +61,6 @@ spring:
                 - Path=/api/mermas/**
               filters:
                 - StripPrefix=1
-            - id: microservice-user
-              uri: lb://microservicio-user
-              predicates:
-                - Path=/api/usuarios/**
-              filters:
-                - StripPrefix=1
-            - id: microservice-reservas
-              uri: lb://microservicio-reservas
-              predicates:
-                - Path=/api/reservas/**
-
             - id: microservicio-eventos
               uri: lb://microservicio-eventos
               predicates:
