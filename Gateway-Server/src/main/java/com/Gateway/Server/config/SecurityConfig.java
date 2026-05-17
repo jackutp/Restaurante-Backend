@@ -3,12 +3,10 @@ package com.Gateway.Server.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
@@ -48,30 +46,33 @@ public class SecurityConfig {
    }
 
     private static final String[] PUBLIC_ENDPOINTS = {
-            "/api/usuarios/login",
-            "/api/usuarios/registro"
+            "/usuarios/login",
+            "/usuarios/registro"
     };
     private static final String[] PUBLIC_GET_ENDPOINTS = {
-            "/api/productos/**"
+            "/productos/**"
     };
     private static final String[] ADMIN_ENDPOINTS = {
-            "/api/insumos/**",
-            "/api/mermas/**",
-            "/api/proveedores/**"
+            "/insumos/**",
+            "/mermas/**",
+            "/proveedores/**"
     };
     private static final String[] ADMIN_CLIENTE_ENDPOINTS = {
-            "/api/eventos/**",
-            "/api/reservas/**"
+            "/eventos/**",
+            "/reservas/**"
     };
     private static final  String[] MESERO_ENDPOINTS = {
             //Aquí van los pagos, etc
     };
     private static final String[] COCINERO_MESERO_ENDPOINTS = {
-            "/api/pedidos/**"
+            "/pedidos/**"
     };
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, JwtAuthenticationManager authManager){
         return http
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .authorizeExchange(exchange -> exchange.anyExchange().permitAll()).build();
+        /*return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .addFilterAt(
                         jwtAuthenticationWebFilter(authManager),
@@ -93,11 +94,11 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS)
                         .permitAll()
                         //Admin
-                        .pathMatchers(HttpMethod.GET, "/api/usuarios/**")
+                        .pathMatchers(HttpMethod.GET, "/usuarios/**")
                         .hasAuthority("ADMINISTRADOR")
-                        .pathMatchers(HttpMethod.PUT, "/api/usuarios/**")
+                        .pathMatchers(HttpMethod.PUT, "/usuarios/**")
                         .hasAuthority("ADMINISTRADOR")
-                        .pathMatchers(HttpMethod.DELETE, "/api/usuarios/**")
+                        .pathMatchers(HttpMethod.DELETE, "/usuarios/**")
                         .hasAuthority("ADMINISTRADOR")
                         .pathMatchers(ADMIN_ENDPOINTS)
                         .hasAuthority("ADMINISTRADOR")
@@ -109,9 +110,10 @@ public class SecurityConfig {
                         .hasAnyAuthority("MESERO", "COCINERO", "ADMINISTRADOR")
                         //Default
                         .anyExchange()
-                        .authenticated()
+                        //.authenticated()
+                        .permitAll()
                 )
                 .build();
-
+         */
     }
 }
