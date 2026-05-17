@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    write:
+      url: jdbc:postgresql://${EVENTOS_WRITE_DB}/eventos_db
+      username: postgres
+      password: admin
+      driver-class-name: org.postgresql.Driver
+    read:
+      url: jdbc:postgresql://${EVENTOS_READ_DB}/eventos_db
+      username: postgres
+      password: admin
+      driver-class-name: org.postgresql.Driver
+    # Configuracion de Eureka (Service Discovery)
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${random.value}
