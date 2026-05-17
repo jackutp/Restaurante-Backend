@@ -19,7 +19,7 @@ public class ProductoController {
         this.productoService = productoService;
     }
     // GET: Listar todos los productos
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<ProductoDTO>> getAllProductos() {
         return ResponseEntity.ok(productoService.findAll());
     }
