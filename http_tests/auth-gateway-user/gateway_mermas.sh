@@ -3,83 +3,75 @@
 BASE_URL="http://localhost:8090"
 
 echo "========================================"
-echo "1. REGISTER USER"
-echo "========================================"
-
-curl -i -X POST "$BASE_URL/api/usuarios/registro" \
-	-H "Content-Type: application/json" \
-	-d '{
-  "nombre":"Juan",
-  "apellido":"Perez",
-  "dni":"11122233",
-  "email":"juan@test.com",
-  "clave":"123456"
-}'
-
-echo ""
-echo ""
-echo "========================================"
-echo "2. LOGIN USER"
+echo "1. LOGIN"
 echo "========================================"
 
 LOGIN_RESPONSE=$(curl -s -X POST "$BASE_URL/api/usuarios/login" \
 	-H "Content-Type: application/json" \
 	-d '{
-  "email":"juan@test.com",
-  "clave":"123456"
+    "email":"nuevo@example.com",
+    "password":"abc123"
 }')
 
 echo "$LOGIN_RESPONSE"
 
 echo ""
-echo ""
 echo "========================================"
-echo "3. EXTRACT TOKEN"
+echo "2. EXTRACT TOKEN"
 echo "========================================"
 
 TOKEN=$(echo "$LOGIN_RESPONSE" | sed -n 's/.*"token":"\([^"]*\)".*/\1/p')
 
-echo "TOKEN:"
 echo "$TOKEN"
 
 echo ""
-echo ""
 echo "========================================"
-echo "4. ACCESS ADMIN ENDPOINT WITHOUT TOKEN"
-echo "EXPECTED: 401"
-echo "========================================"
-
-curl -i "$BASE_URL/api/usuarios"
-
-echo ""
-echo ""
-echo "========================================"
-echo "5. ACCESS ADMIN ENDPOINT WITH CLIENTE TOKEN"
-echo "EXPECTED: 403"
+echo "3. GET ALL MERMAS"
+echo "EXPECTED: 200"
 echo "========================================"
 
-curl -i "$BASE_URL/api/usuarios" \
+curl -i -X GET "$BASE_URL/api/mermas" \
 	-H "Authorization: Bearer $TOKEN"
 
 echo ""
 echo ""
 echo "========================================"
-echo "6. ACCESS PUBLIC PRODUCTOS"
+echo "4. GET MERMA BY ID"
+echo "EXPECTED: 200 or 404"
+echo "========================================"
+
+curl -i -X GET "$BASE_URL/api/mermas/1" \
+	-H "Authorization: Bearer $TOKEN"
+
+echo ""
+echo ""
+echo "========================================"
+echo "5. GET MERMAS BY TIPO"
 echo "EXPECTED: 200"
 echo "========================================"
 
-curl -i "$BASE_URL/api/productos/all"
+curl -i -X GET "$BASE_URL/api/mermas/tipo/VENCIMIENTO" \
+	-H "Authorization: Bearer $TOKEN"
 
 echo ""
 echo ""
 echo "========================================"
-echo "7. TRY PRODUCT WRITE WITHOUT TOKEN"
-echo "EXPECTED: 401"
+echo "6. GET PRODUCTOS"
+echo "EXPECTED: 200"
 echo "========================================"
 
-curl -i -X POST "$BASE_URL/api/productos" \
-	-H "Content-Type: application/json" \
-	-d '{}'
+curl -i -X GET "$BASE_URL/api/mermas/productos" \
+	-H "Authorization: Bearer $TOKEN"
+
+echo ""
+echo ""
+echo "========================================"
+echo "7. GET INSUMOS"
+echo "EXPECTED: 200"
+echo "========================================"
+
+curl -i -X GET "$BASE_URL/api/mermas/insumos" \
+	-H "Authorization: Bearer $TOKEN"
 
 echo ""
 echo ""

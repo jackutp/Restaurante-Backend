@@ -3,10 +3,6 @@ server:
 jwt:
   secret: "3KTMZ7An77+TnowBQVy0+Nop3ADuwmIIbcTszYkOAYY="
 spring:
-  security:
-    user:
-      name: admin
-      password: 123456
   application:
     name: microservice-user
   datasource:
@@ -14,7 +10,6 @@ spring:
     username: root
     password: Kenyi@qp10
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -28,6 +23,11 @@ spring:
     sql:
       init:
         mode: always
-#eureka:
-#  client:
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true
 #    enabled: false
