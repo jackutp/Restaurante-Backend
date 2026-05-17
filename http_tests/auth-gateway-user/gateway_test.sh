@@ -11,7 +11,7 @@ curl -i -X POST "$BASE_URL/api/usuarios/registro" \
 	-d '{
   "nombre":"Juan",
   "apellido":"Perez",
-  "dni":"11122233",
+  "dni":"12345678",
   "email":"juan@test.com",
   "clave":"123456"
 }'
@@ -68,7 +68,7 @@ echo "6. ACCESS PUBLIC PRODUCTOS"
 echo "EXPECTED: 200"
 echo "========================================"
 
-curl -i "$BASE_URL/api/productos/all"
+curl -i "$BASE_URL/api/productos"
 
 echo ""
 echo ""
