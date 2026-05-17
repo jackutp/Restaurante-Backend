@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/reservas")
+@RequestMapping("/reservas")
 public class ReservaController {
     @Autowired
     ReservaReadService reservaReadService;
