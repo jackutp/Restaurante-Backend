@@ -3,9 +3,7 @@ import com.microservicio.Proveedor.Entities.EstadoOrden;
 import com.microservicio.Proveedor.Entities.OrdenCompra;
 import com.microservicio.Proveedor.Entities.Proveedor;
 import com.microservicio.Proveedor.Repositories.OrdenCompraRepository;
-import com.microservicio.Proveedor.Repositories.ProveedorInsumoRepository;
 import com.microservicio.Proveedor.Repositories.ProveedorRepository;
-import com.microservicio.Proveedor.Services.feign.InsumoFeignClient;
 import com.microservicio.Proveedor.dto.OrdenCompraDTO;
 import com.microservicio.Proveedor.dto.OrdenCompraRequestDTO;
 import com.microservicio.Proveedor.Mapper.OrdenCompraMapper;
@@ -23,20 +21,14 @@ public class OrdenCompraServiceImpl implements OrdenCompraService {
 
     private final OrdenCompraRepository ordenCompraRepository;
     private final ProveedorRepository proveedorRepository;
-    private final ProveedorInsumoRepository proveedorInsumoRepository;
     private final OrdenCompraMapper ordenCompraMapper;
-    private final InsumoFeignClient insumoFeignClient;
 
     public OrdenCompraServiceImpl(OrdenCompraRepository ordenCompraRepository,
                                   ProveedorRepository proveedorRepository,
-                                  ProveedorInsumoRepository proveedorInsumoRepository,
-                                  OrdenCompraMapper ordenCompraMapper,
-                                  InsumoFeignClient insumoFeignClient) {
+                                  OrdenCompraMapper ordenCompraMapper) {
         this.ordenCompraRepository = ordenCompraRepository;
         this.proveedorRepository = proveedorRepository;
-        this.proveedorInsumoRepository = proveedorInsumoRepository;
         this.ordenCompraMapper = ordenCompraMapper;
-        this.insumoFeignClient = insumoFeignClient;
     }
 
     @Override
