@@ -4,87 +4,8 @@ logging:
     org.springframework.cloud.gateway: TRACE
 server:
   port: 8090
-jwt:
-  secret: "3KTMZ7An77+TnowBQVy0+Nop3ADuwmIIbcTszYkOAYY="
 spring:
   application:
     name: gateway-server
-  cloud:
-    gateway:
-      server:
-        webflux:
-          discovery:
-            locator:
-              enabled: true
-              lower-case-service-id: true
-          globalcors:
-            add-to-simple-url-handler-mapping: true
-            cors-configurations:
-              '[/**]':
-                allowed-origin-patterns:
-                  - "http://localhost:3000"
-                allowed-methods:
-                  - GET
-                  - POST
-                  - PUT
-                  - DELETE
-                  - PATCH
-                  - OPTIONS
-                allowed-headers:
-                  - Content-Type
-                  - Authorization
-                  - X-Requested-With
-                  - Accept
-                  - Origin
-                allow-credentials: true
-                max-age: 3600
-          routes:
-            - id: microservicio-insumos
-              uri: lb://microservicio-insumos
-              predicates:
-                - Path=/api/insumos/**
-              filters:
-                - StripPrefix=1
-
-            - id: microservicio-producto
-              uri: lb://microservicio-producto
-              predicates:
-                - Path=/api/productos/**
-              filters:
-                - StripPrefix=1
-
-            - id: microservicio-proveedor
-              uri: lb://microservicio-proveedor
-              predicates:
-                - Path=/api/proveedores/**
-              filters:
-                - StripPrefix=1
-            - id: microservicio-mermas
-              uri: lb://microservicio-mermas
-              predicates:
-                - Path=/api/mermas/**
-              filters:
-                - StripPrefix=1
-            - id: microservice-user
-              uri: lb://microservice-user
-              predicates:
-                - Path=/api/usuarios/**
-              filters:
-                - StripPrefix=1
-            - id: microservice-reservas
-              uri: lb://microservicio-reservas
-              predicates:
-                - Path=/api/reservas/**
-
-            - id: microservicio-eventos
-              uri: lb://microservicio-eventos
-              predicates:
-                - Path=/api/eventos/**
-              filters:
-                - StripPrefix=1
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true
+  profiles:
+    default: local
