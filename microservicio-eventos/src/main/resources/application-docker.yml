@@ -2,13 +2,13 @@ spring:
   datasource:
     write:
       url: jdbc:postgresql://${EVENTOS_WRITE_DB}/eventos_db
-      username: postgres
-      password: admin
+      username: ${USERNAME_WRITE_DB}
+      password: ${PASSWORD_WRITE_DB}
       driver-class-name: org.postgresql.Driver
     read:
       url: jdbc:postgresql://${EVENTOS_READ_DB}/eventos_db
-      username: postgres
-      password: admin
+      username: ${USERNAME_READ_DB}
+      password: ${USERNAME_PASSWORD_DB}
       driver-class-name: org.postgresql.Driver
     # Configuracion de Eureka (Service Discovery)
 eureka:
