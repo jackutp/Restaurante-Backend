@@ -2,9 +2,7 @@ package com.Restaurante.reservas.controller;
 
 import com.Restaurante.reservas.dto.ReservaRequestDTO;
 import com.Restaurante.reservas.dto.ReservaRespuestaDTO;
-import com.Restaurante.reservas.entities.Reserva;
 import com.Restaurante.reservas.service.ReservaReadService;
-import com.Restaurante.reservas.service.ReservaService;
 import com.Restaurante.reservas.service.ReservaWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,22 +18,34 @@ public class ReservaController {
     ReservaWriteService reservaWriteService;
 
     @PostMapping("/create")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void saveReserva(@RequestBody ReservaRequestDTO reserva){
-        reservaWriteService.save(reserva);
+    public ResponseEntity<ReservaRespuestaDTO> saveReserva(@RequestBody ReservaRequestDTO reserva){
+        ReservaRespuestaDTO saved = reservaWriteService.save(reserva);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
     @GetMapping("/search/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){
         return ResponseEntity.ok(reservaReadService.findReservaById(id));
     }
+
+    @GetMapping("/searchMesa/{id}")
+    public ResponseEntity<?> findMesaById(@PathVariable Long id){
+        return ResponseEntity.ok(reservaReadService.findMesaById(id));
+    }
+
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){
         return ResponseEntity.ok(reservaWriteService.deleteReservation(id));
     }
     @PatchMapping("/update/{id}")
     public ResponseEntity<?> updateReserva(@PathVariable Long id, @RequestBody ReservaRequestDTO reserva){
-        return ResponseEntity.ok(reservaWriteService.updateReserva(id, reserva));
+         return ResponseEntity.ok(reservaWriteService.updateReserva(id, reserva));
     }
+
+   @GetMapping("/allMesas")
+   public ResponseEntity<?> findAllMesas(){
+        return ResponseEntity.ok(reservaReadService.findAllMesas());
+   }
+
     @GetMapping("/all")
     public ResponseEntity<?> findAllReservas(){
         return ResponseEntity.ok(reservaReadService.findAll());

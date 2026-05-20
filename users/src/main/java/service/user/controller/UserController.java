@@ -22,7 +22,7 @@ public class UserController {
     private final UserService usuarioService;
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDTO> login(@RequestBody UserLoginRequestDTO request){
+    public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody UserLoginRequestDTO request){
         return ResponseEntity.ok(usuarioService.login(request));
     }
     // POST - Registro público (cualquier persona se registra como cliente)

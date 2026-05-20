@@ -1,11 +1,13 @@
 package com.microservicio.Insumos.Controller;
 
 import com.microservicio.Insumos.Entities.EstadoInsumo;
-import com.microservicio.Insumos.Services.InsumoService;
+import com.microservicio.Insumos.Services.InsumoServiceRead;
+import com.microservicio.Insumos.Services.InsumoServiceWrite;
 import com.microservicio.Insumos.dto.InsumoDTO;
 import com.microservicio.Insumos.dto.InsumoRequestDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,22 +15,21 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/insumos")
+@RequiredArgsConstructor
 public class InsumoController {
 
-    private final InsumoService insumoService;
+    private final InsumoServiceRead insumoRead;
+    private final InsumoServiceWrite insumoWrite;
 
-    public InsumoController(InsumoService insumoService) {
-        this.insumoService = insumoService;
-    }
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        return ResponseEntity.ok(insumoService.findAll());
+        return ResponseEntity.ok(insumoRead.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
-        var insumo = insumoService.findById(id);
+        var insumo = insumoRead.findById(id);
         if (insumo.isPresent()) {
             return ResponseEntity.ok(insumo.get());
         } else {
@@ -44,7 +45,7 @@ public class InsumoController {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "El parámetro 'nombre' es requerido"));
         }
-        var resultados = insumoService.findByNombre(nombre);
+        var resultados = insumoRead.findByNombre(nombre);
         if (resultados.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("message", "No se encontraron insumos con: " + nombre));
@@ -54,23 +55,23 @@ public class InsumoController {
 
     @GetMapping("/estado/{estado}")
     public ResponseEntity<?> getByEstado(@PathVariable EstadoInsumo estado) {
-        return ResponseEntity.ok(insumoService.findByEstado(estado));
+        return ResponseEntity.ok(insumoRead.findByEstado(estado));
     }
 
     @GetMapping("/low-stock")
     public ResponseEntity<?> getLowStock() {
-        return ResponseEntity.ok(insumoService.findLowStock());
+        return ResponseEntity.ok(insumoRead.findLowStock());
     }
 
     @GetMapping("/out-of-stock")
     public ResponseEntity<?> getOutOfStock() {
-        return ResponseEntity.ok(insumoService.findOutOfStock());
+        return ResponseEntity.ok(insumoRead.findOutOfStock());
     }
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody InsumoRequestDTO insumoDTO) {
         try {
-            InsumoDTO saved = insumoService.save(insumoDTO);
+            InsumoDTO saved = insumoWrite.save(insumoDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -82,7 +83,7 @@ public class InsumoController {
     public ResponseEntity<?> update(@PathVariable Integer id,
                                     @Valid @RequestBody InsumoRequestDTO insumoDTO) {
         try {
-            InsumoDTO updated = insumoService.update(id, insumoDTO);
+            InsumoDTO updated = insumoWrite.update(id, insumoDTO);
             return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -99,7 +100,7 @@ public class InsumoController {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "El campo 'stock' es requerido"));
             }
-            InsumoDTO updated = insumoService.updateStock(id, nuevoStock);
+            InsumoDTO updated = insumoWrite.updateStock(id, nuevoStock);
             return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -113,7 +114,7 @@ public class InsumoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         try {
-            insumoService.delete(id);
+            insumoWrite.delete(id);
             return ResponseEntity.ok(Map.of("message", "Insumo eliminado exitosamente"));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

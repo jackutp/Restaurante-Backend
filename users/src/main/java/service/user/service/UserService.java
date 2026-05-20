@@ -1,5 +1,7 @@
 package service.user.service;
 
+import org.springframework.transaction.annotation.Transactional;
+import service.user.exception.ConflictException;
 import service.user.jwt.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +14,6 @@ import service.user.exception.resourceNotFoundException;
 import service.user.model.User;
 import service.user.model.TipoUser;
 import service.user.repository.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -20,7 +21,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class UserService {
 
     private final UserRepository usuarioRepository;
@@ -28,18 +28,20 @@ public class UserService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    @Transactional
     public UserResponseDTO login(UserLoginRequestDTO request){
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         UserDetails user = usuarioRepository.findByEmail(request.email()).orElseThrow();
         return toResponseDTO((User) user);
     }
     // REGISTRO (solo clientes)
+    @Transactional
     public UserResponseDTO registrar(UserRegistroDTO dto) {
         if (usuarioRepository.existsByEmail(dto.email())) {
-            throw new RuntimeException("El email ya está registrado");
+            throw new ConflictException("El email ya está registrado");
         }
         if (usuarioRepository.existsByDni(dto.dni())) {
-            throw new RuntimeException("El DNI ya está registrado");
+            throw new ConflictException("El DNI ya está registrado");
         }
 
         User usuario = User.builder()
@@ -57,6 +59,7 @@ public class UserService {
     }
 
     // MODIFICAR (solo admins pueden cambiar rol)
+    @Transactional
     public UserResponseDTO actualizar(Integer id, UserRegistroDTO dto, TipoUser nuevoTipo) {
         User usuario = usuarioRepository.findById(id).orElseThrow(() -> new resourceNotFoundException("Usuario no encontrado"));
 
@@ -77,6 +80,7 @@ public class UserService {
     }
 
     // ELIMINAR
+    @Transactional
     public void eliminar(Integer id) {
         if (!usuarioRepository.existsById(id)) {
             throw new resourceNotFoundException("Usuario no encontrado");
@@ -85,6 +89,7 @@ public class UserService {
     }
 
     // BUSCAR TODOS (solo admins)
+    @Transactional(readOnly = true)
     public List<UserResponseDTO> listarTodos() {
         return usuarioRepository.findAll().stream()
                 .map(this::toResponseDTO)
@@ -92,6 +97,7 @@ public class UserService {
     }
 
     // BUSCAR POR ID
+    @Transactional(readOnly = true)
     public UserResponseDTO buscarPorId(Integer id) {
         User usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new resourceNotFoundException("Usuario no encontrado"));

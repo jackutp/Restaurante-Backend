@@ -25,6 +25,7 @@ public class EventoService {
     private final EventoMapper eventoMapper;
 
     // Validar fecha (hoy + 3 meses máximo)
+   @Transactional(readOnly = true)
     private void validateEventDate(LocalDate date) {
         LocalDate today = LocalDate.now();
         LocalDate maxDate = today.plusMonths(3);
@@ -39,6 +40,7 @@ public class EventoService {
     }
 
     // Validar capacidad máxima diaria (opcional)
+    @Transactional(readOnly = true)
     private void checkDailyCapacity(LocalDate date) {
         Long eventsCount = eventoRepository.countByDate(date);
         if (eventsCount >= 10) {
@@ -68,12 +70,14 @@ public class EventoService {
     }
 
     // Obtener todos los eventos (paginado)
+    @Transactional(readOnly = true)
     public Page<EventoResponseDTO> getAllEventos(Pageable pageable) {
         return eventoRepository.findAll(pageable)
                 .map(eventoMapper::toResponseDTO);
     }
 
     // Obtener evento por ID
+    @Transactional(readOnly = true)
     public EventoResponseDTO getEventoById(Long id) {
         EventoRequest evento = eventoRepository.findById(id)
                 .orElseThrow(() -> new EventoException("Evento no encontrado con ID: " + id));
@@ -108,6 +112,7 @@ public class EventoService {
     }
 
     // Filtrar eventos por estado
+    @Transactional(readOnly = true)
     public Page<EventoResponseDTO> getEventosByStatus(String status, Pageable pageable) {
         try {
             EventoStatus eventoStatus = EventoStatus.valueOf(status);
@@ -119,6 +124,7 @@ public class EventoService {
     }
 
     // Obtener estadísticas
+    @Transactional(readOnly = true)
     public Object getEventoStats() {
         List<Object[]> stats = eventoRepository.countByStatus();
         long total = eventoRepository.count();
@@ -131,6 +137,7 @@ public class EventoService {
     }
 
     // Buscar eventos por email
+    @Transactional(readOnly = true)
     public List<EventoResponseDTO> getEventosByEmail(String email) {
         return eventoRepository.findByEmail(email)
                 .stream()
@@ -139,6 +146,7 @@ public class EventoService {
     }
 
     // Verificar disponibilidad de fecha
+    @Transactional(readOnly = true)
     public boolean checkAvailability(LocalDate date) {
         try {
             validateEventDate(date);

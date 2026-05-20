@@ -1,10 +1,11 @@
 package com.Restaurante.reservas.service;
 
-import com.Restaurante.reservas.dto.MesaDto;
+import com.Restaurante.reservas.dto.MesaRespuestaDto;
 import com.Restaurante.reservas.dto.ReservaRequestDTO;
 import com.Restaurante.reservas.dto.ReservaRespuestaDTO;
 import com.Restaurante.reservas.entities.Mesa;
 import com.Restaurante.reservas.entities.Reserva;
+import com.Restaurante.reservas.error_message.ResourceNotFoundException;
 import com.Restaurante.reservas.persistence.MesaRepository;
 import com.Restaurante.reservas.persistence.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,8 @@ public class ReservaWriteImp implements  ReservaWriteService{
     @Autowired
     private MesaRepository mesaRepository;
 
-    private MesaDto createMesaDTO(Mesa mesa){
-        return new MesaDto(mesa.getMesaId(), mesa.getNumero(), mesa.getCapacidad(), mesa.isOcupado(), mesa.getTipo());
+    private MesaRespuestaDto createMesaDTO(Mesa mesa){
+        return new MesaRespuestaDto(mesa.getMesaId(), mesa.getNumero(), mesa.getCapacidad(), mesa.isOcupado(), mesa.getTipo());
     }
     private ReservaRespuestaDTO createReservaRespuestaDto(Reserva r){
         return new ReservaRespuestaDTO(r.getReservaId(),createMesaDTO(r.getMesa()),r.getClienteId(), r.getCantidadClientes(), r.getFecha(), r.getHora(), r.getMenu(), r.getDetalles());
@@ -26,7 +27,7 @@ public class ReservaWriteImp implements  ReservaWriteService{
 
     @Override
     public ReservaRespuestaDTO save(ReservaRequestDTO rdto) {
-        Mesa mesa = mesaRepository.findById(rdto.mesaFk()).orElseThrow(() -> new RuntimeException("Mesa not found"));
+        Mesa mesa = mesaRepository.findById(rdto.mesaFk()).orElseThrow(() -> new ResourceNotFoundException("Mesa not found"));
         Reserva reserva = new Reserva();
         reserva.setMesa(mesa);
         reserva.setClienteId(rdto.clienteId());
@@ -41,8 +42,8 @@ public class ReservaWriteImp implements  ReservaWriteService{
 
     @Override
     public ReservaRespuestaDTO updateReserva(Long id, ReservaRequestDTO r) {
-        Reserva updatedReserva = reservaRepository.findById(id).orElseThrow(() -> new RuntimeException("Reserva was not found"));
-        Mesa mesa = mesaRepository.findById(r.mesaFk()).orElseThrow(() -> new RuntimeException("Mesa not found"));
+        Reserva updatedReserva = reservaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Reserva was not found"));
+        Mesa mesa = mesaRepository.findById(r.mesaFk()).orElseThrow(() -> new ResourceNotFoundException("Mesa not found"));
         updatedReserva.setMesa(mesa);
         updatedReserva.setClienteId(r.clienteId());
         updatedReserva.setCantidadClientes(r.cantidadClientes());

@@ -3,13 +3,13 @@ spring:
     write:
       url: jdbc:postgresql://localhost:5432/eventos_db
       username: postgres
-      password: admin
+      password: kenyiaqp10
       driver-class-name: org.postgresql.Driver
     read:
-      url: jdbc:postgresql://localhost:5432/eventos_db
-      #url: jdbc:postgresql://localhost:5433/eventos_db
+      #url: jdbc:postgresql://localhost:5432/eventos_db
+      url: jdbc:postgresql://localhost:5433/eventos_db
       username: postgres
-      password: admin
+      password: kenyiaqp10
       driver-class-name: org.postgresql.Driver
     # Configuracion de Eureka (Service Discovery)
 eureka:
