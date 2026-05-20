@@ -169,4 +169,10 @@ public class ProductoServiceImpl implements ProductoService {
                 .map(productoMapper::toDTO)
                 .collect(Collectors.toList());
     }
+    @Override
+    public Integer getStock(Integer id) {
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
+        return producto.getStock();
+    }
 }

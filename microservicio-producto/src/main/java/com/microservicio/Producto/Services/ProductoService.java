@@ -1,5 +1,4 @@
 package com.microservicio.Producto.Services;
-import com.microservicio.Producto.Entities.Producto;
 import com.microservicio.Producto.Entities.Categoria;
 import com.microservicio.Producto.dto.ProductoDTO;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,4 +20,7 @@ public interface ProductoService {
     // Métodos de búsqueda
     List<ProductoDTO> findByCategoria(Categoria categoria);
     List<ProductoDTO> findByPrecioRange(Double min, Double max);
+
+    // Agregar este método en la interfaz ProductoService
+    Integer getStock(Integer id);
 }

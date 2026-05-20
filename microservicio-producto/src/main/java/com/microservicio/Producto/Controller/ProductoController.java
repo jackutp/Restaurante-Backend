@@ -164,4 +164,16 @@ public class ProductoController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
+    // GET: Obtener stock de un producto
+    @GetMapping("/{id}/stock")
+    public ResponseEntity<?> getStock(@PathVariable Integer id) {
+        try {
+            Integer stock = productoService.getStock(id);
+            return ResponseEntity.ok(Map.of("stock", stock));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        }
+    }
+
 }
