@@ -24,6 +24,7 @@
 
     <modules>
 		<module>microservicio-eventos</module>
+		<module>microservicio-mesas</module>
 		<module>microservicio-producto</module>
 		<module>microservicio-Insumos</module>
 		<module>microservicio-proveedor</module>

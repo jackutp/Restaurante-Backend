@@ -66,6 +66,12 @@ spring:
                 - Path=/api/eventos/**
               filters:
                 - StripPrefix=1
+            - id: microservicio-mesas
+              uri: lb://microservicio-mesas
+              predicates:
+                - Path=/api/mesas/**
+              filters:
+                - StripPrefix=1
 eureka:
   client:
     service-url:
