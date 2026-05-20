@@ -143,7 +143,8 @@ public class ProductoController {
         }
     }
     // MODIFICACION STOCK :V
-    @PatchMapping("/{id}/stock")
+    // MODIFICACION STOCK :V
+    @PutMapping("/{id}/stock")  // ← Cambiar a PUT
     public ResponseEntity<?> updateStock(
             @PathVariable Integer id,
             @RequestBody Map<String, Integer> request) {

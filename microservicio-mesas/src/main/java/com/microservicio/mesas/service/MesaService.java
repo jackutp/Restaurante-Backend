@@ -115,4 +115,29 @@ public class MesaService {
 
         mesaRepository.delete(mesa);
     }
+    // Agregar este método en MesaService.java
+
+    // Actualizar mesa (número y capacidad)
+    @Transactional
+    public MesaResponseDTO updateMesa(Long id, CrearMesaRequestDTO request) {
+        Mesa mesa = mesaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada con ID: " + id));
+
+        // Solo permitir editar si está DISPONIBLE
+        if (mesa.getEstado() != EstadoMesa.DISPONIBLE) {
+            throw new RuntimeException("No se puede editar una mesa ocupada o reservada");
+        }
+
+        // Verificar que el nuevo número no exista en otra mesa
+        if (mesaRepository.existsByNumero(request.getNumero()) && !mesa.getNumero().equals(request.getNumero())) {
+            throw new RuntimeException("Ya existe una mesa con el número: " + request.getNumero());
+        }
+
+        mesa.setNumero(request.getNumero());
+        mesa.setCapacidad(request.getCapacidad());
+        mesa.setUpdatedAt(LocalDateTime.now());
+
+        Mesa updatedMesa = mesaRepository.save(mesa);
+        return mesaMapper.toResponseDTO(updatedMesa);
+    }
 }

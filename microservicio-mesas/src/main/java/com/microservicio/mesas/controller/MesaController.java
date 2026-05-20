@@ -44,14 +44,15 @@ public class MesaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newMesa);
     }
 
-    @PatchMapping("/{id}/estado")
+    // Cambiar de @PatchMapping a @PutMapping
+    @PutMapping("/{id}/estado")
     public ResponseEntity<MesaResponseDTO> updateEstado(
             @PathVariable Long id,
             @Valid @RequestBody ActualizarEstadoMesaRequestDTO request) {
         return ResponseEntity.ok(mesaService.updateEstado(id, request));
     }
 
-    @PatchMapping("/{id}/total")
+    @PutMapping("/{id}/total")
     public ResponseEntity<MesaResponseDTO> updateTotal(
             @PathVariable Long id,
             @Valid @RequestBody ActualizarTotalMesaRequestDTO request) {
@@ -62,5 +63,11 @@ public class MesaController {
     public ResponseEntity<Void> deleteMesa(@PathVariable Long id) {
         mesaService.deleteMesa(id);
         return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<MesaResponseDTO> updateMesa(
+            @PathVariable Long id,
+            @Valid @RequestBody CrearMesaRequestDTO request) {
+        return ResponseEntity.ok(mesaService.updateMesa(id, request));
     }
 }

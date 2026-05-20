@@ -15,8 +15,7 @@ public interface ProductoFeignClient {
     @GetMapping("/productos/{id}/stock")
     StockResponse obtenerStockProducto(@PathVariable("id") Integer id);
 
-    // ✅ AGREGAR ESTE MÉTODO
-    @PatchMapping("/productos/{id}/stock")
+    @PutMapping("/productos/{id}/stock")  // ← Cambiar a PUT
     void actualizarStock(@PathVariable("id") Integer id,
                          @RequestBody Map<String, Integer> request);
 
