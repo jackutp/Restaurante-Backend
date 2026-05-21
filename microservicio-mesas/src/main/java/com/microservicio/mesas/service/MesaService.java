@@ -140,4 +140,52 @@ public class MesaService {
         Mesa updatedMesa = mesaRepository.save(mesa);
         return mesaMapper.toResponseDTO(updatedMesa);
     }
+
+    // ========== NUEVOS MÉTODOS (BUSCAR POR NÚMERO) ==========
+
+    // Actualizar estado por número de mesa
+    @Transactional
+    public MesaResponseDTO updateEstadoByNumero(Integer numero, ActualizarEstadoMesaRequestDTO request) {
+        Mesa mesa = mesaRepository.findByNumero(numero)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada con número: " + numero));
+
+        System.out.println("💰 Total actual de mesa " + numero + ": " + mesa.getTotalActual());
+        System.out.println("💰 Total recibido: " + request.getTotalActual());
+
+        mesa.setEstado(request.getEstado());
+        mesa.setUpdatedAt(LocalDateTime.now());
+
+        if (request.getEstado() == EstadoMesa.OCUPADO && request.getTotalActual() != null) {
+            // ✅ SUMAR al total existente
+            double nuevoTotal = mesa.getTotalActual() + request.getTotalActual();
+            mesa.setTotalActual(nuevoTotal);
+            mesa.setOrdenActualId(request.getOrdenActualId());
+            System.out.println("💰 Nuevo total después de sumar: " + nuevoTotal);
+        }
+
+        if (request.getEstado() == EstadoMesa.DISPONIBLE) {
+            mesa.setTotalActual(0.0);
+            mesa.setOrdenActualId(null);
+        }
+
+        Mesa updatedMesa = mesaRepository.save(mesa);
+        return mesaMapper.toResponseDTO(updatedMesa);
+    }
+
+    // Actualizar total por número de mesa (si se usa por separado)
+    @Transactional
+    public MesaResponseDTO updateTotalByNumero(Integer numero, ActualizarTotalMesaRequestDTO request) {
+        Mesa mesa = mesaRepository.findByNumero(numero)
+                .orElseThrow(() -> new RuntimeException("Mesa no encontrada con número: " + numero));
+
+        // SUMAR al total existente
+        double nuevoTotal = mesa.getTotalActual() + request.getTotal();
+        mesa.setTotalActual(nuevoTotal);
+        mesa.setUpdatedAt(LocalDateTime.now());
+
+        System.out.println("💰 Mesa " + numero + " - Total actualizado vía PATCH: " + nuevoTotal);
+
+        Mesa updatedMesa = mesaRepository.save(mesa);
+        return mesaMapper.toResponseDTO(updatedMesa);
+    }
 }

@@ -78,6 +78,18 @@ spring:
                 - Path=/api/pedidos/**
               filters:
                 - StripPrefix=1
+            - id: microservicio-cocina
+              uri: lb://microservicio-cocina
+              predicates:
+                - Path=/api/cocina/**
+              filters:
+                - StripPrefix=1
+            - id: microservicio-pagos
+              uri: lb://microservicio-pagos
+              predicates:
+                - Path=/api/pagos/**
+              filters:
+                - StripPrefix=1
 eureka:
   client:
     service-url:

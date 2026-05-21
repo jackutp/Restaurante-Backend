@@ -70,4 +70,18 @@ public class MesaController {
             @Valid @RequestBody CrearMesaRequestDTO request) {
         return ResponseEntity.ok(mesaService.updateMesa(id, request));
     }
+
+    @PutMapping("/numero/{numero}/estado")
+    public ResponseEntity<MesaResponseDTO> updateEstadoByNumero(
+            @PathVariable Integer numero,
+            @Valid @RequestBody ActualizarEstadoMesaRequestDTO request) {
+        return ResponseEntity.ok(mesaService.updateEstadoByNumero(numero, request));
+    }
+
+    @PutMapping("/numero/{numero}/total")
+    public ResponseEntity<MesaResponseDTO> updateTotalByNumero(
+            @PathVariable Integer numero,
+            @Valid @RequestBody ActualizarTotalMesaRequestDTO request) {
+        return ResponseEntity.ok(mesaService.updateTotalByNumero(numero, request));
+    }
 }

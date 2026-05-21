@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "microservicio-mesas", url = "http://localhost:8216")
 public interface MesaFeignClient {
 
-    @PutMapping("/mesas/{id}/estado")  // ← Cambiar a PUT
-    void actualizarEstadoMesa(@PathVariable("id") Long id,
+    @PutMapping("/mesas/numero/{numero}/estado")
+    void actualizarEstadoMesa(@PathVariable("numero") Integer numero,
                               @RequestBody ActualizarEstadoMesaRequestDTO request);
 
-    @PutMapping("/mesas/{id}/total")   // ← Cambiar a PUT
-    void actualizarTotalMesa(@PathVariable("id") Long id,
+    @PutMapping("/mesas/numero/{numero}/total")
+    void actualizarTotalMesa(@PathVariable("numero") Integer numero,
                              @RequestBody ActualizarTotalMesaRequestDTO request);
 }

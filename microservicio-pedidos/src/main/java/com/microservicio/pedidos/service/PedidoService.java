@@ -9,6 +9,9 @@ import com.microservicio.pedidos.repository.PedidoItemRepository;
 import com.microservicio.pedidos.repository.PedidoRepository;
 import com.microservicio.pedidos.service.feign.MesaFeignClient;
 import com.microservicio.pedidos.service.feign.ProductoFeignClient;
+import com.microservicio.pedidos.dto.CrearPedidoCocinaRequestDTO;
+import com.microservicio.pedidos.dto.ItemCocinaRequestDTO;
+import com.microservicio.pedidos.service.feign.CocinaFeignClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -17,25 +20,28 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.HashMap;
 import java.util.Map;
+
 @Service
 public class PedidoService {
-
     private final PedidoRepository pedidoRepository;
     private final PedidoItemRepository pedidoItemRepository;
     private final PedidoMapper pedidoMapper;
     private final MesaFeignClient mesaFeignClient;
     private final ProductoFeignClient productoFeignClient;
+    private final CocinaFeignClient cocinaFeignClient;
 
     public PedidoService(PedidoRepository pedidoRepository,
                          PedidoItemRepository pedidoItemRepository,
                          PedidoMapper pedidoMapper,
                          MesaFeignClient mesaFeignClient,
-                         ProductoFeignClient productoFeignClient) {
+                         ProductoFeignClient productoFeignClient,
+                         CocinaFeignClient cocinaFeignClient) {
         this.pedidoRepository = pedidoRepository;
         this.pedidoItemRepository = pedidoItemRepository;
         this.pedidoMapper = pedidoMapper;
         this.mesaFeignClient = mesaFeignClient;
         this.productoFeignClient = productoFeignClient;
+        this.cocinaFeignClient = cocinaFeignClient;
     }
 
     private String generarOrdenId() {
@@ -100,42 +106,72 @@ public class PedidoService {
                 .mapToDouble(i -> i.getPrecio() * i.getCantidad())
                 .sum();
 
-        // 6. ACTUALIZAR MESA
-        actualizarMesa(request.getMesaNumero().longValue(), total, ordenId);
+        // 6. ACTUALIZAR MESA (AHORA USA NÚMERO, NO ID)
+        actualizarMesa(request.getMesaNumero(), total, ordenId);
 
-        // 7. ✅ DESCOTAR STOCK
-        descontarStock(request.getItems());  // ← Aquí pasas los items del request
+        // 7. DESCONTAR STOCK
+        descontarStock(request.getItems());
+
+        // 8. ENVIAR A COCINA
+        enviarPedidoACocina(ordenId, request.getMesaNumero(), hora, request.getItems());
 
         return pedidoMapper.toResponseDTO(savedPedido);
     }
 
-    private void actualizarMesa(Long mesaId, double total, String ordenId) {
+    // COCINA METODO ENVIAR
+    private void enviarPedidoACocina(String ordenId, Integer mesaNumero, String hora, List<PedidoItemRequestDTO> items) {
         try {
-            // Actualizar estado a OCUPADO
-            ActualizarEstadoMesaRequestDTO estadoRequest = new ActualizarEstadoMesaRequestDTO();
-            estadoRequest.setEstado("OCUPADO");
-            estadoRequest.setOrdenActualId(ordenId);
-            mesaFeignClient.actualizarEstadoMesa(mesaId, estadoRequest);
+            CrearPedidoCocinaRequestDTO cocinaRequest = new CrearPedidoCocinaRequestDTO();
+            cocinaRequest.setOrdenId(ordenId);
+            cocinaRequest.setMesaNumero(mesaNumero);
+            cocinaRequest.setHora(hora);
 
-            // Actualizar total
-            ActualizarTotalMesaRequestDTO totalRequest = new ActualizarTotalMesaRequestDTO();
-            totalRequest.setTotal(total);
-            mesaFeignClient.actualizarTotalMesa(mesaId, totalRequest);
+            List<ItemCocinaRequestDTO> itemsCocina = items.stream().map(item -> {
+                ItemCocinaRequestDTO itemDTO = new ItemCocinaRequestDTO();
+                itemDTO.setProductoId(item.getProductoId());
+                itemDTO.setNombre(item.getNombre());
+                itemDTO.setCantidad(item.getCantidad());
+                itemDTO.setNotas(item.getNotas());
+                return itemDTO;
+            }).collect(Collectors.toList());
 
+            cocinaRequest.setItems(itemsCocina);
+
+            cocinaFeignClient.enviarPedidoACocina(cocinaRequest);
+            System.out.println("✅ Pedido enviado a cocina: " + ordenId);
         } catch (Exception e) {
-            System.err.println("Error al actualizar mesa " + mesaId + ": " + e.getMessage());
+            System.err.println("❌ Error al enviar pedido a cocina: " + e.getMessage());
         }
     }
 
-    private void liberarMesa(Long mesaId) {
+    // ✅ MODIFICADO: Usa Integer (número de mesa) en lugar de Long (ID)
+    private void actualizarMesa(Integer numeroMesa, double total, String ordenId) {
+        try {
+            System.out.println("📤 Enviando a mesa " + numeroMesa + " - Total: " + total);
+
+            // Actualizar estado a OCUPADO
+            ActualizarEstadoMesaRequestDTO estadoRequest = new ActualizarEstadoMesaRequestDTO();
+            estadoRequest.setEstado("OCUPADO");
+            estadoRequest.setTotalActual(total);  // ← Enviar total aquí también
+            estadoRequest.setOrdenActualId(ordenId);
+            mesaFeignClient.actualizarEstadoMesa(numeroMesa, estadoRequest);
+
+                    System.out.println("✅ Mesa actualizada correctamente");
+        } catch (Exception e) {
+            System.err.println("Error al actualizar mesa " + numeroMesa + ": " + e.getMessage());
+        }
+    }
+
+    // ✅ MODIFICADO: Usa Integer (número de mesa) en lugar de Long (ID)
+    private void liberarMesa(Integer numeroMesa) {
         try {
             ActualizarEstadoMesaRequestDTO estadoRequest = new ActualizarEstadoMesaRequestDTO();
             estadoRequest.setEstado("DISPONIBLE");
             estadoRequest.setTotalActual(0.0);
             estadoRequest.setOrdenActualId(null);
-            mesaFeignClient.actualizarEstadoMesa(mesaId, estadoRequest);
+            mesaFeignClient.actualizarEstadoMesa(numeroMesa, estadoRequest);
         } catch (Exception e) {
-            System.err.println("Error al liberar mesa " + mesaId + ": " + e.getMessage());
+            System.err.println("Error al liberar mesa " + numeroMesa + ": " + e.getMessage());
         }
     }
 
@@ -171,8 +207,9 @@ public class PedidoService {
         pedido.setEstado(request.getEstado());
         pedido.setUpdatedAt(LocalDateTime.now());
 
+        // ✅ Cuando el pedido se completa, liberar la mesa (usando número, no ID)
         if (request.getEstado() == EstadoPedido.COMPLETADO) {
-            liberarMesa(pedido.getMesaNumero().longValue());
+            liberarMesa(pedido.getMesaNumero());
         }
 
         Pedido updatedPedido = pedidoRepository.save(pedido);
@@ -203,25 +240,22 @@ public class PedidoService {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
 
-        liberarMesa(pedido.getMesaNumero().longValue());
+        liberarMesa(pedido.getMesaNumero());
         pedidoRepository.delete(pedido);
     }
 
     private void descontarStock(List<PedidoItemRequestDTO> items) {
         for (PedidoItemRequestDTO item : items) {
             try {
-                // Obtener stock actual
                 ProductoFeignClient.StockResponse stockResponse = productoFeignClient.obtenerStockProducto(item.getProductoId());
                 Integer stockActual = stockResponse.getStock();
                 Integer nuevoStock = stockActual - item.getCantidad();
 
-                // Validar que no quede negativo
                 if (nuevoStock < 0) {
                     System.err.println("⚠️ Stock negativo para producto " + item.getProductoId() + ". Se deja en 0.");
                     nuevoStock = 0;
                 }
 
-                // Actualizar stock
                 Map<String, Integer> stockRequest = new HashMap<>();
                 stockRequest.put("stock", nuevoStock);
                 productoFeignClient.actualizarStock(item.getProductoId(), stockRequest);
