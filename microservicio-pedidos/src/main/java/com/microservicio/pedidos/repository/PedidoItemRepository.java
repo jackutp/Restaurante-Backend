@@ -12,11 +12,8 @@ import java.util.List;
 
 @Repository
 public interface PedidoItemRepository extends JpaRepository<PedidoItem, Long> {
-
     List<PedidoItem> findByPedidoId(Long pedidoId);
-
     List<PedidoItem> findByPedidoIdAndCompletadoFalse(Long pedidoId);
-
     //para metrica
     @Query("SELECT pi.nombre, SUM(pi.cantidad), SUM(pi.precio * pi.cantidad) " +
             "FROM PedidoItem pi JOIN pi.pedido p " +

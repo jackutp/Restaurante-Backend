@@ -6,7 +6,6 @@ public class ItemCocinaRequestDTO {
     private Integer cantidad;
     private String notas;
 
-    // Getters y Setters
     public Integer getProductoId() { return productoId; }
     public void setProductoId(Integer productoId) { this.productoId = productoId; }
     public String getNombre() { return nombre; }

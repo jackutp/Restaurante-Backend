@@ -9,7 +9,6 @@ public class MetricasPedidosResponseDTO {
     private Map<String, Long> ordenesPorEstado;
     private List<ProductoTopDTO> productosTop;
 
-    // Getters y Setters
     public Long getOrdenesCompletadas() { return ordenesCompletadas; }
     public void setOrdenesCompletadas(Long ordenesCompletadas) { this.ordenesCompletadas = ordenesCompletadas; }
     public Map<String, Long> getOrdenesPorEstado() { return ordenesPorEstado; }

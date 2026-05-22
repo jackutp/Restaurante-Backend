@@ -7,8 +7,6 @@ public class CrearPedidoCocinaRequestDTO {
     private Integer mesaNumero;
     private String hora;
     private List<ItemCocinaRequestDTO> items;
-
-    // Getters y Setters
     public String getOrdenId() { return ordenId; }
     public void setOrdenId(String ordenId) { this.ordenId = ordenId; }
     public Integer getMesaNumero() { return mesaNumero; }

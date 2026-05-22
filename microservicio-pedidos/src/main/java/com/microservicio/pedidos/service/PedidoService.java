@@ -46,18 +46,14 @@ public class PedidoService {
         this.productoFeignClient = productoFeignClient;
         this.cocinaFeignClient = cocinaFeignClient;
     }
-
     private String generarOrdenId() {
         return "ORD-" + System.currentTimeMillis();
     }
-
     private String obtenerHoraActual() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
     }
-
     @Transactional
     public PedidoResponseDTO crearPedido(CrearPedidoRequestDTO request) {
-
         // 1. VALIDAR STOCK
         for (PedidoItemRequestDTO itemReq : request.getItems()) {
             ProductoFeignClient.StockResponse stockResponse = productoFeignClient.obtenerStockProducto(itemReq.getProductoId());
@@ -68,7 +64,6 @@ public class PedidoService {
                         ". Disponible: " + stockDisponible + ", Solicitado: " + itemReq.getCantidad());
             }
         }
-
         // 2. OBTENER INFORMACIÓN COMPLETA DE CADA PRODUCTO
         for (PedidoItemRequestDTO itemReq : request.getItems()) {
             ProductoResponseDTO producto = productoFeignClient.obtenerProductoPorId(itemReq.getProductoId());
@@ -78,14 +73,11 @@ public class PedidoService {
             itemReq.setNombre(producto.getNombre());
             itemReq.setPrecio(producto.getPrecio());
         }
-
         // 3. CREAR PEDIDO
         String ordenId = generarOrdenId();
         String hora = obtenerHoraActual();
-
         Pedido pedido = new Pedido(ordenId, request.getMesaNumero(), hora, EstadoPedido.PENDIENTE);
         Pedido savedPedido = pedidoRepository.save(pedido);
-
         // 4. CREAR ITEMS
         List<PedidoItem> items = request.getItems().stream()
                 .map(item -> {
@@ -100,28 +92,21 @@ public class PedidoService {
                     return pedidoItem;
                 })
                 .collect(Collectors.toList());
-
         pedidoItemRepository.saveAll(items);
         savedPedido.setItems(items);
-
         // 5. CALCULAR TOTAL
         double total = items.stream()
                 .mapToDouble(i -> i.getPrecio() * i.getCantidad())
                 .sum();
-
         // 6. ACTUALIZAR MESA (AHORA USA NÚMERO, NO ID)
         actualizarMesa(request.getMesaNumero(), total, ordenId);
-
         // 7. DESCONTAR STOCK
         descontarStock(request.getItems());
-
         // 8. ENVIAR A COCINA
         enviarPedidoACocina(ordenId, request.getMesaNumero(), hora, request.getItems());
-
         return pedidoMapper.toResponseDTO(savedPedido);
     }
-
-    // COCINA METODO ENVIAR
+    // COCINA ENVIAR
     private void enviarPedidoACocina(String ordenId, Integer mesaNumero, String hora, List<PedidoItemRequestDTO> items) {
         try {
             CrearPedidoCocinaRequestDTO cocinaRequest = new CrearPedidoCocinaRequestDTO();
@@ -141,31 +126,27 @@ public class PedidoService {
             cocinaRequest.setItems(itemsCocina);
 
             cocinaFeignClient.enviarPedidoACocina(cocinaRequest);
-            System.out.println("✅ Pedido enviado a cocina: " + ordenId);
+            System.out.println("Pedido enviado a cocina: " + ordenId);
         } catch (Exception e) {
-            System.err.println("❌ Error al enviar pedido a cocina: " + e.getMessage());
+            System.err.println("Error al enviar pedido a cocina: " + e.getMessage());
         }
     }
-
-    // ✅ MODIFICADO: Usa Integer (número de mesa) en lugar de Long (ID)
     private void actualizarMesa(Integer numeroMesa, double total, String ordenId) {
         try {
-            System.out.println("📤 Enviando a mesa " + numeroMesa + " - Total: " + total);
-
+            System.out.println("Enviando a mesa " + numeroMesa + " - Total: " + total);
             // Actualizar estado a OCUPADO
             ActualizarEstadoMesaRequestDTO estadoRequest = new ActualizarEstadoMesaRequestDTO();
             estadoRequest.setEstado("OCUPADO");
-            estadoRequest.setTotalActual(total);  // ← Enviar total aquí también
+            estadoRequest.setTotalActual(total);
             estadoRequest.setOrdenActualId(ordenId);
             mesaFeignClient.actualizarEstadoMesa(numeroMesa, estadoRequest);
 
-                    System.out.println("✅ Mesa actualizada correctamente");
+                    System.out.println("Mesa actualizada correctamente");
         } catch (Exception e) {
             System.err.println("Error al actualizar mesa " + numeroMesa + ": " + e.getMessage());
         }
     }
 
-    // ✅ MODIFICADO: Usa Integer (número de mesa) en lugar de Long (ID)
     private void liberarMesa(Integer numeroMesa) {
         try {
             ActualizarEstadoMesaRequestDTO estadoRequest = new ActualizarEstadoMesaRequestDTO();
@@ -177,19 +158,16 @@ public class PedidoService {
             System.err.println("Error al liberar mesa " + numeroMesa + ": " + e.getMessage());
         }
     }
-
     public List<PedidoResponseDTO> getAllPedidos() {
         return pedidoRepository.findAll().stream()
                 .map(pedidoMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
-
     public PedidoResponseDTO getPedidoById(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
         return pedidoMapper.toResponseDTO(pedido);
     }
-
     public PedidoResponseDTO getPedidoByOrdenId(String ordenId) {
         Pedido pedido = pedidoRepository.findByOrdenId(ordenId)
                 .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ordenId: " + ordenId));
@@ -210,7 +188,7 @@ public class PedidoService {
         pedido.setEstado(request.getEstado());
         pedido.setUpdatedAt(LocalDateTime.now());
 
-        // ✅ Cuando el pedido se completa, liberar la mesa (usando número, no ID)
+        // Cuando el pedido se completa, liberar la mesa
         if (request.getEstado() == EstadoPedido.COMPLETADO) {
             liberarMesa(pedido.getMesaNumero());
         }
@@ -246,7 +224,6 @@ public class PedidoService {
         liberarMesa(pedido.getMesaNumero());
         pedidoRepository.delete(pedido);
     }
-
     private void descontarStock(List<PedidoItemRequestDTO> items) {
         for (PedidoItemRequestDTO item : items) {
             try {
@@ -255,7 +232,7 @@ public class PedidoService {
                 Integer nuevoStock = stockActual - item.getCantidad();
 
                 if (nuevoStock < 0) {
-                    System.err.println("⚠️ Stock negativo para producto " + item.getProductoId() + ". Se deja en 0.");
+                    System.err.println("Stock negativo para producto " + item.getProductoId() + ". Se deja en 0.");
                     nuevoStock = 0;
                 }
 
@@ -263,10 +240,10 @@ public class PedidoService {
                 stockRequest.put("stock", nuevoStock);
                 productoFeignClient.actualizarStock(item.getProductoId(), stockRequest);
 
-                System.out.println("✅ Stock actualizado: Producto " + item.getProductoId() +
+                System.out.println("Stock actualizado: Producto " + item.getProductoId() +
                         " | " + stockActual + " → " + nuevoStock);
             } catch (Exception e) {
-                System.err.println("❌ Error al actualizar stock del producto " + item.getProductoId() + ": " + e.getMessage());
+                System.err.println("Error al actualizar stock del producto " + item.getProductoId() + ": " + e.getMessage());
             }
         }
     }
@@ -274,11 +251,9 @@ public class PedidoService {
     //metricas
     public MetricasPedidosResponseDTO getMetricas() {
         MetricasPedidosResponseDTO metricas = new MetricasPedidosResponseDTO();
-
         // 1. Órdenes completadas hoy
         Long completadasHoy = pedidoRepository.countOrdenesCompletadasHoy();
         metricas.setOrdenesCompletadas(completadasHoy != null ? completadasHoy : 0L);
-
         // 2. Órdenes por estado
         List<Object[]> estadoCounts = pedidoRepository.countByEstado();
         Map<String, Long> ordenesPorEstado = new HashMap<>();
@@ -286,12 +261,10 @@ public class PedidoService {
             ordenesPorEstado.put(((EstadoPedido) row[0]).toString(), (Long) row[1]);
         }
         metricas.setOrdenesPorEstado(ordenesPorEstado);
-
         // 3. Productos más vendidos (últimos 7 días)
         LocalDateTime hace7Dias = LocalDateTime.now().minusDays(7);
         Pageable top5 = PageRequest.of(0, 5);
         List<Object[]> topProductos = pedidoItemRepository.findTopProductos(hace7Dias, top5);
-
         List<MetricasPedidosResponseDTO.ProductoTopDTO> productosTop = new ArrayList<>();
         for (Object[] row : topProductos) {
             productosTop.add(new MetricasPedidosResponseDTO.ProductoTopDTO(
@@ -301,7 +274,6 @@ public class PedidoService {
             ));
         }
         metricas.setProductosTop(productosTop);
-
         return metricas;
     }
     @Transactional

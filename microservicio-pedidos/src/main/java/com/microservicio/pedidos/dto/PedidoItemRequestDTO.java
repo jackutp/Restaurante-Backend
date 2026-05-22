@@ -4,21 +4,15 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public class PedidoItemRequestDTO {
-
     @NotNull(message = "El ID del producto es obligatorio")
     private Integer productoId;
-
     private String nombre;
-
     private Double precio;
-
     @NotNull(message = "La cantidad es obligatoria")
     @Min(value = 1, message = "La cantidad mínima es 1")
     private Integer cantidad;
-
     private String notas;
 
-    // Getters y Setters
     public Integer getProductoId() { return productoId; }
     public void setProductoId(Integer productoId) { this.productoId = productoId; }
 

@@ -10,7 +10,6 @@ public class CrearPedidoRequestDTO {
     @Valid
     @NotNull(message = "Los items son obligatorios")
     private List<PedidoItemRequestDTO> items;
-    // Getters y Setters
     public Integer getMesaNumero() { return mesaNumero; }
     public void setMesaNumero(Integer mesaNumero) { this.mesaNumero = mesaNumero; }
     public List<PedidoItemRequestDTO> getItems() { return items; }

@@ -14,24 +14,17 @@ import java.util.Optional;
 
 @Repository
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
-
     Optional<Pedido> findByOrdenId(String ordenId);
-
     List<Pedido> findByEstado(EstadoPedido estado);
-
     List<Pedido> findByMesaNumero(Integer mesaNumero);
-
     List<Pedido> findByEstadoOrderByCreatedAtDesc(EstadoPedido estado);
-
     //para metricas
     // Contar órdenes por estado
     @Query("SELECT p.estado, COUNT(p) FROM Pedido p GROUP BY p.estado")
     List<Object[]> countByEstado();
-
     // Contar órdenes completadas hoy
     @Query("SELECT COUNT(p) FROM Pedido p WHERE p.estado = 'SERVIDO' AND p.createdAt >= CURRENT_DATE")
     Long countOrdenesCompletadasHoy();
-
     // Productos más vendidos (últimos 7 días)
     @Query("SELECT pi.nombre, SUM(pi.cantidad), SUM(pi.precio * pi.cantidad) " +
             "FROM PedidoItem pi JOIN pi.pedido p " +

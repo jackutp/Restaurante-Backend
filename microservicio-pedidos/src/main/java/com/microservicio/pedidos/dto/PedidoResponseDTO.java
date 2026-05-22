@@ -1,5 +1,4 @@
 package com.microservicio.pedidos.dto;
-
 import com.microservicio.pedidos.entity.EstadoPedido;
 import java.util.List;
 public class PedidoResponseDTO {
@@ -23,7 +22,6 @@ public class PedidoResponseDTO {
     public String getHora() { return hora; }
     public EstadoPedido getEstado() { return estado; }
     public List<PedidoItemResponseDTO> getItems() { return items; }
-    // Builder
     public static Builder builder() {
         return new Builder();
     }
