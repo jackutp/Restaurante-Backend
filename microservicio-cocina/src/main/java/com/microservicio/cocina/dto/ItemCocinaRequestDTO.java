@@ -1,5 +1,4 @@
 package com.microservicio.cocina.dto;
-
 public class ItemCocinaRequestDTO {
     private Integer productoId;
     private String nombre;

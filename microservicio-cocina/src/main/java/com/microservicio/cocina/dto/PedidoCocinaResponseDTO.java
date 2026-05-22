@@ -1,7 +1,5 @@
 package com.microservicio.cocina.dto;
-
 import java.util.List;
-
 public class PedidoCocinaResponseDTO {
     private Long id;
     private String ordenId;
@@ -9,7 +7,6 @@ public class PedidoCocinaResponseDTO {
     private String hora;
     private String estado;
     private List<ItemCocinaResponseDTO> items;
-
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getOrdenId() { return ordenId; }

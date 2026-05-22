@@ -2,6 +2,8 @@ package com.microservicio.pagos.entity;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "comprobantes")
 public class Comprobante {
@@ -11,22 +13,22 @@ public class Comprobante {
     private Long id;
 
     @Column(name = "tipo", nullable = false)
-    private String tipo; // BOLETA, FACTURA
+    private String tipo;
 
     @Column(name = "serie", nullable = false)
-    private String serie; // B001, F001
+    private String serie;
 
     @Column(name = "correlativo", nullable = false)
     private Integer correlativo;
 
     @Column(name = "numero_completo", nullable = false, unique = true)
-    private String numeroCompleto; // B001-00000001
+    private String numeroCompleto;
 
     @Column(name = "ruc")
-    private String ruc; // Solo para factura
+    private String ruc;
 
     @Column(name = "razon_social")
-    private String razonSocial; // Solo para factura
+    private String razonSocial;
 
     @Column(name = "orden_id", nullable = false)
     private String ordenId;
@@ -41,9 +43,8 @@ public class Comprobante {
     private String pdfUrl;
 
     @Column(name = "created_at")
-    private String createdAt;
+    private LocalDateTime createdAt;
 
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTipo() { return tipo; }
@@ -66,6 +67,6 @@ public class Comprobante {
     public void setTotal(Double total) { this.total = total; }
     public String getPdfUrl() { return pdfUrl; }
     public void setPdfUrl(String pdfUrl) { this.pdfUrl = pdfUrl; }
-    public String getCreatedAt() { return createdAt; }
-    public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

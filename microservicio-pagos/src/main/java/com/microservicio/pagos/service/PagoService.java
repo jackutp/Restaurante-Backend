@@ -1,5 +1,4 @@
 package com.microservicio.pagos.service;
-
 import com.microservicio.pagos.dto.*;
 import com.microservicio.pagos.entity.*;
 import com.microservicio.pagos.repository.PagoRepository;
@@ -11,12 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
-
+import java.util.*;
 @Service
 public class PagoService {
-
     private final PagoRepository pagoRepository;
     private final ComprobanteRepository comprobanteRepository;
     private final MesaFeignClient mesaFeignClient;
@@ -96,7 +92,7 @@ public class PagoService {
         comprobante.setMesaNumero(request.getMesaNumero());
         comprobante.setTotal(request.getTotal());
         comprobante.setPdfUrl(pdfPath);
-        comprobante.setCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
+        comprobante.setCreatedAt(LocalDateTime.now());
         comprobante = comprobanteRepository.save(comprobante);
 
         ComprobanteResponseDTO response = new ComprobanteResponseDTO();
@@ -105,7 +101,6 @@ public class PagoService {
         response.setNumeroCompleto(comprobante.getNumeroCompleto());
         response.setPdfUrl(comprobante.getPdfUrl());
         response.setTotal(comprobante.getTotal());
-        response.setFecha(comprobante.getCreatedAt());
 
         return response;
     }
@@ -126,7 +121,7 @@ public class PagoService {
 
             System.out.println("✅ Mesa " + numeroMesa + " liberada correctamente");
         } catch (Exception e) {
-            System.err.println("❌ Error al liberar mesa " + numeroMesa + ": " + e.getMessage());
+            System.err.println("Error al liberar mesa " + numeroMesa + ": " + e.getMessage());
         }
     }
 
@@ -137,7 +132,77 @@ public class PagoService {
             pedidoFeignClient.actualizarEstadoPedido(ordenId, request);
             System.out.println("✅ Pedido " + ordenId + " marcado como COMPLETADO");
         } catch (Exception e) {
-            System.err.println("❌ Error al actualizar pedido " + ordenId + ": " + e.getMessage());
+            System.err.println("Error al actualizar pedido " + ordenId + ": " + e.getMessage());
         }
+    }
+
+    //Para metricas
+    public MetricasPagosResponseDTO getMetricas() {
+        MetricasPagosResponseDTO metricas = new MetricasPagosResponseDTO();
+
+        try {
+            LocalDateTime ahora = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+            String hoyInicio = ahora.withHour(0).withMinute(0).withSecond(0).format(formatter);
+            String hoyFin = ahora.withHour(23).withMinute(59).withSecond(59).format(formatter);
+
+            // 1. Ventas del día
+            Double ventasDelDia = comprobanteRepository.sumTotalByDateRangeNative(hoyInicio, hoyFin);
+            metricas.setVentasDelDia(ventasDelDia != null ? ventasDelDia : 0.0);
+
+            // 2. Ventas últimos 7 días
+            List<Double> ventasSemanales = new ArrayList<>();
+            List<String> dias = new ArrayList<>();
+            DateTimeFormatter diaFormatter = DateTimeFormatter.ofPattern("EEE", new Locale("es", "ES"));
+
+            for (int i = 6; i >= 0; i--) {
+                LocalDateTime dia = ahora.minusDays(i);
+                String inicio = dia.withHour(0).withMinute(0).withSecond(0).format(formatter);
+                String fin = dia.withHour(23).withMinute(59).withSecond(59).format(formatter);
+
+                Double total = comprobanteRepository.sumTotalByDateRangeNative(inicio, fin);
+                ventasSemanales.add(total != null ? total : 0.0);
+                dias.add(dia.format(diaFormatter));
+            }
+            metricas.setVentasUltimos7Dias(ventasSemanales);
+            metricas.setDiasSemana(dias);
+
+            // 3. Ventas por hora
+            List<Object[]> ventasPorHoraRaw = comprobanteRepository.sumTotalByHourNative(hoyInicio, hoyFin);
+            List<MetricasPagosResponseDTO.VentaPorHoraDTO> ventasPorHora = new ArrayList<>();
+            for (Object[] row : ventasPorHoraRaw) {
+                ventasPorHora.add(new MetricasPagosResponseDTO.VentaPorHoraDTO(
+                        ((Number) row[0]).intValue(),
+                        ((Number) row[1]).doubleValue()
+                ));
+            }
+            metricas.setVentasPorHora(ventasPorHora);
+
+            // 4. Datos de mesas
+            try {
+                List<MesaResponseDTO> mesas = mesaFeignClient.getAllMesas();
+                long ocupadas = mesas.stream().filter(m -> "OCUPADO".equals(m.getEstado())).count();
+                metricas.setMesasOcupadas((int) ocupadas);
+                metricas.setTotalMesas(mesas.size());
+                metricas.setOcupacionPorcentaje(mesas.size() > 0 ? (ocupadas * 100.0 / mesas.size()) : 0.0);
+            } catch (Exception e) {
+                metricas.setMesasOcupadas(0);
+                metricas.setTotalMesas(0);
+                metricas.setOcupacionPorcentaje(0.0);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            metricas.setVentasDelDia(0.0);
+            metricas.setVentasUltimos7Dias(new ArrayList<>());
+            metricas.setDiasSemana(new ArrayList<>());
+            metricas.setVentasPorHora(new ArrayList<>());
+            metricas.setMesasOcupadas(0);
+            metricas.setTotalMesas(0);
+            metricas.setOcupacionPorcentaje(0.0);
+        }
+
+        return metricas;
     }
 }

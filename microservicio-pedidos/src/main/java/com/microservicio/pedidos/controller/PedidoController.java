@@ -52,4 +52,17 @@ public class PedidoController {
         pedidoService.eliminarPedido(id);
         return ResponseEntity.noContent().build();
     }
+    //metrica
+    @GetMapping("/metricas")
+    public ResponseEntity<MetricasPedidosResponseDTO> getMetricas() {
+        return ResponseEntity.ok(pedidoService.getMetricas());
+    }
+
+    @PostMapping("/orden/{ordenId}/estado")
+    public ResponseEntity<PedidoResponseDTO> actualizarEstadoPorOrdenId(
+            @PathVariable String ordenId,
+            @Valid @RequestBody ActualizarEstadoRequestDTO request) {
+        System.out.println("recibido para orden: " + ordenId + " -> " + request.getEstado());
+        return ResponseEntity.ok(pedidoService.actualizarEstadoPorOrdenId(ordenId, request));
+    }
 }

@@ -1,5 +1,4 @@
 package com.microservicio.cocina.dto;
-
 public class ItemCocinaResponseDTO {
     private Long id;
     private Integer productoId;
@@ -7,7 +6,6 @@ public class ItemCocinaResponseDTO {
     private Integer cantidad;
     private String notas;
     private Boolean completado;
-
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Integer getProductoId() { return productoId; }

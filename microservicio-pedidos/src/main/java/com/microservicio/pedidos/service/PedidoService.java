@@ -12,10 +12,13 @@ import com.microservicio.pedidos.service.feign.ProductoFeignClient;
 import com.microservicio.pedidos.dto.CrearPedidoCocinaRequestDTO;
 import com.microservicio.pedidos.dto.ItemCocinaRequestDTO;
 import com.microservicio.pedidos.service.feign.CocinaFeignClient;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.HashMap;
@@ -266,5 +269,50 @@ public class PedidoService {
                 System.err.println("❌ Error al actualizar stock del producto " + item.getProductoId() + ": " + e.getMessage());
             }
         }
+    }
+
+    //metricas
+    public MetricasPedidosResponseDTO getMetricas() {
+        MetricasPedidosResponseDTO metricas = new MetricasPedidosResponseDTO();
+
+        // 1. Órdenes completadas hoy
+        Long completadasHoy = pedidoRepository.countOrdenesCompletadasHoy();
+        metricas.setOrdenesCompletadas(completadasHoy != null ? completadasHoy : 0L);
+
+        // 2. Órdenes por estado
+        List<Object[]> estadoCounts = pedidoRepository.countByEstado();
+        Map<String, Long> ordenesPorEstado = new HashMap<>();
+        for (Object[] row : estadoCounts) {
+            ordenesPorEstado.put(((EstadoPedido) row[0]).toString(), (Long) row[1]);
+        }
+        metricas.setOrdenesPorEstado(ordenesPorEstado);
+
+        // 3. Productos más vendidos (últimos 7 días)
+        LocalDateTime hace7Dias = LocalDateTime.now().minusDays(7);
+        Pageable top5 = PageRequest.of(0, 5);
+        List<Object[]> topProductos = pedidoItemRepository.findTopProductos(hace7Dias, top5);
+
+        List<MetricasPedidosResponseDTO.ProductoTopDTO> productosTop = new ArrayList<>();
+        for (Object[] row : topProductos) {
+            productosTop.add(new MetricasPedidosResponseDTO.ProductoTopDTO(
+                    (String) row[0],
+                    ((Number) row[1]).longValue(),
+                    ((Number) row[2]).doubleValue()
+            ));
+        }
+        metricas.setProductosTop(productosTop);
+
+        return metricas;
+    }
+    @Transactional
+    public PedidoResponseDTO actualizarEstadoPorOrdenId(String ordenId, ActualizarEstadoRequestDTO request) {
+        Pedido pedido = pedidoRepository.findByOrdenId(ordenId)
+                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ordenId: " + ordenId));
+
+        pedido.setEstado(request.getEstado());
+        pedido.setUpdatedAt(LocalDateTime.now());
+
+        Pedido updatedPedido = pedidoRepository.save(pedido);
+        return pedidoMapper.toResponseDTO(updatedPedido);
     }
 }

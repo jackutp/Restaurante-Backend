@@ -1,13 +1,10 @@
 package com.microservicio.cocina.dto;
-
 import java.util.List;
-
 public class CrearPedidoCocinaRequestDTO {
     private String ordenId;
     private Integer mesaNumero;
     private String hora;
     private List<ItemCocinaRequestDTO> items;
-
     public String getOrdenId() { return ordenId; }
     public void setOrdenId(String ordenId) { this.ordenId = ordenId; }
     public Integer getMesaNumero() { return mesaNumero; }

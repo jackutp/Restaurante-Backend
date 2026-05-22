@@ -1,5 +1,6 @@
 package com.microservicio.pagos.controller;
 
+import com.microservicio.pagos.dto.MetricasPagosResponseDTO;
 import com.microservicio.pagos.dto.ProcesarPagoRequestDTO;
 import com.microservicio.pagos.dto.ProcesarPagoResponseDTO;
 import com.microservicio.pagos.entity.Comprobante;
@@ -36,14 +37,14 @@ public class PagoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // ✅ NUEVO: Listar todos los comprobantes
+    // Listar todos los comprobantes
     @GetMapping("/comprobantes")
     public ResponseEntity<List<Comprobante>> listarComprobantes() {
         List<Comprobante> comprobantes = comprobanteRepository.findAllByOrderByIdDesc();
         return ResponseEntity.ok(comprobantes);
     }
 
-    // ✅ NUEVO: Descargar PDF de un comprobante
+    //  Descargar PDF de un comprobante
     @GetMapping("/comprobantes/{id}/pdf")
     public ResponseEntity<byte[]> descargarPdf(@PathVariable Long id) {
         try {
@@ -69,4 +70,9 @@ public class PagoController {
             return ResponseEntity.internalServerError().build();
         }
     }
+    @GetMapping("/metricas")
+    public ResponseEntity<MetricasPagosResponseDTO> getMetricas() {
+        return ResponseEntity.ok(pagoService.getMetricas());
+    }
+
 }

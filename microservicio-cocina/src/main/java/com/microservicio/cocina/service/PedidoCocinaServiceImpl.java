@@ -89,6 +89,15 @@ public class PedidoCocinaServiceImpl implements PedidoCocinaService {
         if (todosCompletados) {
             pedido.setEstado("LISTO");
             pedidoRepository.save(pedido);
+
+            try {
+                Map<String, String> request = new HashMap<>();
+                request.put("estado", "SERVIDO");
+                pedidoFeignClient.actualizarEstadoPedido(pedido.getOrdenId(), request);
+                System.out.println("Pedido " + pedido.getOrdenId() + " actualizado a SERVIDO en Pedidos");
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+            }
         }
 
         return mapper.toItemResponseDTO(item);

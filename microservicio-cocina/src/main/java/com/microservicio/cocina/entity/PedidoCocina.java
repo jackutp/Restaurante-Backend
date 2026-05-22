@@ -1,38 +1,27 @@
 package com.microservicio.cocina.entity;
-
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 @Entity
 @Table(name = "pedidos_cocina")
 public class PedidoCocina {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "orden_id", unique = true, nullable = false)
     private String ordenId;
-
     @Column(name = "mesa_numero", nullable = false)
     private Integer mesaNumero;
-
     @Column(name = "hora")
     private String hora;
-
     @Column(name = "estado")
     private String estado = "PENDIENTE";
-
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<ItemCocina> items = new ArrayList<>();
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
-
     public PedidoCocina() {}
-
     public PedidoCocina(String ordenId, Integer mesaNumero, String hora) {
         this.ordenId = ordenId;
         this.mesaNumero = mesaNumero;
