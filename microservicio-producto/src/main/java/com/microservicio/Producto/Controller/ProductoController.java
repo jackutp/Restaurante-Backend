@@ -18,12 +18,10 @@ public class ProductoController {
     public ProductoController(ProductoService productoService) {
         this.productoService = productoService;
     }
-    // GET: Listar todos los productos
     @GetMapping
     public ResponseEntity<List<ProductoDTO>> getAllProductos() {
         return ResponseEntity.ok(productoService.findAll());
     }
-    // GET: Obtener producto por ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductoById(@PathVariable Integer id) {
         return productoService.findById(id)
@@ -31,7 +29,6 @@ public class ProductoController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "Producto no encontrado con id: " + id)));
     }
-    // GET: Obtener imagen del producto
     @GetMapping(value = "/{id}/imagen", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<byte[]> getImagen(@PathVariable Integer id) {
         try {
@@ -43,19 +40,17 @@ public class ProductoController {
             return ResponseEntity.noContent().build();
         }
     }
-    // GET: Filtrar por categoría
     @GetMapping("/categoria/{categoria}")
     public ResponseEntity<List<ProductoDTO>> getByCategoria(@PathVariable Categoria categoria) {
         return ResponseEntity.ok(productoService.findByCategoria(categoria));
     }
-    // GET: Filtrar por rango de precio
     @GetMapping("/precio")
     public ResponseEntity<List<ProductoDTO>> getByPrecioRange(
             @RequestParam Double min,
             @RequestParam Double max) {
         return ResponseEntity.ok(productoService.findByPrecioRange(min, max));
     }
-    // POST: Crear producto con imagen
+    // Crear producto con imagen
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProducto(
             @RequestParam("nombre") String nombre,
@@ -79,7 +74,7 @@ public class ProductoController {
             return ResponseEntity.badRequest().body(error);
         }
     }
-    // PUT: Actualizar producto completo
+    // Actualizar producto completo
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateProducto(
             @PathVariable Integer id,
@@ -104,7 +99,7 @@ public class ProductoController {
                     .body(Map.of("error", "Error al actualizar: " + e.getMessage()));
         }
     }
-    // PUT: Actualizar solo la imagen
+    // Actualizar solo la imagen
     @PutMapping(value = "/{id}/imagen", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateImagen(
             @PathVariable Integer id,
@@ -120,7 +115,7 @@ public class ProductoController {
                     .body(Map.of("error", "Error al actualizar imagen: " + e.getMessage()));
         }
     }
-    // DELETE: Eliminar producto (incluye su imagen)
+    // Eliminar producto (incluye su imagen)
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProducto(@PathVariable Integer id) {
         try {
@@ -131,7 +126,7 @@ public class ProductoController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-    // DELETE: Eliminar solo la imagen del producto
+    // Eliminar solo la imagen del producto
     @DeleteMapping("/{id}/imagen")
     public ResponseEntity<?> deleteImagen(@PathVariable Integer id) {
         try {
@@ -143,8 +138,7 @@ public class ProductoController {
         }
     }
     // MODIFICACION STOCK :V
-    // MODIFICACION STOCK :V
-    @PutMapping("/{id}/stock")  // ← Cambiar a PUT
+    @PutMapping("/{id}/stock")
     public ResponseEntity<?> updateStock(
             @PathVariable Integer id,
             @RequestBody Map<String, Integer> request) {
@@ -165,7 +159,7 @@ public class ProductoController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-    // GET: Obtener stock de un producto
+    // Obtener stock de un producto
     @GetMapping("/{id}/stock")
     public ResponseEntity<?> getStock(@PathVariable Integer id) {
         try {

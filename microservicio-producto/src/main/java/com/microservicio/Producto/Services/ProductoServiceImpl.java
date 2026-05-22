@@ -1,5 +1,4 @@
 package com.microservicio.Producto.Services;
-
 import com.microservicio.Producto.Entities.Producto;
 import com.microservicio.Producto.Entities.Categoria;
 import com.microservicio.Producto.Repositories.ProductoRepository;
@@ -51,7 +50,6 @@ public class ProductoServiceImpl implements ProductoService {
                 String imagenPath = imageUtils.guardarImagen(imagen);
                 producto.setImagenProducto(imagenPath);
             }
-
             // Guardar producto
             Producto saved = productoRepository.save(producto);
             return productoMapper.toDTO(saved);

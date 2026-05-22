@@ -11,8 +11,8 @@ public class ProductoDTO {
     private String descripcion;
     private BigDecimal precio;
     private Categoria categoria;
-    private String imagenProducto;  // Ruta de la imagen
-    private String imagenUrl;       // URL completa para acceder
+    private String imagenProducto;
+    private String imagenUrl;
     private Integer stock;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
