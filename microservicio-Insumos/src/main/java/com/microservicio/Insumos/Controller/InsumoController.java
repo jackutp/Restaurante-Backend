@@ -8,6 +8,7 @@ import com.microservicio.Insumos.dto.InsumoRequestDTO;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +16,12 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/insumos")
-@RequiredArgsConstructor
 public class InsumoController {
 
-    private final InsumoServiceRead insumoRead;
-    private final InsumoServiceWrite insumoWrite;
+    @Autowired
+    private InsumoServiceRead insumoRead;
+    @Autowired
+    private InsumoServiceWrite insumoWrite;
 
 
     @GetMapping

@@ -10,6 +10,7 @@ import com.Restaurante.reservas.persistence.MesaRepository;
 import com.Restaurante.reservas.persistence.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ReservaWriteImp implements  ReservaWriteService{
@@ -26,6 +27,7 @@ public class ReservaWriteImp implements  ReservaWriteService{
     }
 
     @Override
+    @Transactional
     public ReservaRespuestaDTO save(ReservaRequestDTO rdto) {
         Mesa mesa = mesaRepository.findById(rdto.mesaFk()).orElseThrow(() -> new ResourceNotFoundException("Mesa not found"));
         Reserva reserva = new Reserva();
@@ -41,6 +43,7 @@ public class ReservaWriteImp implements  ReservaWriteService{
     }
 
     @Override
+    @Transactional
     public ReservaRespuestaDTO updateReserva(Long id, ReservaRequestDTO r) {
         Reserva updatedReserva = reservaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Reserva was not found"));
         Mesa mesa = mesaRepository.findById(r.mesaFk()).orElseThrow(() -> new ResourceNotFoundException("Mesa not found"));
@@ -56,6 +59,7 @@ public class ReservaWriteImp implements  ReservaWriteService{
     }
 
     @Override
+    @Transactional
     public boolean deleteReservation(Long id) {
         if(reservaRepository.existsById(id)){
             reservaRepository.deleteById(id);

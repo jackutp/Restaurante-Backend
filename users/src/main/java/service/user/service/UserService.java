@@ -1,5 +1,6 @@
 package service.user.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import service.user.exception.ConflictException;
 import service.user.jwt.JwtService;
@@ -20,13 +21,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder; // BCrypt
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
+    @Autowired
+    private  UserRepository usuarioRepository;
+    @Autowired
+    private  PasswordEncoder passwordEncoder; // BCrypt
+    @Autowired
+    private  JwtService jwtService;
+    @Autowired
+    private  AuthenticationManager authenticationManager;
 
     @Transactional
     public UserResponseDTO login(UserLoginRequestDTO request){

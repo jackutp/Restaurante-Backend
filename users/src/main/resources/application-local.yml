@@ -3,12 +3,12 @@ jwt:
 spring:
   datasource:
     write:
-      url: jdbc:mysql://localhost:3306/restaurante?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      jdbc-url: jdbc:mysql://localhost:3306/restaurante?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       username: root
       password: Kenyi@qp10
       driver-class-name: com.mysql.cj.jdbc.Driver
     read:
-      url: jdbc:mysql://localhost:3306/restaurante?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      jdbc-url: jdbc:mysql://localhost:3306/restaurante?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       username: root
       password: Kenyi@qp10
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -18,4 +18,4 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     prefer-ip-address: true
-#    enabled: false
+    enabled: false

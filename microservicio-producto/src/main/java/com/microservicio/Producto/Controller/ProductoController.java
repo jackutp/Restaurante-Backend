@@ -4,6 +4,7 @@ import com.microservicio.Producto.Services.ProductoServiceRead;
 import com.microservicio.Producto.Services.ProductoServiceWrite;
 import com.microservicio.Producto.dto.ProductoDTO;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +16,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/productos")
 public class ProductoController {
-    private final ProductoServiceWrite productoWrite;
-    private final ProductoServiceRead productoRead;
-    public ProductoController(ProductoServiceWrite productoWrite, ProductoServiceRead productoRead) {
-        this.productoWrite = productoWrite;
-        this.productoRead = productoRead;
-    }
+    @Autowired
+    private ProductoServiceWrite productoWrite;
+    @Autowired
+    private ProductoServiceRead productoRead;
 
     // GET: Listar todos los productos
     @GetMapping("/all")

@@ -2,13 +2,14 @@ package com.microservicio.eventos.Services;
 
 import com.microservicio.eventos.Entities.EventoRequest;
 import com.microservicio.eventos.Entities.EventoStatus;
+import com.microservicio.eventos.Exceptions.ResourceNotFoundException;
 import com.microservicio.eventos.dto.EventoRequestDTO;
 import com.microservicio.eventos.dto.EventoResponseDTO;
 import com.microservicio.eventos.dto.EventoStatusUpdateDTO;
 import com.microservicio.eventos.Exceptions.EventoException;
 import com.microservicio.eventos.Mapper.EventoMapper;
 import com.microservicio.eventos.Repositories.EventoRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,11 +19,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class EventoService {
 
-    private final EventoRepository eventoRepository;
-    private final EventoMapper eventoMapper;
+    @Autowired
+    private  EventoRepository eventoRepository;
+    @Autowired
+    private  EventoMapper eventoMapper;
 
     // Validar fecha (hoy + 3 meses máximo)
    @Transactional(readOnly = true)
@@ -80,7 +82,7 @@ public class EventoService {
     @Transactional(readOnly = true)
     public EventoResponseDTO getEventoById(Long id) {
         EventoRequest evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new EventoException("Evento no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento no encontrado con ID: " + id));
         return eventoMapper.toResponseDTO(evento);
     }
 
@@ -88,7 +90,7 @@ public class EventoService {
     @Transactional
     public EventoResponseDTO updateEventoStatus(Long id, EventoStatusUpdateDTO updateDTO) {
         EventoRequest evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new EventoException("Evento no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento no encontrado con ID: " + id));
 
         try {
             EventoStatus newStatus = EventoStatus.valueOf(updateDTO.getStatus());
@@ -107,7 +109,7 @@ public class EventoService {
     @Transactional
     public void deleteEvento(Long id) {
         EventoRequest evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new EventoException("Evento no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento no encontrado con ID: " + id));
         eventoRepository.delete(evento);
     }
 

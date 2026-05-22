@@ -9,6 +9,7 @@ import com.microservicio.Proveedor.dto.ProveedorRequestDTO;
 import com.microservicio.Proveedor.Entities.EstadoOrden;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,18 +22,14 @@ import java.util.Map;
 @RequestMapping("/proveedores")
 public class ProveedorController {
 
-    private final OrdenCompraReadService ordenCompraRead;
-    private final OrdenCompraWriteService ordenCompraWrite;
-    private final ProveedorServiceRead proveedorRead;
-    private final ProveedorServiceWrite proveedorWrite;
-
-    public ProveedorController(OrdenCompraReadService ordenCompraRead, OrdenCompraWriteService ordenCompraWrite, ProveedorServiceRead proveedorRead, ProveedorServiceWrite proveedorWrite) {
-        this.ordenCompraRead = ordenCompraRead;
-        this.ordenCompraWrite = ordenCompraWrite;
-        this.proveedorRead = proveedorRead;
-        this.proveedorWrite = proveedorWrite;
-    }
-
+    @Autowired
+    private  OrdenCompraReadService ordenCompraRead;
+    @Autowired
+    private  OrdenCompraWriteService ordenCompraWrite;
+    @Autowired
+    private  ProveedorServiceRead proveedorRead;
+    @Autowired
+    private  ProveedorServiceWrite proveedorWrite;
     // ============ PROVEEDORES CRUD ============
 
     @GetMapping

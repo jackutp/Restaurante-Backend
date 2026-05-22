@@ -6,25 +6,24 @@ import com.microservicio.Proveedor.Mapper.OrdenCompraMapper;
 import com.microservicio.Proveedor.Repositories.OrdenCompraRepository;
 import com.microservicio.Proveedor.Repositories.ProveedorRepository;
 import com.microservicio.Proveedor.dto.OrdenCompraDTO;
-import jakarta.persistence.EntityNotFoundException;
+import com.microservicio.Proveedor.exception.FileStorageException;
+import com.microservicio.Proveedor.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class OrdenCompraReadImp implements OrdenCompraReadService {
-    private final OrdenCompraRepository ordenCompraRepository;
-    private final ProveedorRepository proveedorRepository;
-    private final OrdenCompraMapper ordenCompraMapper;
-
-    public OrdenCompraReadImp(OrdenCompraRepository ordenCompraRepository,
-                                  ProveedorRepository proveedorRepository,
-                                  OrdenCompraMapper ordenCompraMapper) {
-        this.ordenCompraRepository = ordenCompraRepository;
-        this.proveedorRepository = proveedorRepository;
-        this.ordenCompraMapper = ordenCompraMapper;
-    }
+    @Autowired
+    private  OrdenCompraRepository ordenCompraRepository;
+    @Autowired
+    private  ProveedorRepository proveedorRepository;
+    @Autowired
+    private  OrdenCompraMapper ordenCompraMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -39,7 +38,7 @@ public class OrdenCompraReadImp implements OrdenCompraReadService {
     @Transactional(readOnly = true)
     public List<OrdenCompraDTO> findByProveedor(Integer proveedorId) {
         Proveedor proveedor = proveedorRepository.findById(proveedorId)
-                .orElseThrow(() -> new EntityNotFoundException("Proveedor no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado"));
         return ordenCompraRepository.findByProveedorOrderByFechaDesc(proveedor)
                 .stream()
                 .map(ordenCompraMapper::toDTO)
@@ -57,10 +56,10 @@ public class OrdenCompraReadImp implements OrdenCompraReadService {
     @Transactional(readOnly = true)
     public byte[] descargarFactura(Integer id) {
         OrdenCompra orden = ordenCompraRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Orden no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada"));
 
         if (orden.getFacturaContenido() == null) {
-            throw new RuntimeException("La orden no tiene factura asociada");
+            throw new FileStorageException("La orden no tiene factura asociada");
         }
         return orden.getFacturaContenido();
     }

@@ -33,8 +33,6 @@
 		<module>reserva</module>
   	    <module>users</module>
         <module>microservicio-Mermas</module>
-		<module>order</module>
-		<module>payments</module>
     </modules>
     <scm>
 		<connection/>

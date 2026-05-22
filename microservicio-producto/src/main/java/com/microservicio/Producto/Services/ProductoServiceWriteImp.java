@@ -5,23 +5,25 @@ import com.microservicio.Producto.Mapper.ProductoMapper;
 import com.microservicio.Producto.Repositories.ProductoRepository;
 import com.microservicio.Producto.Utils.ImageUtils;
 import com.microservicio.Producto.dto.ProductoDTO;
+import com.microservicio.Producto.exception.FileStorageException;
+import com.microservicio.Producto.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Service
 public class ProductoServiceWriteImp implements ProductoServiceWrite{
-    private final ProductoRepository productoRepository;
-    private final ProductoMapper productoMapper;
-    private final ImageUtils imageUtils;
-    public ProductoServiceWriteImp(ProductoRepository productoRepository,
-                                  ProductoMapper productoMapper,
-                                  ImageUtils imageUtils) {
-        this.productoRepository = productoRepository;
-        this.productoMapper = productoMapper;
-        this.imageUtils = imageUtils;
-    }
+    @Autowired
+    private  ProductoRepository productoRepository;
+    @Autowired
+    private  ProductoMapper productoMapper;
+    @Autowired
+    private  ImageUtils imageUtils;
+
     @Override
     @Transactional
     public ProductoDTO save(ProductoDTO productoDTO, MultipartFile imagen) {
@@ -65,7 +67,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
                 String imagenPath = imageUtils.guardarImagen(imagen);
                 existingProducto.setImagenProducto(imagenPath);
             } catch (IOException e) {
-                throw new RuntimeException("Error al actualizar la imagen: " + e.getMessage());
+                throw new FileStorageException("Error al actualizar la imagen: " + e.getMessage());
             }
         }
         Producto updated = productoRepository.save(existingProducto);
@@ -76,7 +78,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
     @Transactional
     public void delete(Integer id) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
         // Eliminar la imagen asociada
         if (producto.getImagenProducto() != null) {
             imageUtils.eliminarImagen(producto.getImagenProducto());
@@ -89,10 +91,10 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
     @Transactional
     public ProductoDTO updateStock(Integer id, Integer nuevoStock) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
         // Validar que el stock no sea negativo
         if (nuevoStock < 0) {
-            throw new RuntimeException("El stock no puede ser negativo");
+            throw new IllegalArgumentException("El stock no puede ser negativo");
         }
         producto.setStock(nuevoStock);
         Producto updated = productoRepository.save(producto);
@@ -104,7 +106,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
     @Transactional
     public void updateImagen(Integer id, MultipartFile imagen) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
         try {
             // Eliminar imagen anterior
             if (producto.getImagenProducto() != null) {
@@ -124,7 +126,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
     @Transactional
     public void deleteImagen(Integer id) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
 
         if (producto.getImagenProducto() != null) {
             imageUtils.eliminarImagen(producto.getImagenProducto());

@@ -8,6 +8,7 @@ import com.microservicio.Mermas.Services.feign.ProductoFeignClient;
 import com.microservicio.Mermas.dto.InsumoDTO;
 import com.microservicio.Mermas.dto.MermaDTO;
 import com.microservicio.Mermas.dto.ProductoDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,20 +18,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class MermaServiceReadImp implements MermaServiceRead{
-    private final MermaRepository mermaRepository;
-    private final MermaMapper mermaMapper;
-    private final ProductoFeignClient productoFeignClient;
-    private final InsumoFeignClient insumoFeignClient;
-
-    public MermaServiceReadImp(MermaRepository mermaRepository,
-                            MermaMapper mermaMapper,
-                            ProductoFeignClient productoFeignClient,
-                            InsumoFeignClient insumoFeignClient) {
-        this.mermaRepository = mermaRepository;
-        this.mermaMapper = mermaMapper;
-        this.productoFeignClient = productoFeignClient;
-        this.insumoFeignClient = insumoFeignClient;
-    }
+    @Autowired
+    private  MermaRepository mermaRepository;
+    @Autowired
+    private  MermaMapper mermaMapper;
+    @Autowired
+    private  ProductoFeignClient productoFeignClient;
+    @Autowired
+    private  InsumoFeignClient insumoFeignClient;
 
     @Override
     @Transactional(readOnly = true)
@@ -44,7 +39,7 @@ public class MermaServiceReadImp implements MermaServiceRead{
     @Override
     @Transactional(readOnly = true)
     public Optional<MermaDTO> findById(Integer id) {
-        return Optional.empty();
+        return mermaRepository.findById(id).map(mermaMapper::toDTO);
     }
 
     @Override

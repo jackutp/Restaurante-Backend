@@ -1,13 +1,13 @@
 package service.user.controller;
 
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import service.user.dto.UserLoginRequestDTO;
 import service.user.dto.UserRegistroDTO;
 import service.user.dto.UserResponseDTO;
 import service.user.model.TipoUser;
 import service.user.service.UserService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +16,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
-@RequiredArgsConstructor
 public class UserController {
 
-    private final UserService usuarioService;
+    @Autowired
+    private UserService usuarioService;
 
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@Valid @RequestBody UserLoginRequestDTO request){

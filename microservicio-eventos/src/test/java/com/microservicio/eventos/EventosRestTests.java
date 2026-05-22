@@ -12,6 +12,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
@@ -22,13 +23,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("local")
-@RequiredArgsConstructor
+@Transactional
 public class EventosRestTests {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
-    private final EventoService eventoService;
+    @Autowired
+    private EventoService eventoService;
 
     private EventoRequestDTO buildEventoRequestDto(){
         EventoRequestDTO dto = new EventoRequestDTO();
@@ -37,7 +39,7 @@ public class EventosRestTests {
         dto.setEmail("juan@test.com");
         dto.setPhone("+51999999999");
         dto.setCompany("Acme");
-        dto.setDate(LocalDate.now().plusDays(5));
+        dto.setDate(LocalDate.now().plusDays(6));
         dto.setAttendees(50);
         dto.setComments("Evento empresarial importante.");
         dto.setAgeConfirmed(true);
@@ -136,7 +138,7 @@ public class EventosRestTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.email")
+                .andExpect(jsonPath("$.errors.email")
                         .exists());
     }
     @Test
@@ -148,7 +150,7 @@ public class EventosRestTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.name")
+                .andExpect(jsonPath("$.errors.name")
                         .exists());
     }
     @Test
@@ -160,7 +162,7 @@ public class EventosRestTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.date")
+                .andExpect(jsonPath("$.errors.date")
                         .exists());
     }
     @Test
@@ -172,7 +174,7 @@ public class EventosRestTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.attendees")
+                .andExpect(jsonPath("$.errors.attendees")
                         .exists());
     }
     @Test
@@ -184,7 +186,7 @@ public class EventosRestTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.privacyAccepted")
+                .andExpect(jsonPath("$.errors.privacyAccepted")
                         .exists());
     }
     @Test
@@ -196,7 +198,7 @@ public class EventosRestTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.ageConfirmed")
+                .andExpect(jsonPath("$.errors.ageConfirmed")
                         .exists());
     }
     @Test
@@ -208,7 +210,7 @@ public class EventosRestTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.comments")
+                .andExpect(jsonPath("$.errors.comments")
                         .exists());
     }
     @Test
@@ -220,7 +222,7 @@ public class EventosRestTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.phone")
+                .andExpect(jsonPath("$.errors.phone")
                         .exists());
     }
 }

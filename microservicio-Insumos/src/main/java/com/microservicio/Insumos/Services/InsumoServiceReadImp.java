@@ -4,6 +4,7 @@ import com.microservicio.Insumos.Entities.EstadoInsumo;
 import com.microservicio.Insumos.Mapper.InsumoMapper;
 import com.microservicio.Insumos.Repositories.InsumoRepository;
 import com.microservicio.Insumos.dto.InsumoDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,13 +14,10 @@ import java.util.stream.Collectors;
 
 @Service
 public class InsumoServiceReadImp implements InsumoServiceRead{
-    private final InsumoRepository insumoRepository;
-    private final InsumoMapper insumoMapper;
-
-    public InsumoServiceReadImp(InsumoRepository insumoRepository, InsumoMapper insumoMapper) {
-        this.insumoRepository = insumoRepository;
-        this.insumoMapper = insumoMapper;
-    }
+    @Autowired
+    private InsumoRepository insumoRepository;
+    @Autowired
+    private InsumoMapper insumoMapper;
 
     @Override
     @Transactional(readOnly = true)

@@ -8,30 +8,30 @@ import com.microservicio.Proveedor.Repositories.OrdenCompraRepository;
 import com.microservicio.Proveedor.Repositories.ProveedorRepository;
 import com.microservicio.Proveedor.dto.OrdenCompraDTO;
 import com.microservicio.Proveedor.dto.OrdenCompraRequestDTO;
+import com.microservicio.Proveedor.exception.FileStorageException;
+import com.microservicio.Proveedor.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Service
 public class OrdenCompraWriteImp implements OrdenCompraWriteService {
-    private final OrdenCompraRepository ordenCompraRepository;
-    private final ProveedorRepository proveedorRepository;
-    private final OrdenCompraMapper ordenCompraMapper;
-
-    public OrdenCompraWriteImp(OrdenCompraRepository ordenCompraRepository,
-                                  ProveedorRepository proveedorRepository,
-                                  OrdenCompraMapper ordenCompraMapper) {
-        this.ordenCompraRepository = ordenCompraRepository;
-        this.proveedorRepository = proveedorRepository;
-        this.ordenCompraMapper = ordenCompraMapper;
-    }
+    @Autowired
+    private  OrdenCompraRepository ordenCompraRepository;
+    @Autowired
+    private  ProveedorRepository proveedorRepository;
+    @Autowired
+    private  OrdenCompraMapper ordenCompraMapper;
 
     @Override
     @Transactional
     public OrdenCompraDTO create(OrdenCompraRequestDTO request) {
         Proveedor proveedor = proveedorRepository.findById(request.getProveedorId())
-                .orElseThrow(() -> new EntityNotFoundException("Proveedor no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Proveedor no encontrado"));
 
         OrdenCompra orden = new OrdenCompra();
         orden.setProveedor(proveedor);
@@ -45,7 +45,7 @@ public class OrdenCompraWriteImp implements OrdenCompraWriteService {
     @Transactional
     public OrdenCompraDTO updateEstado(Integer id, EstadoOrden estado) {
         OrdenCompra orden = ordenCompraRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Orden no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada"));
 
         orden.setEstado(estado);
         OrdenCompra updated = ordenCompraRepository.save(orden);
@@ -56,7 +56,7 @@ public class OrdenCompraWriteImp implements OrdenCompraWriteService {
     @Transactional
     public OrdenCompraDTO subirFactura(Integer id, MultipartFile archivo) {
         OrdenCompra orden = ordenCompraRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Orden no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada"));
 
         try {
             orden.setFacturaNombre(archivo.getOriginalFilename());
@@ -67,7 +67,7 @@ public class OrdenCompraWriteImp implements OrdenCompraWriteService {
             OrdenCompra updated = ordenCompraRepository.save(orden);
             return ordenCompraMapper.toDTO(updated);
         } catch (IOException e) {
-            throw new RuntimeException("Error al guardar la factura: " + e.getMessage());
+            throw new FileStorageException("Error al guardar la factura: " + e.getMessage());
         }
     }
 
@@ -75,7 +75,7 @@ public class OrdenCompraWriteImp implements OrdenCompraWriteService {
     @Transactional
     public void eliminarFactura(Integer id) {
         OrdenCompra orden = ordenCompraRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Orden no encontrada"));
+                .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada"));
 
         orden.setFacturaNombre(null);
         orden.setFacturaTipo(null);
@@ -87,7 +87,7 @@ public class OrdenCompraWriteImp implements OrdenCompraWriteService {
     @Transactional
     public void delete(Integer id) {
         if (!ordenCompraRepository.existsById(id)) {
-            throw new EntityNotFoundException("Orden no encontrada");
+            throw new ResourceNotFoundException("Orden no encontrada");
         }
         ordenCompraRepository.deleteById(id);
     }

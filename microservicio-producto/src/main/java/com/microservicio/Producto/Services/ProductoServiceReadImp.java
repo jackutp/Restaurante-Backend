@@ -6,7 +6,8 @@ import com.microservicio.Producto.Mapper.ProductoMapper;
 import com.microservicio.Producto.Repositories.ProductoRepository;
 import com.microservicio.Producto.Utils.ImageUtils;
 import com.microservicio.Producto.dto.ProductoDTO;
-import jakarta.persistence.EntityNotFoundException;
+import com.microservicio.Producto.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,16 +17,12 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProductoServiceReadImp implements ProductoServiceRead{
-    private final ProductoRepository productoRepository;
-    private final ProductoMapper productoMapper;
-    private final ImageUtils imageUtils;
-    public ProductoServiceReadImp(ProductoRepository productoRepository,
-                               ProductoMapper productoMapper,
-                               ImageUtils imageUtils) {
-        this.productoRepository = productoRepository;
-        this.productoMapper = productoMapper;
-        this.imageUtils = imageUtils;
-    }
+    @Autowired
+    private  ProductoRepository productoRepository;
+    @Autowired
+    private  ProductoMapper productoMapper;
+    @Autowired
+    private  ImageUtils imageUtils;
 
     @Override
     @Transactional(readOnly = true)
@@ -47,9 +44,9 @@ public class ProductoServiceReadImp implements ProductoServiceRead{
     @Transactional(readOnly = true)
     public byte[] getImagen(Integer id) {
         Producto producto = productoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
         if (producto.getImagenProducto() == null) {
-            throw new RuntimeException("El producto no tiene imagen asociada");
+            throw new ResourceNotFoundException("El producto no tiene imagen asociada");
         }
         return imageUtils.obtenerImagen(producto.getImagenProducto());
     }
