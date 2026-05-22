@@ -1,5 +1,4 @@
 package com.Restaurante.reservas.controller;
-
 import com.Restaurante.reservas.dto.ReservaRequestDTO;
 import com.Restaurante.reservas.dto.ReservaRespuestaDTO;
 import com.Restaurante.reservas.entities.Reserva;
@@ -8,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/api/reservas")
 public class ReservaController {

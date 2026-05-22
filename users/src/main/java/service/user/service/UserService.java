@@ -111,7 +111,7 @@ public class UserService {
                 .dni(dto.dni())
                 .email(dto.email())
                 .clave(passwordEncoder.encode(dto.clave()))
-                .tipo(tipo)  // ← Usar el rol enviado
+                .tipo(tipo)
                 .build();
 
         usuario = usuarioRepository.save(usuario);
