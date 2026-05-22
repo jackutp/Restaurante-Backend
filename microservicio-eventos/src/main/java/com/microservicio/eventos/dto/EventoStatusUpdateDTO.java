@@ -7,6 +7,5 @@ import lombok.Data;
 public class EventoStatusUpdateDTO {
     @NotNull(message = "El estado es obligatorio")
     private String status;
-
     private String reason;
 }
