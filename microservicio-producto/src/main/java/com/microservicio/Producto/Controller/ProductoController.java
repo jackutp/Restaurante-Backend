@@ -1,8 +1,10 @@
 package com.microservicio.Producto.Controller;
 import com.microservicio.Producto.Entities.Categoria;
-import com.microservicio.Producto.Services.ProductoService;
+import com.microservicio.Producto.Services.ProductoServiceRead;
+import com.microservicio.Producto.Services.ProductoServiceWrite;
 import com.microservicio.Producto.dto.ProductoDTO;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,19 +16,20 @@ import java.util.Map;
 @RestController
 @RequestMapping("/productos")
 public class ProductoController {
-    private final ProductoService productoService;
-    public ProductoController(ProductoService productoService) {
-        this.productoService = productoService;
-    }
+    @Autowired
+    private ProductoServiceWrite productoWrite;
+    @Autowired
+    private ProductoServiceRead productoRead;
+
     // GET: Listar todos los productos
     @GetMapping("/all")
     public ResponseEntity<List<ProductoDTO>> getAllProductos() {
-        return ResponseEntity.ok(productoService.findAll());
+        return ResponseEntity.ok(productoRead.findAll());
     }
     // GET: Obtener producto por ID
     @GetMapping("/{id}")
     public ResponseEntity<?> getProductoById(@PathVariable Integer id) {
-        return productoService.findById(id)
+        return productoRead.findById(id)
                 .<ResponseEntity<?>>map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
                         .body(Map.of("error", "Producto no encontrado con id: " + id)));
@@ -35,7 +38,7 @@ public class ProductoController {
     @GetMapping(value = "/{id}/imagen", produces = {MediaType.IMAGE_JPEG_VALUE, MediaType.IMAGE_PNG_VALUE})
     public ResponseEntity<byte[]> getImagen(@PathVariable Integer id) {
         try {
-            byte[] imagen = productoService.getImagen(id);
+            byte[] imagen = productoRead.getImagen(id);
             return ResponseEntity.ok().body(imagen);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
@@ -46,14 +49,14 @@ public class ProductoController {
     // GET: Filtrar por categoría
     @GetMapping("/categoria/{categoria}")
     public ResponseEntity<List<ProductoDTO>> getByCategoria(@PathVariable Categoria categoria) {
-        return ResponseEntity.ok(productoService.findByCategoria(categoria));
+        return ResponseEntity.ok(productoRead.findByCategoria(categoria));
     }
     // GET: Filtrar por rango de precio
     @GetMapping("/precio")
     public ResponseEntity<List<ProductoDTO>> getByPrecioRange(
             @RequestParam Double min,
             @RequestParam Double max) {
-        return ResponseEntity.ok(productoService.findByPrecioRange(min, max));
+        return ResponseEntity.ok(productoRead.findByPrecioRange(min, max));
     }
     // POST: Crear producto con imagen
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -70,7 +73,7 @@ public class ProductoController {
             productoDTO.setPrecio(java.math.BigDecimal.valueOf(precio));
             productoDTO.setCategoria(categoria);
 
-            ProductoDTO saved = productoService.save(productoDTO, imagen);
+            ProductoDTO saved = productoWrite.save(productoDTO, imagen);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
 
         } catch (Exception e) {
@@ -94,7 +97,7 @@ public class ProductoController {
             productoDTO.setDescripcion(descripcion);
             productoDTO.setPrecio(java.math.BigDecimal.valueOf(precio));
             productoDTO.setCategoria(categoria);
-            ProductoDTO updated = productoService.update(id, productoDTO, imagen);
+            ProductoDTO updated = productoWrite.update(id, productoDTO, imagen);
             return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -110,7 +113,7 @@ public class ProductoController {
             @PathVariable Integer id,
             @RequestParam("imagen") MultipartFile imagen) {
         try {
-            productoService.updateImagen(id, imagen);
+            productoWrite.updateImagen(id, imagen);
             return ResponseEntity.ok(Map.of("message", "Imagen actualizada exitosamente"));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -124,7 +127,7 @@ public class ProductoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProducto(@PathVariable Integer id) {
         try {
-            productoService.delete(id);
+            productoWrite.delete(id);
             return ResponseEntity.ok(Map.of("message", "Producto eliminado exitosamente"));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -135,7 +138,7 @@ public class ProductoController {
     @DeleteMapping("/{id}/imagen")
     public ResponseEntity<?> deleteImagen(@PathVariable Integer id) {
         try {
-            productoService.deleteImagen(id);
+            productoWrite.deleteImagen(id);
             return ResponseEntity.ok(Map.of("message", "Imagen eliminada exitosamente"));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -153,7 +156,7 @@ public class ProductoController {
                 return ResponseEntity.badRequest()
                         .body(Map.of("error", "El campo 'stock' es requerido"));
             }
-            ProductoDTO updated = productoService.updateStock(id, nuevoStock);
+            ProductoDTO updated = productoWrite.updateStock(id, nuevoStock);
             return ResponseEntity.ok(updated);
 
         } catch (EntityNotFoundException e) {

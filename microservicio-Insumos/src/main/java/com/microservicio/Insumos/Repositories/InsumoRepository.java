@@ -20,8 +20,7 @@ public interface InsumoRepository extends JpaRepository<Insumos, Integer> {
     List<Insumos> findLowStock();
     @Query("SELECT i FROM Insumos i WHERE i.stock = 0")
     List<Insumos> findOutOfStock();
-    @Modifying
-    @Transactional
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("UPDATE Insumos i SET i.stock = :stock, i.estadoInsumo = CASE WHEN :stock <= 0 THEN 'VACIO' WHEN :stock < 10 THEN 'BAJO' ELSE 'DISPONIBLE' END WHERE i.insumoid = :id")
     int updateStock(@Param("id") Integer id, @Param("stock") Integer stock);
 }

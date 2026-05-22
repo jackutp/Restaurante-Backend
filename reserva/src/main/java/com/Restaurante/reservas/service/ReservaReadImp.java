@@ -1,14 +1,12 @@
 package com.Restaurante.reservas.service;
 
-import com.Restaurante.reservas.dto.MesaDto;
+import com.Restaurante.reservas.dto.MesaRespuestaDto;
 import com.Restaurante.reservas.dto.ReservaRespuestaDTO;
 import com.Restaurante.reservas.entities.Mesa;
 import com.Restaurante.reservas.entities.Reserva;
 import com.Restaurante.reservas.persistence.MesaRepository;
 import com.Restaurante.reservas.persistence.ReservaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +20,8 @@ public class ReservaReadImp implements ReservaReadService{
     @Autowired
     private MesaRepository mesaRepository;
 
-    private MesaDto createMesaDTO(Mesa mesa){
-        return new MesaDto(mesa.getMesaId(), mesa.getNumero(), mesa.getCapacidad(), mesa.isOcupado(), mesa.getTipo());
+    private MesaRespuestaDto createMesaDTO(Mesa mesa){
+        return new MesaRespuestaDto(mesa.getMesaId(), mesa.getNumero(), mesa.getCapacidad(), mesa.isOcupado(), mesa.getTipo());
     }
     private ReservaRespuestaDTO createReservaRespuestaDto(Reserva r){
         return new ReservaRespuestaDTO(r.getReservaId(),createMesaDTO(r.getMesa()),r.getClienteId(), r.getCantidadClientes(), r.getFecha(), r.getHora(), r.getMenu(), r.getDetalles());
@@ -42,16 +40,16 @@ public class ReservaReadImp implements ReservaReadService{
 
     @Override
     @Transactional(readOnly = true)
-    public MesaDto findMesaById(Long mesaId) {
+    public MesaRespuestaDto findMesaById(Long mesaId) {
         Mesa mesa = mesaRepository.findById(mesaId).orElseThrow();
         return createMesaDTO(mesa);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<MesaDto> findAllMesas() {
+    public List<MesaRespuestaDto> findAllMesas() {
         List<Mesa> mesas = (List<Mesa>) mesaRepository.findAll();
-        List<MesaDto> mesasRespuesta = new ArrayList<>();
+        List<MesaRespuestaDto> mesasRespuesta = new ArrayList<>();
         for(Mesa m : mesas){
             mesasRespuesta.add(createMesaDTO(m));
         }

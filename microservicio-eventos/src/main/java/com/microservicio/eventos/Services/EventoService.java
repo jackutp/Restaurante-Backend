@@ -2,13 +2,14 @@ package com.microservicio.eventos.Services;
 
 import com.microservicio.eventos.Entities.EventoRequest;
 import com.microservicio.eventos.Entities.EventoStatus;
+import com.microservicio.eventos.Exceptions.ResourceNotFoundException;
 import com.microservicio.eventos.dto.EventoRequestDTO;
 import com.microservicio.eventos.dto.EventoResponseDTO;
 import com.microservicio.eventos.dto.EventoStatusUpdateDTO;
 import com.microservicio.eventos.Exceptions.EventoException;
 import com.microservicio.eventos.Mapper.EventoMapper;
 import com.microservicio.eventos.Repositories.EventoRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class EventoService {
 
-    private final EventoRepository eventoRepository;
-    private final EventoMapper eventoMapper;
+    @Autowired
+    private  EventoRepository eventoRepository;
+    @Autowired
+    private  EventoMapper eventoMapper;
 
     // Validar fecha (hoy + 3 meses máximo)
+   @Transactional(readOnly = true)
     private void validateEventDate(LocalDate date) {
         LocalDate today = LocalDate.now();
         LocalDate maxDate = today.plusMonths(3);
@@ -39,6 +42,7 @@ public class EventoService {
     }
 
     // Validar capacidad máxima diaria (opcional)
+    @Transactional(readOnly = true)
     private void checkDailyCapacity(LocalDate date) {
         Long eventsCount = eventoRepository.countByDate(date);
         if (eventsCount >= 10) {
@@ -68,15 +72,17 @@ public class EventoService {
     }
 
     // Obtener todos los eventos (paginado)
+    @Transactional(readOnly = true)
     public Page<EventoResponseDTO> getAllEventos(Pageable pageable) {
         return eventoRepository.findAll(pageable)
                 .map(eventoMapper::toResponseDTO);
     }
 
     // Obtener evento por ID
+    @Transactional(readOnly = true)
     public EventoResponseDTO getEventoById(Long id) {
         EventoRequest evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new EventoException("Evento no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento no encontrado con ID: " + id));
         return eventoMapper.toResponseDTO(evento);
     }
 
@@ -84,7 +90,7 @@ public class EventoService {
     @Transactional
     public EventoResponseDTO updateEventoStatus(Long id, EventoStatusUpdateDTO updateDTO) {
         EventoRequest evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new EventoException("Evento no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento no encontrado con ID: " + id));
 
         try {
             EventoStatus newStatus = EventoStatus.valueOf(updateDTO.getStatus());
@@ -103,11 +109,12 @@ public class EventoService {
     @Transactional
     public void deleteEvento(Long id) {
         EventoRequest evento = eventoRepository.findById(id)
-                .orElseThrow(() -> new EventoException("Evento no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento no encontrado con ID: " + id));
         eventoRepository.delete(evento);
     }
 
     // Filtrar eventos por estado
+    @Transactional(readOnly = true)
     public Page<EventoResponseDTO> getEventosByStatus(String status, Pageable pageable) {
         try {
             EventoStatus eventoStatus = EventoStatus.valueOf(status);
@@ -119,6 +126,7 @@ public class EventoService {
     }
 
     // Obtener estadísticas
+    @Transactional(readOnly = true)
     public Object getEventoStats() {
         List<Object[]> stats = eventoRepository.countByStatus();
         long total = eventoRepository.count();
@@ -131,6 +139,7 @@ public class EventoService {
     }
 
     // Buscar eventos por email
+    @Transactional(readOnly = true)
     public List<EventoResponseDTO> getEventosByEmail(String email) {
         return eventoRepository.findByEmail(email)
                 .stream()
@@ -139,6 +148,7 @@ public class EventoService {
     }
 
     // Verificar disponibilidad de fecha
+    @Transactional(readOnly = true)
     public boolean checkAvailability(LocalDate date) {
         try {
             validateEventDate(date);

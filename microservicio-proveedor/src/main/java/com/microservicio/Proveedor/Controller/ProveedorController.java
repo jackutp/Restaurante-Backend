@@ -1,12 +1,15 @@
 package com.microservicio.Proveedor.Controller;
-import com.microservicio.Proveedor.Services.ProveedorService;
-import com.microservicio.Proveedor.Services.OrdenCompraService;
+import com.microservicio.Proveedor.Services.orden_compra.OrdenCompraReadService;
+import com.microservicio.Proveedor.Services.orden_compra.OrdenCompraWriteService;
+import com.microservicio.Proveedor.Services.proveedor.ProveedorServiceRead;
+import com.microservicio.Proveedor.Services.proveedor.ProveedorServiceWrite;
 import com.microservicio.Proveedor.dto.OrdenCompraRequestDTO;
 import com.microservicio.Proveedor.dto.ProveedorDTO;
 import com.microservicio.Proveedor.dto.ProveedorRequestDTO;
 import com.microservicio.Proveedor.Entities.EstadoOrden;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,24 +22,24 @@ import java.util.Map;
 @RequestMapping("/proveedores")
 public class ProveedorController {
 
-    private final ProveedorService proveedorService;
-    private final OrdenCompraService ordenCompraService;
-
-    public ProveedorController(ProveedorService proveedorService, OrdenCompraService ordenCompraService) {
-        this.proveedorService = proveedorService;
-        this.ordenCompraService = ordenCompraService;
-    }
-
+    @Autowired
+    private  OrdenCompraReadService ordenCompraRead;
+    @Autowired
+    private  OrdenCompraWriteService ordenCompraWrite;
+    @Autowired
+    private  ProveedorServiceRead proveedorRead;
+    @Autowired
+    private  ProveedorServiceWrite proveedorWrite;
     // ============ PROVEEDORES CRUD ============
 
     @GetMapping
     public ResponseEntity<?> getAllProveedores() {
-        return ResponseEntity.ok(proveedorService.findAll());
+        return ResponseEntity.ok(proveedorRead.findAll());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getProveedorById(@PathVariable Integer id) {
-        var proveedor = proveedorService.findById(id);
+        var proveedor = proveedorRead.findById(id);
         if (proveedor.isPresent()) {
             return ResponseEntity.ok(proveedor.get());
         } else {
@@ -48,7 +51,7 @@ public class ProveedorController {
     @PostMapping
     public ResponseEntity<?> createProveedor(@Valid @RequestBody ProveedorRequestDTO proveedorDTO) {
         try {
-            ProveedorDTO saved = proveedorService.save(proveedorDTO);
+            ProveedorDTO saved = proveedorWrite.save(proveedorDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(saved);
         } catch (Exception e) {
             Map<String, String> error = new HashMap<>();
@@ -61,7 +64,7 @@ public class ProveedorController {
     public ResponseEntity<?> updateProveedor(@PathVariable Integer id,
                                              @Valid @RequestBody ProveedorRequestDTO proveedorDTO) {
         try {
-            ProveedorDTO updated = proveedorService.update(id, proveedorDTO);
+            ProveedorDTO updated = proveedorWrite.update(id, proveedorDTO);
             return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -72,7 +75,7 @@ public class ProveedorController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProveedor(@PathVariable Integer id) {
         try {
-            proveedorService.delete(id);
+            proveedorWrite.delete(id);
             return ResponseEntity.ok(Map.of("message", "Proveedor eliminado exitosamente"));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -84,17 +87,17 @@ public class ProveedorController {
 
     @GetMapping("/{id}/ordenes")
     public ResponseEntity<?> getOrdenesByProveedor(@PathVariable Integer id) {
-        return ResponseEntity.ok(ordenCompraService.findByProveedor(id));
+        return ResponseEntity.ok(ordenCompraRead.findByProveedor(id));
     }
 
     @GetMapping("/ordenes")
     public ResponseEntity<?> getAllOrdenes() {
-        return ResponseEntity.ok(ordenCompraService.findAll());
+        return ResponseEntity.ok(ordenCompraRead.findAll());
     }
 
     @GetMapping("/ordenes/{ordenId}")
     public ResponseEntity<?> getOrdenById(@PathVariable Integer ordenId) {
-        var orden = ordenCompraService.findById(ordenId);
+        var orden = ordenCompraRead.findById(ordenId);
         if (orden.isPresent()) {
             return ResponseEntity.ok(orden.get());
         } else {
@@ -116,7 +119,7 @@ public class ProveedorController {
             OrdenCompraRequestDTO requestDTO = new OrdenCompraRequestDTO();
             requestDTO.setProveedorId(proveedorId);
 
-            var created = ordenCompraService.create(requestDTO);
+            var created = ordenCompraWrite.create(requestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (Exception e) {
             return ResponseEntity.badRequest()
@@ -129,7 +132,7 @@ public class ProveedorController {
                                           @RequestBody Map<String, String> request) {
         try {
             EstadoOrden estado = EstadoOrden.valueOf(request.get("estado"));
-            var updated = ordenCompraService.updateEstado(ordenId, estado);
+            var updated = ordenCompraWrite.updateEstado(ordenId, estado);
             return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -144,7 +147,7 @@ public class ProveedorController {
     public ResponseEntity<?> subirFactura(@PathVariable Integer ordenId,
                                           @RequestParam("factura") MultipartFile factura) {
         try {
-            var updated = ordenCompraService.subirFactura(ordenId, factura);
+            var updated = ordenCompraWrite.subirFactura(ordenId, factura);
             return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -158,8 +161,8 @@ public class ProveedorController {
     @GetMapping(value = "/ordenes/{ordenId}/factura")
     public ResponseEntity<byte[]> descargarFactura(@PathVariable Integer ordenId) {
         try {
-            byte[] factura = ordenCompraService.descargarFactura(ordenId);
-            var orden = ordenCompraService.findById(ordenId).get();
+            byte[] factura = ordenCompraRead.descargarFactura(ordenId);
+            var orden = ordenCompraRead.findById(ordenId).get();
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType(orden.getFacturaTipo()))
                     .header("Content-Disposition", "attachment; filename=\"" + orden.getFacturaNombre() + "\"")
@@ -172,7 +175,7 @@ public class ProveedorController {
     @DeleteMapping("/ordenes/{ordenId}/factura")
     public ResponseEntity<?> eliminarFactura(@PathVariable Integer ordenId) {
         try {
-            ordenCompraService.eliminarFactura(ordenId);
+            ordenCompraWrite.eliminarFactura(ordenId);
             return ResponseEntity.ok(Map.of("message", "Factura eliminada exitosamente"));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -183,7 +186,7 @@ public class ProveedorController {
     @DeleteMapping("/ordenes/{ordenId}")
     public ResponseEntity<?> deleteOrden(@PathVariable Integer ordenId) {
         try {
-            ordenCompraService.delete(ordenId);
+            ordenCompraWrite.delete(ordenId);
             return ResponseEntity.ok(Map.of("message", "Orden eliminada exitosamente"));
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
