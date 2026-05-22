@@ -17,7 +17,7 @@ spring:
         format_sql: true
     show-sql: true
   
-  # Configuración de Eureka (Service Discovery)
+  # Configuraciï¿½n de Eureka (Service Discovery)
 eureka:
   client:
     service-url:
@@ -30,10 +30,3 @@ eureka:
 
 server:
   port: 8215
-
-# Configuración de CORS (override en Gateway)
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
