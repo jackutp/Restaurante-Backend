@@ -1,10 +1,7 @@
-// dto/MesaResponseDTO.java
 package com.microservicio.mesas.dto;
-
 import com.microservicio.mesas.entity.EstadoMesa;
 import lombok.Builder;
 import lombok.Data;
-
 @Data
 @Builder
 public class MesaResponseDTO {

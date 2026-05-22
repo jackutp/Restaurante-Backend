@@ -1,10 +1,7 @@
-// dto/CrearMesaRequestDTO.java
 package com.microservicio.mesas.dto;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-
 @Data
 public class CrearMesaRequestDTO {
     @NotNull(message = "El número de mesa es obligatorio")

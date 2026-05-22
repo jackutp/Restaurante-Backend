@@ -10,7 +10,7 @@ public class ActualizarEstadoMesaRequestDTO {
     @NotNull(message = "El estado es obligatorio")
     private EstadoMesa estado;
 
-    private Double totalActual;  // opcional, para cuando se ocupa
+    private Double totalActual;
 
-    private String ordenActualId;  // opcional, ID de la orden activa
+    private String ordenActualId;
 }

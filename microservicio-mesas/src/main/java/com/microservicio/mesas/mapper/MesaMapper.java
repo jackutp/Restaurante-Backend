@@ -1,10 +1,7 @@
-// mapper/MesaMapper.java
 package com.microservicio.mesas.mapper;
-
 import com.microservicio.mesas.dto.MesaResponseDTO;
 import com.microservicio.mesas.entity.Mesa;
 import org.springframework.stereotype.Component;
-
 @Component
 public class MesaMapper {
 
