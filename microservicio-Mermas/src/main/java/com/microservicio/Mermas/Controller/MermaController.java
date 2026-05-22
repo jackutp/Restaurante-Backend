@@ -1,5 +1,4 @@
 package com.microservicio.Mermas.Controller;
-
 import com.microservicio.Mermas.Entities.TipoMerma;
 import com.microservicio.Mermas.Services.MermaService;
 import com.microservicio.Mermas.dto.MermaDTO;
@@ -11,22 +10,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
-
 @RestController
 @RequestMapping("/mermas")
 public class MermaController {
-
     private final MermaService mermaService;
-
     public MermaController(MermaService mermaService) {
         this.mermaService = mermaService;
     }
-
     @GetMapping
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(mermaService.findAll());
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
         var merma = mermaService.findById(id);
@@ -37,12 +31,10 @@ public class MermaController {
                     .body(Map.of("error", "Merma no encontrada con id: " + id));
         }
     }
-
     @GetMapping("/tipo/{tipo}")
     public ResponseEntity<?> getByTipo(@PathVariable TipoMerma tipo) {
         return ResponseEntity.ok(mermaService.findByTipo(tipo));
     }
-
     @GetMapping("/productos")
     public ResponseEntity<?> getProductos() {
         try {
@@ -53,7 +45,6 @@ public class MermaController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
         }
     }
-
     @GetMapping("/insumos")
     public ResponseEntity<?> getInsumos() {
         try {
@@ -64,7 +55,6 @@ public class MermaController {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
         }
     }
-
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody MermaRequestDTO mermaDTO) {
         try {
@@ -76,7 +66,6 @@ public class MermaController {
             return ResponseEntity.badRequest().body(error);
         }
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id,
                                     @Valid @RequestBody MermaRequestDTO mermaDTO) {
@@ -93,7 +82,6 @@ public class MermaController {
             return ResponseEntity.badRequest().body(error);
         }
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         try {

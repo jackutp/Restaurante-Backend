@@ -21,7 +21,7 @@ public class InsumoMapper {
         insumo.setNombre(dto.getNombre());
         insumo.setUnidadMedida(dto.getUnidadMedida());
         insumo.setStock(dto.getStock());
-        // Usar el estado enviado o calcular automáticamente
+        // calcular
         if (dto.getEstadoInsumo() != null) {
             insumo.setEstadoInsumo(dto.getEstadoInsumo());
         } else {
@@ -42,7 +42,7 @@ public class InsumoMapper {
         if (dto.getEstadoInsumo() != null) {
             insumo.setEstadoInsumo(dto.getEstadoInsumo());
         }
-        // Siempre recalcular estado al final para consistencia
+        // recalcular estado
         insumo.actualizarEstado();
     }
 }

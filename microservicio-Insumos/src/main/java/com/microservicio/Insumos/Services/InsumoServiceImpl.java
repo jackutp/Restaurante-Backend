@@ -1,5 +1,4 @@
 package com.microservicio.Insumos.Services;
-
 import com.microservicio.Insumos.Entities.Insumos;
 import com.microservicio.Insumos.Entities.EstadoInsumo;
 import com.microservicio.Insumos.Repositories.InsumoRepository;
@@ -12,10 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @Service
 public class InsumoServiceImpl implements InsumoService {
-
     private final InsumoRepository insumoRepository;
     private final InsumoMapper insumoMapper;
 
@@ -23,7 +20,6 @@ public class InsumoServiceImpl implements InsumoService {
         this.insumoRepository = insumoRepository;
         this.insumoMapper = insumoMapper;
     }
-
     @Override
     public List<InsumoDTO> findAll() {
         return insumoRepository.findAll()
@@ -31,13 +27,11 @@ public class InsumoServiceImpl implements InsumoService {
                 .map(insumoMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
     @Override
     public Optional<InsumoDTO> findById(Integer id) {
         return insumoRepository.findById(id)
                 .map(insumoMapper::toDTO);
     }
-
     @Override
     public List<InsumoDTO> findByNombre(String nombre) {
         return insumoRepository.searchByNombre(nombre)
@@ -45,7 +39,6 @@ public class InsumoServiceImpl implements InsumoService {
                 .map(insumoMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
     @Override
     @Transactional
     public InsumoDTO save(InsumoRequestDTO insumoDTO) {
@@ -53,7 +46,6 @@ public class InsumoServiceImpl implements InsumoService {
         if (insumoRepository.findByNombre(insumoDTO.getNombre()).isPresent()) {
             throw new RuntimeException("Ya existe un insumo con el nombre: " + insumoDTO.getNombre());
         }
-
         Insumos insumo = insumoMapper.toEntity(insumoDTO);
         Insumos saved = insumoRepository.save(insumo);
         return insumoMapper.toDTO(saved);
@@ -64,7 +56,6 @@ public class InsumoServiceImpl implements InsumoService {
     public InsumoDTO update(Integer id, InsumoRequestDTO insumoDTO) {
         Insumos existingInsumo = insumoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Insumo no encontrado con id: " + id));
-
         // Verificar nombre duplicado (si cambió el nombre)
         if (!existingInsumo.getNombre().equals(insumoDTO.getNombre())) {
             insumoRepository.findByNombre(insumoDTO.getNombre()).ifPresent(i -> {

@@ -1,5 +1,4 @@
 package com.microservicio.Insumos.Controller;
-
 import com.microservicio.Insumos.Entities.EstadoInsumo;
 import com.microservicio.Insumos.Services.InsumoService;
 import com.microservicio.Insumos.dto.InsumoDTO;
@@ -10,22 +9,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
-
 @RestController
 @RequestMapping("/insumos")
 public class InsumoController {
-
     private final InsumoService insumoService;
-
     public InsumoController(InsumoService insumoService) {
         this.insumoService = insumoService;
     }
-
     @GetMapping
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(insumoService.findAll());
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
         var insumo = insumoService.findById(id);
@@ -36,7 +30,6 @@ public class InsumoController {
                     .body(Map.of("error", "Insumo no encontrado con id: " + id));
         }
     }
-
     // NUEVO: Búsqueda por nombre
     @GetMapping("/search")
     public ResponseEntity<?> searchByNombre(@RequestParam String nombre) {
@@ -51,22 +44,18 @@ public class InsumoController {
         }
         return ResponseEntity.ok(resultados);
     }
-
     @GetMapping("/estado/{estado}")
     public ResponseEntity<?> getByEstado(@PathVariable EstadoInsumo estado) {
         return ResponseEntity.ok(insumoService.findByEstado(estado));
     }
-
     @GetMapping("/low-stock")
     public ResponseEntity<?> getLowStock() {
         return ResponseEntity.ok(insumoService.findLowStock());
     }
-
     @GetMapping("/out-of-stock")
     public ResponseEntity<?> getOutOfStock() {
         return ResponseEntity.ok(insumoService.findOutOfStock());
     }
-
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody InsumoRequestDTO insumoDTO) {
         try {
@@ -77,7 +66,6 @@ public class InsumoController {
                     .body(Map.of("error", "Error al crear insumo: " + e.getMessage()));
         }
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Integer id,
                                     @Valid @RequestBody InsumoRequestDTO insumoDTO) {

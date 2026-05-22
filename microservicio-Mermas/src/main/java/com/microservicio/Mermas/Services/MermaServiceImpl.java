@@ -1,5 +1,4 @@
 package com.microservicio.Mermas.Services;
-
 import com.microservicio.Mermas.Entities.Merma;
 import com.microservicio.Mermas.Entities.TipoMerma;
 import com.microservicio.Mermas.Repositories.MermaRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @Service
 public class MermaServiceImpl implements MermaService {
 
@@ -31,7 +29,6 @@ public class MermaServiceImpl implements MermaService {
         this.productoFeignClient = productoFeignClient;
         this.insumoFeignClient = insumoFeignClient;
     }
-
     @Override
     public List<MermaDTO> findAll() {
         return mermaRepository.findAll()
@@ -39,13 +36,11 @@ public class MermaServiceImpl implements MermaService {
                 .map(mermaMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
     @Override
     public Optional<MermaDTO> findById(Integer id) {
         return mermaRepository.findById(id)
                 .map(mermaMapper::toDTO);
     }
-
     @Override
     @Transactional
     public MermaDTO save(MermaRequestDTO mermaDTO) {
@@ -53,13 +48,11 @@ public class MermaServiceImpl implements MermaService {
         Merma saved = mermaRepository.save(merma);
         return mermaMapper.toDTO(saved);
     }
-
     @Override
     @Transactional
     public MermaDTO update(Integer id, MermaRequestDTO mermaDTO) {
         Merma existingMerma = mermaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Merma no encontrada con id: " + id));
-
         existingMerma.setTipoMerma(mermaDTO.getTipoMerma());
         existingMerma.setNombreMerma(mermaDTO.getNombreMerma());
         existingMerma.setCantidad(mermaDTO.getCantidad());
@@ -70,7 +63,6 @@ public class MermaServiceImpl implements MermaService {
         Merma updated = mermaRepository.save(existingMerma);
         return mermaMapper.toDTO(updated);
     }
-
     @Override
     @Transactional
     public void delete(Integer id) {
@@ -79,7 +71,6 @@ public class MermaServiceImpl implements MermaService {
         }
         mermaRepository.deleteById(id);
     }
-
     @Override
     public List<MermaDTO> findByTipo(TipoMerma tipo) {
         return mermaRepository.findByTipoMerma(tipo)
@@ -87,12 +78,10 @@ public class MermaServiceImpl implements MermaService {
                 .map(mermaMapper::toDTO)
                 .collect(Collectors.toList());
     }
-
     @Override
     public List<ProductoDTO> getProductos() {
         return productoFeignClient.getAllProductos();
     }
-
     @Override
     public List<InsumoDTO> getInsumos() {
         return insumoFeignClient.getAllInsumos();

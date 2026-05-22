@@ -16,8 +16,6 @@ public interface MermaService {
     MermaDTO update(Integer id, MermaRequestDTO mermaDTO);
     void delete(Integer id);
     List<MermaDTO> findByTipo(TipoMerma tipo);
-
-    // Métodos para obtener datos de otros microservicios
     List<ProductoDTO> getProductos();
     List<InsumoDTO> getInsumos();
 }

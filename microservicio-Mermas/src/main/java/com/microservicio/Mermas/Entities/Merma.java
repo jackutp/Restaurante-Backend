@@ -1,9 +1,7 @@
 package com.microservicio.Mermas.Entities;
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-
 @Setter
 @Getter
 @Entity
@@ -11,7 +9,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Merma {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer mermaid;
@@ -33,10 +30,10 @@ public class Merma {
     private LocalDateTime fecha;
 
     @Column(name = "referencia_id")
-    private Integer referenciaId;  // ID del producto o insumo
+    private Integer referenciaId;
 
     @Column(name = "unidad_medida")
-    private String unidadMedida;  // Solo para insumos
+    private String unidadMedida;
 
     @PrePersist
     protected void onCreate() {
