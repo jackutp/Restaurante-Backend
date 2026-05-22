@@ -1,10 +1,7 @@
 package com.microservicio.Proveedor.dto;
-
-
 import com.microservicio.Proveedor.Entities.EstadoOrden;
 import lombok.Data;
 import java.time.LocalDateTime;
-
 @Data
 public class OrdenCompraDTO {
     private Integer ordenId;

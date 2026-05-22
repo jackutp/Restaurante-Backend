@@ -1,9 +1,9 @@
 package com.microservicio.Proveedor.Controller;
+import com.microservicio.Proveedor.dto.OrdenCompraRequestDTO;
 import com.microservicio.Proveedor.Services.orden_compra.OrdenCompraReadService;
 import com.microservicio.Proveedor.Services.orden_compra.OrdenCompraWriteService;
 import com.microservicio.Proveedor.Services.proveedor.ProveedorServiceRead;
 import com.microservicio.Proveedor.Services.proveedor.ProveedorServiceWrite;
-import com.microservicio.Proveedor.dto.OrdenCompraRequestDTO;
 import com.microservicio.Proveedor.dto.ProveedorDTO;
 import com.microservicio.Proveedor.dto.ProveedorRequestDTO;
 import com.microservicio.Proveedor.Entities.EstadoOrden;

@@ -22,7 +22,7 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     List<Producto> findAllWithImage();
     // Buscar por rango de precio
     List<Producto> findByPrecioBetween(BigDecimal min, BigDecimal max);
-    // Actualizar solo la imagen (optimizado)
+    // Actualizar solo la imagen
     @Modifying
     @Transactional
     @Query("UPDATE Producto p SET p.imagenProducto = :imagenPath WHERE p.productoid = :id")

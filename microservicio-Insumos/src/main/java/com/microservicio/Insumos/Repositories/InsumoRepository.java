@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface InsumoRepository extends JpaRepository<Insumos, Integer> {
     Optional<Insumos> findByNombre(String nombre);
-    // Búsqueda por nombre parcial con LIKE
+    // Búsqueda por nombre
     @Query("SELECT i FROM Insumos i WHERE LOWER(i.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))")
     List<Insumos> searchByNombre(@Param("nombre") String nombre);
     List<Insumos> findByEstadoInsumo(EstadoInsumo estado);

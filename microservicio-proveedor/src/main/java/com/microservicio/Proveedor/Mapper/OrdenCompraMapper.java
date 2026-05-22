@@ -1,15 +1,11 @@
 package com.microservicio.Proveedor.Mapper;
-
 import com.microservicio.Proveedor.Entities.OrdenCompra;
 import com.microservicio.Proveedor.dto.OrdenCompraDTO;
 import org.springframework.stereotype.Component;
-
 @Component
 public class OrdenCompraMapper {
-
     public OrdenCompraDTO toDTO(OrdenCompra orden) {
         if (orden == null) return null;
-
         OrdenCompraDTO dto = new OrdenCompraDTO();
         dto.setOrdenId(orden.getOrdenId());
         dto.setProveedorId(orden.getProveedor().getProveedorid());
@@ -21,7 +17,6 @@ public class OrdenCompraMapper {
         dto.setTieneFactura(orden.getFacturaContenido() != null);
         dto.setCreatedAt(orden.getCreatedAt());
         dto.setUpdatedAt(orden.getUpdatedAt());
-
         return dto;
     }
 }
