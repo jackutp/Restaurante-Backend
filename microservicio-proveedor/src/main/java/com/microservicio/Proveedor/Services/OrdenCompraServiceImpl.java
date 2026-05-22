@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Optional;
-
 @Service
 public class OrdenCompraServiceImpl implements OrdenCompraService {
 
@@ -30,7 +29,6 @@ public class OrdenCompraServiceImpl implements OrdenCompraService {
         this.proveedorRepository = proveedorRepository;
         this.ordenCompraMapper = ordenCompraMapper;
     }
-
     @Override
     public List<OrdenCompraDTO> findAll() {
         return ordenCompraRepository.findAll()
@@ -90,7 +88,7 @@ public class OrdenCompraServiceImpl implements OrdenCompraService {
             orden.setFacturaNombre(archivo.getOriginalFilename());
             orden.setFacturaTipo(archivo.getContentType());
             orden.setFacturaContenido(archivo.getBytes());
-            orden.setEstado(EstadoOrden.RECIBIDO);  // Al subir factura, cambia a RECIBIDO
+            orden.setEstado(EstadoOrden.RECIBIDO);
 
             OrdenCompra updated = ordenCompraRepository.save(orden);
             return ordenCompraMapper.toDTO(updated);

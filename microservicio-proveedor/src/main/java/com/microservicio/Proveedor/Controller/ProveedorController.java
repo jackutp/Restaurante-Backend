@@ -14,26 +14,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.Map;
-
 @RestController
 @RequestMapping("/proveedores")
 public class ProveedorController {
-
     private final ProveedorService proveedorService;
     private final OrdenCompraService ordenCompraService;
-
     public ProveedorController(ProveedorService proveedorService, OrdenCompraService ordenCompraService) {
         this.proveedorService = proveedorService;
         this.ordenCompraService = ordenCompraService;
     }
-
-    // ============ PROVEEDORES CRUD ============
-
     @GetMapping
     public ResponseEntity<?> getAllProveedores() {
         return ResponseEntity.ok(proveedorService.findAll());
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<?> getProveedorById(@PathVariable Integer id) {
         var proveedor = proveedorService.findById(id);
@@ -44,7 +37,6 @@ public class ProveedorController {
                     .body(Map.of("error", "Proveedor no encontrado con id: " + id));
         }
     }
-
     @PostMapping
     public ResponseEntity<?> createProveedor(@Valid @RequestBody ProveedorRequestDTO proveedorDTO) {
         try {
@@ -56,7 +48,6 @@ public class ProveedorController {
             return ResponseEntity.badRequest().body(error);
         }
     }
-
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProveedor(@PathVariable Integer id,
                                              @Valid @RequestBody ProveedorRequestDTO proveedorDTO) {
@@ -68,7 +59,6 @@ public class ProveedorController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProveedor(@PathVariable Integer id) {
         try {
@@ -79,19 +69,15 @@ public class ProveedorController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-
-    // ============ ÓRDENES DE COMPRA ============
-
+    // ORDENES DE COMPRA
     @GetMapping("/{id}/ordenes")
     public ResponseEntity<?> getOrdenesByProveedor(@PathVariable Integer id) {
         return ResponseEntity.ok(ordenCompraService.findByProveedor(id));
     }
-
     @GetMapping("/ordenes")
     public ResponseEntity<?> getAllOrdenes() {
         return ResponseEntity.ok(ordenCompraService.findAll());
     }
-
     @GetMapping("/ordenes/{ordenId}")
     public ResponseEntity<?> getOrdenById(@PathVariable Integer ordenId) {
         var orden = ordenCompraService.findById(ordenId);
@@ -102,7 +88,6 @@ public class ProveedorController {
                     .body(Map.of("error", "Orden no encontrada con id: " + ordenId));
         }
     }
-
     @PostMapping("/ordenes")
     public ResponseEntity<?> createOrden(@RequestBody Map<String, Integer> request) {
         try {
@@ -115,7 +100,6 @@ public class ProveedorController {
 
             OrdenCompraRequestDTO requestDTO = new OrdenCompraRequestDTO();
             requestDTO.setProveedorId(proveedorId);
-
             var created = ordenCompraService.create(requestDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(created);
         } catch (Exception e) {
@@ -139,7 +123,6 @@ public class ProveedorController {
                     .body(Map.of("error", "Estado inválido. Use: PENDIENTE, RECIBIDO, DEVUELTO, CANCELADO"));
         }
     }
-
     @PostMapping(value = "/ordenes/{ordenId}/factura", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> subirFactura(@PathVariable Integer ordenId,
                                           @RequestParam("factura") MultipartFile factura) {
@@ -154,7 +137,6 @@ public class ProveedorController {
                     .body(Map.of("error", "Error al subir factura: " + e.getMessage()));
         }
     }
-
     @GetMapping(value = "/ordenes/{ordenId}/factura")
     public ResponseEntity<byte[]> descargarFactura(@PathVariable Integer ordenId) {
         try {
@@ -168,7 +150,6 @@ public class ProveedorController {
             return ResponseEntity.notFound().build();
         }
     }
-
     @DeleteMapping("/ordenes/{ordenId}/factura")
     public ResponseEntity<?> eliminarFactura(@PathVariable Integer ordenId) {
         try {
@@ -179,7 +160,6 @@ public class ProveedorController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
-
     @DeleteMapping("/ordenes/{ordenId}")
     public ResponseEntity<?> deleteOrden(@PathVariable Integer ordenId) {
         try {
