@@ -1,5 +1,4 @@
 package service.user.controller;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import service.user.dto.UserLoginRequestDTO;
 import service.user.dto.UserRegistroDTO;
@@ -11,27 +10,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
-
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService usuarioService;
-
     @PostMapping("/login")
     public ResponseEntity<UserResponseDTO> login(@RequestBody UserLoginRequestDTO request){
         return ResponseEntity.ok(usuarioService.login(request));
     }
-    // POST - Registro público (cualquier persona se registra como cliente)
     @PostMapping("/registro")
     public ResponseEntity<UserResponseDTO> registrar(@Valid @RequestBody UserRegistroDTO dto) {
         UserResponseDTO respuesta = usuarioService.registrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
-
     // PUT - Actualizar datos + rol (solo admins o endpoint protegido)
     @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @PutMapping("/{id}")
@@ -43,7 +36,6 @@ public class UserController {
         UserResponseDTO actualizado = usuarioService.actualizar(id, dto, tipo);
         return ResponseEntity.ok(actualizado);
     }
-
     // DELETE - Eliminar usuario
     @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     @DeleteMapping("/{id}")
@@ -65,5 +57,12 @@ public class UserController {
     @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<UserResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
+    }
+    @PostMapping("/admin/create")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
+    public ResponseEntity<UserResponseDTO> createUserByAdmin(@Valid @RequestBody UserRegistroDTO dto,
+                                                             @RequestParam TipoUser tipo) {
+        UserResponseDTO respuesta = usuarioService.createUserByAdmin(dto, tipo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 }

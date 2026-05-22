@@ -90,6 +90,12 @@ spring:
                 - Path=/api/pagos/**
               filters:
                 - StripPrefix=1
+            - id: microservicio-users
+              uri: lb://microservicio-users
+              predicates:
+                - Path=/api/users/**
+              filters:
+                - StripPrefix=1
 eureka:
   client:
     service-url:
