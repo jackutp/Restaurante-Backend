@@ -1,5 +1,4 @@
 package com.microservicio.pagos.dto;
-
 public class ComprobanteResponseDTO {
     private Long id;
     private String tipo;
@@ -7,8 +6,6 @@ public class ComprobanteResponseDTO {
     private String pdfUrl;
     private Double total;
     private String fecha;
-
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTipo() { return tipo; }

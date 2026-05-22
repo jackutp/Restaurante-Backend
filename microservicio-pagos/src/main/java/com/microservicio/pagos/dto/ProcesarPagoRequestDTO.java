@@ -1,29 +1,21 @@
 package com.microservicio.pagos.dto;
-
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-
 public class ProcesarPagoRequestDTO {
-
     @NotNull(message = "La ordenId es obligatoria")
     private String ordenId;
-
     @NotNull(message = "El número de mesa es obligatorio")
     @Positive(message = "El número de mesa debe ser positivo")
     private Integer mesaNumero;
-
     @NotNull(message = "El total es obligatorio")
     @Positive(message = "El total debe ser mayor a 0")
     private Double total;
-
     @NotNull(message = "El método de pago es obligatorio")
-    private String metodo; // EFECTIVO, TARJETA, QR
-
-    private String tipoComprobante; // BOLETA, FACTURA
-    private String ruc; // Solo para factura
-    private String razonSocial; // Solo para factura
-    private String email; // Opcional
-
+    private String metodo;
+    private String tipoComprobante;
+    private String ruc;
+    private String razonSocial;
+    private String email;
     // Getters y Setters
     public String getOrdenId() { return ordenId; }
     public void setOrdenId(String ordenId) { this.ordenId = ordenId; }

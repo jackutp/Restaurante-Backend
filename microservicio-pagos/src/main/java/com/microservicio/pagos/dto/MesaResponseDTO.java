@@ -1,13 +1,10 @@
 package com.microservicio.pagos.dto;
-
 public class MesaResponseDTO {
     private Long id;
     private Integer numero;
     private Integer capacidad;
     private String estado;
     private Double totalActual;
-
-    // Getters y Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Integer getNumero() { return numero; }

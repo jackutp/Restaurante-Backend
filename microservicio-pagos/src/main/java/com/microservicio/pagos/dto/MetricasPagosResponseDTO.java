@@ -1,9 +1,6 @@
 package com.microservicio.pagos.dto;
-
 import java.util.List;
-
 public class MetricasPagosResponseDTO {
-
     private Double ventasDelDia;
     private List<Double> ventasUltimos7Dias;
     private List<String> diasSemana;
@@ -11,8 +8,6 @@ public class MetricasPagosResponseDTO {
     private Integer mesasOcupadas;
     private Integer totalMesas;
     private Double ocupacionPorcentaje;
-
-    // Getters y Setters
     public Double getVentasDelDia() { return ventasDelDia; }
     public void setVentasDelDia(Double ventasDelDia) { this.ventasDelDia = ventasDelDia; }
     public List<Double> getVentasUltimos7Dias() { return ventasUltimos7Dias; }

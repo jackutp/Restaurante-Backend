@@ -1,10 +1,7 @@
 package com.microservicio.pagos.dto;
-
 import java.util.List;
 import java.util.Map;
-
 public class MetricasResponseDTO {
-
     // Tarjetas
     private Double ventasDelDia;
     private Long ordenesCompletadas;
@@ -12,15 +9,12 @@ public class MetricasResponseDTO {
     private Integer mesasOcupadas;
     private Integer totalMesas;
     private Double ocupacionPorcentaje;
-
     // Gráficos
     private List<Double> ventasUltimos7Dias;
     private List<String> diasSemana;
     private List<ProductoTopDTO> productosTop;
     private List<VentaPorHoraDTO> ventasPorHora;
     private Map<String, Long> ordenesPorEstado;
-
-    // Getters y Setters
     public Double getVentasDelDia() { return ventasDelDia; }
     public void setVentasDelDia(Double ventasDelDia) { this.ventasDelDia = ventasDelDia; }
     public Long getOrdenesCompletadas() { return ordenesCompletadas; }
@@ -44,7 +38,6 @@ public class MetricasResponseDTO {
     public Map<String, Long> getOrdenesPorEstado() { return ordenesPorEstado; }
     public void setOrdenesPorEstado(Map<String, Long> ordenesPorEstado) { this.ordenesPorEstado = ordenesPorEstado; }
 
-    // Clases anidadas
     public static class ProductoTopDTO {
         private String nombre;
         private Long cantidad;

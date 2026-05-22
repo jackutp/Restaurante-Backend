@@ -1,47 +1,33 @@
 package com.microservicio.pagos.entity;
-
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "comprobantes")
 public class Comprobante {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "tipo", nullable = false)
     private String tipo;
-
     @Column(name = "serie", nullable = false)
     private String serie;
-
     @Column(name = "correlativo", nullable = false)
     private Integer correlativo;
-
     @Column(name = "numero_completo", nullable = false, unique = true)
     private String numeroCompleto;
-
     @Column(name = "ruc")
     private String ruc;
-
     @Column(name = "razon_social")
     private String razonSocial;
-
     @Column(name = "orden_id", nullable = false)
     private String ordenId;
-
     @Column(name = "mesa_numero", nullable = false)
     private Integer mesaNumero;
-
     @Column(name = "total", nullable = false)
     private Double total;
-
     @Column(name = "pdf_url")
     private String pdfUrl;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

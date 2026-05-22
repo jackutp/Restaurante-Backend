@@ -1,5 +1,4 @@
 package com.microservicio.pagos.dto;
-
 public class ProcesarPagoResponseDTO {
     private Long pagoId;
     private String ordenId;
@@ -8,8 +7,6 @@ public class ProcesarPagoResponseDTO {
     private String metodo;
     private String estado;
     private ComprobanteResponseDTO comprobante;
-
-    // Getters y Setters
     public Long getPagoId() { return pagoId; }
     public void setPagoId(Long pagoId) { this.pagoId = pagoId; }
     public String getOrdenId() { return ordenId; }

@@ -1,5 +1,4 @@
 package com.microservicio.pagos.controller;
-
 import com.microservicio.pagos.dto.MetricasPagosResponseDTO;
 import com.microservicio.pagos.dto.ProcesarPagoRequestDTO;
 import com.microservicio.pagos.dto.ProcesarPagoResponseDTO;
@@ -16,34 +15,28 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-
 @RestController
 @RequestMapping("/pagos")
 public class PagoController {
-
     private final PagoService pagoService;
     private final ComprobanteRepository comprobanteRepository;
-
     public PagoController(PagoService pagoService,
                           ComprobanteRepository comprobanteRepository) {
         this.pagoService = pagoService;
         this.comprobanteRepository = comprobanteRepository;
     }
-
     @PostMapping("/procesar")
     public ResponseEntity<ProcesarPagoResponseDTO> procesarPago(
             @Valid @RequestBody ProcesarPagoRequestDTO request) {
         ProcesarPagoResponseDTO response = pagoService.procesarPago(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
-    // Listar todos los comprobantes
+    // Listar comprobantes
     @GetMapping("/comprobantes")
     public ResponseEntity<List<Comprobante>> listarComprobantes() {
         List<Comprobante> comprobantes = comprobanteRepository.findAllByOrderByIdDesc();
         return ResponseEntity.ok(comprobantes);
     }
-
     //  Descargar PDF de un comprobante
     @GetMapping("/comprobantes/{id}/pdf")
     public ResponseEntity<byte[]> descargarPdf(@PathVariable Long id) {
