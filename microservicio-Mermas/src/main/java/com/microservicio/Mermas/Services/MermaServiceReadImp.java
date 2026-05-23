@@ -8,6 +8,9 @@ import com.microservicio.Mermas.Services.feign.ProductoFeignClient;
 import com.microservicio.Mermas.dto.InsumoDTO;
 import com.microservicio.Mermas.dto.MermaDTO;
 import com.microservicio.Mermas.dto.ProductoDTO;
+import com.microservicio.Mermas.exception.ExternalServiceException;
+import com.microservicio.Mermas.exception.ResourceNotFoundException;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +41,9 @@ public class MermaServiceReadImp implements MermaServiceRead{
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<MermaDTO> findById(Integer id) {
-        return mermaRepository.findById(id).map(mermaMapper::toDTO);
+    public MermaDTO findById(Integer id) {
+        return mermaRepository.findById(id).map(mermaMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Merma no encontrada con id: " + id));
     }
 
     @Override
@@ -54,12 +58,20 @@ public class MermaServiceReadImp implements MermaServiceRead{
     @Override
     @Transactional(readOnly = true)
     public List<ProductoDTO> getProductos() {
-        return productoFeignClient.getAllProductos();
+        try{
+            return productoFeignClient.getAllProductos();
+        } catch (FeignException e){
+            throw new ExternalServiceException("Servicio de productos no disponible");
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<InsumoDTO> getInsumos() {
-        return insumoFeignClient.getAllInsumos();
+        try{
+            return insumoFeignClient.getAllInsumos();
+        } catch(FeignException e){
+            throw new ExternalServiceException("Servicio de Insumos no disponible");
+        }
     }
 }

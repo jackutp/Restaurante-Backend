@@ -8,6 +8,8 @@ import com.microservicio.Mermas.dto.InsumoDTO;
 import com.microservicio.Mermas.dto.MermaDTO;
 import com.microservicio.Mermas.dto.MermaRequestDTO;
 import com.microservicio.Mermas.dto.ProductoDTO;
+import com.microservicio.Mermas.exception.ExternalServiceException;
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -211,19 +213,17 @@ public class MermasRestTests {
 
     @Test
     void shouldReturn503WhenProductosServiceFails() throws Exception {
-        Mockito.when(productoFeignClient.getAllProductos()).thenThrow(new RuntimeException("Servicio caído"));
+        Mockito.when(productoFeignClient.getAllProductos()).thenThrow(Mockito.mock(FeignException.class));
 
         mockMvc.perform(get("/mermas/productos"))
-                .andExpect(status().isServiceUnavailable())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(status().isServiceUnavailable());
     }
 
     @Test
     void shouldReturn503WhenInsumosServiceFails() throws Exception {
-        Mockito.when(insumoFeignClient.getAllInsumos()).thenThrow(new RuntimeException("Servicio caído"));
+        Mockito.when(insumoFeignClient.getAllInsumos()).thenThrow(Mockito.mock(FeignException.class));
 
         mockMvc.perform(get("/mermas/insumos"))
-                .andExpect(status().isServiceUnavailable())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(status().isServiceUnavailable());
     }
 }

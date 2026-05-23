@@ -3,6 +3,7 @@ import com.microservicio.cocina.dto.*;
 import com.microservicio.cocina.entity.PedidoCocina;
 import com.microservicio.cocina.mapper.PedidoCocinaMapper;
 import com.microservicio.cocina.service.PedidoCocinaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,13 +12,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/cocina")
 public class PedidoCocinaController {
-    private final PedidoCocinaService pedidoCocinaService;
-    private final PedidoCocinaMapper pedidoCocinaMapper;
-    public PedidoCocinaController(PedidoCocinaService pedidoCocinaService,
-                                  PedidoCocinaMapper pedidoCocinaMapper) {
-        this.pedidoCocinaService = pedidoCocinaService;
-        this.pedidoCocinaMapper = pedidoCocinaMapper;
-    }
+    @Autowired
+    private  PedidoCocinaService pedidoCocinaService;
+    @Autowired
+    private  PedidoCocinaMapper pedidoCocinaMapper;
+
     @PostMapping("/pedidos")
     public ResponseEntity<PedidoCocinaResponseDTO> recibirPedido(
             @RequestBody CrearPedidoCocinaRequestDTO request) {

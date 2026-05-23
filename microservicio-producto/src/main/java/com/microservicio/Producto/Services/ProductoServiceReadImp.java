@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,9 +34,8 @@ public class ProductoServiceReadImp implements ProductoServiceRead{
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ProductoDTO> findById(Integer id) {
-        return productoRepository.findById(id)
-                .map(productoMapper::toDTO);
+    public ProductoDTO findById(Integer id) {
+        return productoRepository.findById(id).map(productoMapper::toDTO).orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
     }
 
     @Override
@@ -69,5 +67,11 @@ public class ProductoServiceReadImp implements ProductoServiceRead{
                 .stream()
                 .map(productoMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer getStock(Integer id) {
+        Producto producto = productoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
+        return producto.getStock();
     }
 }

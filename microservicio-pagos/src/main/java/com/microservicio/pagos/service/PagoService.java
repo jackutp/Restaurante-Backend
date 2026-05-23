@@ -1,11 +1,16 @@
 package com.microservicio.pagos.service;
 import com.microservicio.pagos.dto.*;
 import com.microservicio.pagos.entity.*;
+import com.microservicio.pagos.exception.ExternalServiceException;
+import com.microservicio.pagos.exception.MetricsGenerationException;
 import com.microservicio.pagos.repository.PagoRepository;
 import com.microservicio.pagos.repository.ComprobanteRepository;
 import com.microservicio.pagos.service.feign.MesaFeignClient;
 import com.microservicio.pagos.service.feign.PedidoFeignClient;
 import com.microservicio.pagos.utils.NumeracionComprobanteUtil;
+import feign.FeignException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
@@ -13,26 +18,18 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 @Service
 public class PagoService {
-    private final PagoRepository pagoRepository;
-    private final ComprobanteRepository comprobanteRepository;
-    private final MesaFeignClient mesaFeignClient;
-    private final PedidoFeignClient pedidoFeignClient;
-    private final PdfGeneratorService pdfGeneratorService;
-    private final NumeracionComprobanteUtil numeracionUtil;
-
-    public PagoService(PagoRepository pagoRepository,
-                       ComprobanteRepository comprobanteRepository,
-                       MesaFeignClient mesaFeignClient,
-                       PedidoFeignClient pedidoFeignClient,
-                       PdfGeneratorService pdfGeneratorService,
-                       NumeracionComprobanteUtil numeracionUtil) {
-        this.pagoRepository = pagoRepository;
-        this.comprobanteRepository = comprobanteRepository;
-        this.mesaFeignClient = mesaFeignClient;
-        this.pedidoFeignClient = pedidoFeignClient;
-        this.pdfGeneratorService = pdfGeneratorService;
-        this.numeracionUtil = numeracionUtil;
-    }
+    @Autowired
+    private  PagoRepository pagoRepository;
+    @Autowired
+    private  ComprobanteRepository comprobanteRepository;
+    @Autowired
+    private  MesaFeignClient mesaFeignClient;
+    @Autowired
+    private  PedidoFeignClient pedidoFeignClient;
+    @Autowired
+    private  PdfGeneratorService pdfGeneratorService;
+    @Autowired
+    private  NumeracionComprobanteUtil numeracionUtil;
 
     @Transactional
     public ProcesarPagoResponseDTO procesarPago(ProcesarPagoRequestDTO request) {
@@ -106,21 +103,23 @@ public class PagoService {
             totalRequest.put("total", 0.0);
             mesaFeignClient.resetearTotal(numeroMesa, totalRequest);
             System.out.println("✅ Mesa " + numeroMesa + " liberada correctamente");
-        } catch (Exception e) {
-            System.err.println("Error al liberar mesa " + numeroMesa + ": " + e.getMessage());
+        } catch (FeignException e) {
+            throw new ExternalServiceException("No se pudo liberar la mesa: Servicio no disponible");
         }
     }
+    @Transactional
     private void actualizarEstadoPedido(String ordenId) {
         try {
             Map<String, String> request = new HashMap<>();
             request.put("estado", "COMPLETADO");
             pedidoFeignClient.actualizarEstadoPedido(ordenId, request);
             System.out.println("✅ Pedido " + ordenId + " marcado como COMPLETADO");
-        } catch (Exception e) {
-            System.err.println("Error al actualizar pedido " + ordenId + ": " + e.getMessage());
+        } catch (FeignException e) {
+            throw new ExternalServiceException("Error al actualizar pedido: " + ordenId + ": Servicio no disponible");
         }
     }
     // metricas
+    @Transactional(readOnly = true)
     public MetricasPagosResponseDTO getMetricas() {
         MetricasPagosResponseDTO metricas = new MetricasPagosResponseDTO();
         try {
@@ -163,20 +162,13 @@ public class PagoService {
                 metricas.setMesasOcupadas((int) ocupadas);
                 metricas.setTotalMesas(mesas.size());
                 metricas.setOcupacionPorcentaje(mesas.size() > 0 ? (ocupadas * 100.0 / mesas.size()) : 0.0);
-            } catch (Exception e) {
+            } catch (FeignException e) {
                 metricas.setMesasOcupadas(0);
                 metricas.setTotalMesas(0);
                 metricas.setOcupacionPorcentaje(0.0);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            metricas.setVentasDelDia(0.0);
-            metricas.setVentasUltimos7Dias(new ArrayList<>());
-            metricas.setDiasSemana(new ArrayList<>());
-            metricas.setVentasPorHora(new ArrayList<>());
-            metricas.setMesasOcupadas(0);
-            metricas.setTotalMesas(0);
-            metricas.setOcupacionPorcentaje(0.0);
+        } catch (DataAccessException e) {
+            throw new MetricsGenerationException("Error generando métricas", e);
         }
         return metricas;
     }

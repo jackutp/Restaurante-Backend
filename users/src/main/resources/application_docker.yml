@@ -12,10 +12,3 @@ spring:
       username: ${USERNAME_READ_DB}
       password: ${PASSWORD_READ_DB}
       driver-class-name: com.mysql.cj.jdbc.Driver
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_URL}
-  instance:
-    prefer-ip-address: true
-#    enabled: false

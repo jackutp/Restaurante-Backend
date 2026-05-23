@@ -4,6 +4,9 @@ import com.microservicio.pedidos.dto.*;
 import com.microservicio.pedidos.entity.EstadoPedido;
 import com.microservicio.pedidos.entity.Pedido;
 import com.microservicio.pedidos.entity.PedidoItem;
+import com.microservicio.pedidos.exception.ConflictException;
+import com.microservicio.pedidos.exception.ExternalServiceException;
+import com.microservicio.pedidos.exception.ResourceNotFoundException;
 import com.microservicio.pedidos.mapper.PedidoMapper;
 import com.microservicio.pedidos.repository.PedidoItemRepository;
 import com.microservicio.pedidos.repository.PedidoRepository;
@@ -12,17 +15,15 @@ import com.microservicio.pedidos.service.feign.ProductoFeignClient;
 import com.microservicio.pedidos.dto.CrearPedidoCocinaRequestDTO;
 import com.microservicio.pedidos.dto.ItemCocinaRequestDTO;
 import com.microservicio.pedidos.service.feign.CocinaFeignClient;
+import feign.FeignException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class PedidoService {
@@ -47,7 +48,7 @@ public class PedidoService {
         this.cocinaFeignClient = cocinaFeignClient;
     }
     private String generarOrdenId() {
-        return "ORD-" + System.currentTimeMillis();
+        return "ORD-" + UUID.randomUUID().toString().substring(0,12).toUpperCase();
     }
     private String obtenerHoraActual() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
@@ -60,7 +61,7 @@ public class PedidoService {
             Integer stockDisponible = stockResponse.getStock();
 
             if (stockDisponible == null || stockDisponible < itemReq.getCantidad()) {
-                throw new RuntimeException("Stock insuficiente para el producto ID: " + itemReq.getProductoId() +
+                throw new ConflictException("Stock insuficiente para el producto ID: " + itemReq.getProductoId() +
                         ". Disponible: " + stockDisponible + ", Solicitado: " + itemReq.getCantidad());
             }
         }
@@ -68,7 +69,7 @@ public class PedidoService {
         for (PedidoItemRequestDTO itemReq : request.getItems()) {
             ProductoResponseDTO producto = productoFeignClient.obtenerProductoPorId(itemReq.getProductoId());
             if (producto == null) {
-                throw new RuntimeException("Producto no encontrado con ID: " + itemReq.getProductoId());
+                throw new ResourceNotFoundException("Producto no encontrado con ID: " + itemReq.getProductoId());
             }
             itemReq.setNombre(producto.getNombre());
             itemReq.setPrecio(producto.getPrecio());
@@ -127,8 +128,8 @@ public class PedidoService {
 
             cocinaFeignClient.enviarPedidoACocina(cocinaRequest);
             System.out.println("Pedido enviado a cocina: " + ordenId);
-        } catch (Exception e) {
-            System.err.println("Error al enviar pedido a cocina: " + e.getMessage());
+        } catch (FeignException e) {
+            throw new ExternalServiceException("Error al enviar a cocina " + e.getMessage());
         }
     }
     private void actualizarMesa(Integer numeroMesa, double total, String ordenId) {
@@ -142,8 +143,8 @@ public class PedidoService {
             mesaFeignClient.actualizarEstadoMesa(numeroMesa, estadoRequest);
 
                     System.out.println("Mesa actualizada correctamente");
-        } catch (Exception e) {
-            System.err.println("Error al actualizar mesa " + numeroMesa + ": " + e.getMessage());
+        } catch (FeignException e) {
+            throw new ExternalServiceException("Error al actualizar mesa" + numeroMesa + ": " + e.getMessage());
         }
     }
 
@@ -154,26 +155,30 @@ public class PedidoService {
             estadoRequest.setTotalActual(0.0);
             estadoRequest.setOrdenActualId(null);
             mesaFeignClient.actualizarEstadoMesa(numeroMesa, estadoRequest);
-        } catch (Exception e) {
-            System.err.println("Error al liberar mesa " + numeroMesa + ": " + e.getMessage());
+        } catch (FeignException e) {
+            throw new ExternalServiceException("Error al liberar mesa" + numeroMesa + ": " + e.getMessage());
         }
     }
+    @Transactional(readOnly = true)
     public List<PedidoResponseDTO> getAllPedidos() {
         return pedidoRepository.findAll().stream()
                 .map(pedidoMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
+    @Transactional(readOnly = true)
     public PedidoResponseDTO getPedidoById(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + id));
         return pedidoMapper.toResponseDTO(pedido);
     }
+    @Transactional(readOnly = true)
     public PedidoResponseDTO getPedidoByOrdenId(String ordenId) {
         Pedido pedido = pedidoRepository.findByOrdenId(ordenId)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ordenId: " + ordenId));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ordenId: " + ordenId));
         return pedidoMapper.toResponseDTO(pedido);
     }
 
+    @Transactional(readOnly = true)
     public List<PedidoResponseDTO> getPedidosByEstado(EstadoPedido estado) {
         return pedidoRepository.findByEstado(estado).stream()
                 .map(pedidoMapper::toResponseDTO)
@@ -183,7 +188,7 @@ public class PedidoService {
     @Transactional
     public PedidoResponseDTO actualizarEstado(Long id, ActualizarEstadoRequestDTO request) {
         Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + id));
 
         pedido.setEstado(request.getEstado());
         pedido.setUpdatedAt(LocalDateTime.now());
@@ -200,7 +205,7 @@ public class PedidoService {
     @Transactional
     public PedidoItemResponseDTO actualizarItemCompletado(Long itemId, ActualizarItemCompletadoRequestDTO request) {
         PedidoItem item = pedidoItemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item no encontrado con ID: " + itemId));
+                .orElseThrow(() -> new ResourceNotFoundException("Item no encontrado con ID: " + itemId));
 
         item.setCompletado(request.getCompletado());
         PedidoItem updatedItem = pedidoItemRepository.save(item);
@@ -219,7 +224,7 @@ public class PedidoService {
     @Transactional
     public void eliminarPedido(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + id));
 
         liberarMesa(pedido.getMesaNumero());
         pedidoRepository.delete(pedido);
@@ -242,13 +247,14 @@ public class PedidoService {
 
                 System.out.println("Stock actualizado: Producto " + item.getProductoId() +
                         " | " + stockActual + " → " + nuevoStock);
-            } catch (Exception e) {
-                System.err.println("Error al actualizar stock del producto " + item.getProductoId() + ": " + e.getMessage());
+            } catch (FeignException e) {
+                throw new ExternalServiceException("Error al actualizar stock del producto " + item.getProductoId() + ": " + e.getMessage());
             }
         }
     }
 
     //metricas
+    @Transactional(readOnly = true)
     public MetricasPedidosResponseDTO getMetricas() {
         MetricasPedidosResponseDTO metricas = new MetricasPedidosResponseDTO();
         // 1. Órdenes completadas hoy
@@ -279,7 +285,7 @@ public class PedidoService {
     @Transactional
     public PedidoResponseDTO actualizarEstadoPorOrdenId(String ordenId, ActualizarEstadoRequestDTO request) {
         Pedido pedido = pedidoRepository.findByOrdenId(ordenId)
-                .orElseThrow(() -> new RuntimeException("Pedido no encontrado con ordenId: " + ordenId));
+                .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ordenId: " + ordenId));
 
         pedido.setEstado(request.getEstado());
         pedido.setUpdatedAt(LocalDateTime.now());

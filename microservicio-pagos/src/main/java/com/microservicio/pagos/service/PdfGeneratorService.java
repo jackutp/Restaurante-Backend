@@ -3,9 +3,11 @@ import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.microservicio.pagos.exception.FileStorageException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -76,9 +78,8 @@ public class PdfGeneratorService {
             document.add(gracias);
             document.close();
             return filePath;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        } catch (IOException | DocumentException e) {
+            throw new FileStorageException("NO se pudo guardar el recibo");
         }
     }
 }

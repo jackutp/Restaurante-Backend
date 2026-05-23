@@ -47,9 +47,9 @@ public class OrdenCompraReadImp implements OrdenCompraReadService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<OrdenCompraDTO> findById(Integer id) {
-        return ordenCompraRepository.findById(id)
-                .map(ordenCompraMapper::toDTO);
+    public OrdenCompraDTO findById(Integer id) {
+        return ordenCompraRepository.findById(id).map(ordenCompraMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada con el id: " + id));
     }
 
     @Override

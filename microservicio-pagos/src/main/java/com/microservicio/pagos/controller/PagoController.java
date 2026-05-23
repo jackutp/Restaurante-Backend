@@ -6,6 +6,7 @@ import com.microservicio.pagos.entity.Comprobante;
 import com.microservicio.pagos.repository.ComprobanteRepository;
 import com.microservicio.pagos.service.PagoService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,13 +19,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/pagos")
 public class PagoController {
-    private final PagoService pagoService;
-    private final ComprobanteRepository comprobanteRepository;
-    public PagoController(PagoService pagoService,
-                          ComprobanteRepository comprobanteRepository) {
-        this.pagoService = pagoService;
-        this.comprobanteRepository = comprobanteRepository;
-    }
+    @Autowired
+    private  PagoService pagoService;
+    @Autowired
+    private  ComprobanteRepository comprobanteRepository;
     @PostMapping("/procesar")
     public ResponseEntity<ProcesarPagoResponseDTO> procesarPago(
             @Valid @RequestBody ProcesarPagoRequestDTO request) {

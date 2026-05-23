@@ -8,6 +8,6 @@ import java.util.Optional;
 public interface OrdenCompraReadService {
     List<OrdenCompraDTO> findAll();
     List<OrdenCompraDTO> findByProveedor(Integer proveedorId);
-    Optional<OrdenCompraDTO> findById(Integer id);
+    OrdenCompraDTO findById(Integer id);
     byte[] descargarFactura(Integer id);
 }

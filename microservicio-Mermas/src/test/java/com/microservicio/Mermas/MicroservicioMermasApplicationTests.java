@@ -97,8 +97,7 @@ class MicroservicioMermasApplicationTests {
 		MermaRequestDTO dto = buildRequestDTO();
 		MermaDTO saved = mermaWrite.save(dto);
 		mermaWrite.delete(saved.getMermaid());
-		Optional<MermaDTO> found = mermaRead.findById(saved.getMermaid());
-		Assertions.assertThat(found).isEmpty();
+		Assertions.assertThatThrownBy(() -> mermaRead.findById(saved.getMermaid())).isInstanceOf(ResourceNotFoundException.class);
 	}
 
 	@Test

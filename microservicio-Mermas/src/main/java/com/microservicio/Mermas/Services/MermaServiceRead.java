@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface MermaServiceRead {
     List<MermaDTO> findAll();
-    Optional<MermaDTO> findById(Integer id);
+    MermaDTO findById(Integer id);
     List<MermaDTO> findByTipo(TipoMerma tipo);
     // Métodos para obtener datos de otros microservicios
     List<ProductoDTO> getProductos();

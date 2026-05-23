@@ -74,9 +74,3 @@ spring:
                 - Path=/api/eventos/**
               filters:
                 - StripPrefix=1
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_URL}
-  instance:
-    prefer-ip-address: true

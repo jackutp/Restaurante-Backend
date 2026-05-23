@@ -62,9 +62,9 @@ class MicroservicioProductoApplicationTests {
 	void shouldFindProductoById() {
 		ProductoDTO dto = buildProductoDTO();
 		ProductoDTO saved = productoWrite.save(dto, buildImage());
-		Optional<ProductoDTO> found = productoRead.findById(saved.getProductoid());
-		Assertions.assertThat(found).isPresent();
-		Assertions.assertThat(found.get().getNombre()).isEqualTo("Pizza Test");
+		ProductoDTO found = productoRead.findById(saved.getProductoid());
+		Assertions.assertThat(found).isNotNull();
+		Assertions.assertThat(found.getNombre()).isEqualTo("Pizza Test");
 	}
 
 	@Test
@@ -112,8 +112,7 @@ class MicroservicioProductoApplicationTests {
 		ProductoDTO dto = buildProductoDTO();
 		ProductoDTO saved = productoWrite.save(dto, buildImage());
 		productoWrite.delete(saved.getProductoid());
-		Optional<ProductoDTO> found = productoRead.findById(saved.getProductoid());
-		Assertions.assertThat(found).isEmpty();
+		Assertions.assertThatThrownBy(() -> productoRead.findById(saved.getProductoid())).isInstanceOf(ResourceNotFoundException.class);
 	}
 
 	@Test
@@ -135,9 +134,9 @@ class MicroservicioProductoApplicationTests {
 						"new-image".getBytes()
 				);
 		productoWrite.updateImagen(saved.getProductoid(), newImage );
-		Optional<ProductoDTO> updated = productoRead.findById(saved.getProductoid());
-		Assertions.assertThat(updated).isPresent();
-		Assertions.assertThat(updated.get().getImagenProducto()).isNotNull();
+		ProductoDTO updated = productoRead.findById(saved.getProductoid());
+		Assertions.assertThat(updated).isNotNull();
+		Assertions.assertThat(updated.getImagenProducto()).isNotNull();
 	}
 
 	@Test
@@ -145,9 +144,9 @@ class MicroservicioProductoApplicationTests {
 		ProductoDTO dto = buildProductoDTO();
 		ProductoDTO saved = productoWrite.save(dto, buildImage());
 		productoWrite.deleteImagen(saved.getProductoid());
-		Optional<ProductoDTO> updated = productoRead.findById(saved.getProductoid());
-		Assertions.assertThat(updated).isPresent();
-		Assertions.assertThat(updated.get().getImagenProducto()).isNull();
+		ProductoDTO updated = productoRead.findById(saved.getProductoid());
+		Assertions.assertThat(updated).isNotNull();
+		Assertions.assertThat(updated.getImagenProducto()).isNull();
 	}
 
 	@Test

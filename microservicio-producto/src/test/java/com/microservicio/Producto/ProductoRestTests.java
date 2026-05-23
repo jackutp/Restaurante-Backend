@@ -184,7 +184,7 @@ public class ProductoRestTests {
 
         ProductoDTO saved = objectMapper.readValue(response, ProductoDTO.class);
         mockMvc.perform(
-                        patch("/productos/" + saved.getProductoid() + "/stock")
+                        put("/productos/" + saved.getProductoid() + "/stock")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {
@@ -279,7 +279,7 @@ public class ProductoRestTests {
     @Test
     void shouldRejectNegativeStock() throws Exception {
         mockMvc.perform(
-                        patch("/productos/1/stock")
+                        put("/productos/10/stock")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content("""
                                         {

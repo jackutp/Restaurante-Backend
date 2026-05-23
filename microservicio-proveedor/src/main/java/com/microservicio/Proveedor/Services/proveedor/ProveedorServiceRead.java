@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface ProveedorServiceRead {
     List<ProveedorDTO> findAll();
-    Optional<ProveedorDTO> findById(Integer id);
+    ProveedorDTO findById(Integer id);
 }
