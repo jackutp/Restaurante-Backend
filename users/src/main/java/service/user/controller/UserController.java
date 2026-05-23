@@ -51,7 +51,7 @@ public class UserController {
     }
 
     // GET - Listar todos (solo admins en producción)
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<UserResponseDTO>> listarTodos() {
         return ResponseEntity.ok(usuarioService.listarTodos());
     }

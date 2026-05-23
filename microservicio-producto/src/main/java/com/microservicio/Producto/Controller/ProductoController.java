@@ -51,7 +51,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoRead.findByPrecioRange(min, max));
     }
     // Crear producto con imagen
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/crear",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> createProducto(
             @RequestParam("nombre") String nombre,
             @RequestParam("descripcion") String descripcion,

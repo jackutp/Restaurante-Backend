@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import java.util.List;
 
-@FeignClient(name = "microservicio-insumos")
+@FeignClient(name = "microservicio-insumos", url = "http://localhost:8100")
 public interface InsumoFeignClient {
 
-    @GetMapping("/insumos")
+    @GetMapping("/insumos/all")
     List<InsumoDTO> getAllInsumos();
 
     @GetMapping("/insumos/{id}")

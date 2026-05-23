@@ -14,7 +14,7 @@ public class PedidoController {
     public PedidoController(PedidoService pedidoService) {
         this.pedidoService = pedidoService;
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<PedidoResponseDTO>> getAllPedidos() {
         return ResponseEntity.ok(pedidoService.getAllPedidos());
     }

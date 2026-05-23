@@ -20,6 +20,6 @@ public interface MesaFeignClient {
     @PutMapping("/mesas/numero/{numero}/total")
     void resetearTotal(@PathVariable("numero") Integer numero,
                        @RequestBody Map<String, Double> request);
-    @GetMapping("/mesas")
+    @GetMapping("/mesas/all")
     List<MesaResponseDTO> getAllMesas();
 }
