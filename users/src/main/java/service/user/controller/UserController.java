@@ -62,4 +62,11 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> buscarPorId(@PathVariable Integer id) {
         return ResponseEntity.ok(usuarioService.buscarPorId(id));
     }
+    @PostMapping("/admin/create")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
+    public ResponseEntity<UserResponseDTO> createUserByAdmin(@Valid @RequestBody UserRegistroDTO dto,
+                                                             @RequestParam TipoUser tipo) {
+        UserResponseDTO respuesta = usuarioService.createUserByAdmin(dto, tipo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
+    }
 }
