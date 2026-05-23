@@ -107,18 +107,7 @@ public class UserService {
                 .orElseThrow(() -> new resourceNotFoundException("Usuario no encontrado"));
         return toResponseDTO(usuario);
     }
-
-    private UserResponseDTO toResponseDTO(User u) {
-        return new UserResponseDTO(
-                u.getIdUsuario(),
-                u.getNombre(),
-                u.getApellido(),
-                u.getDni(),
-                u.getEmail(),
-                u.getTipo(),
-                jwtService.getToken(u)
-        );
-    }
+    @Transactional
     public UserResponseDTO createUserByAdmin(UserRegistroDTO dto, TipoUser tipo) {
         if (usuarioRepository.existsByEmail(dto.email())) {
             throw new RuntimeException("El email ya está registrado");
@@ -138,4 +127,16 @@ public class UserService {
         usuario = usuarioRepository.save(usuario);
         return toResponseDTO(usuario);
     }
+    private UserResponseDTO toResponseDTO(User u) {
+        return new UserResponseDTO(
+                u.getIdUsuario(),
+                u.getNombre(),
+                u.getApellido(),
+                u.getDni(),
+                u.getEmail(),
+                u.getTipo(),
+                jwtService.getToken(u)
+        );
+    }
+
 }

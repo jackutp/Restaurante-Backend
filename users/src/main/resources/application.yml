@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: 8220
 spring:
   profiles:
     default: local
   application:
-    name: microservice-user
+    name: microservice-users
   jpa:
     hibernate:
       ddl-auto: update
