@@ -4,8 +4,14 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.microservicio.pagos.exception.FileStorageException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,71 +21,173 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 @Service
 public class PdfGeneratorService {
-    @Value("${pdf.storage.path:./pdfs/}")
-    private String pdfDir;
-    public String generarComprobantePdf(String tipo, String numeroCompleto,
-                                        Integer mesaNumero, Double total,
-                                        String ruc, String razonSocial) {
+    @Autowired
+    private S3Client s3Client;
+    @Value("${aws.s3.bucket}")
+    private String bucketName;
+    @Value("${aws.region}")
+    private String region;
+    public String generarComprobantePdf(
+            String tipo,
+            String numeroCompleto,
+            Integer mesaNumero,
+            Double total,
+            String ruc,
+            String razonSocial
+    ) {
         try {
-            // Crear directorio
-            Path path = Paths.get(pdfDir);
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
-            String fileName = numeroCompleto.replace("/", "_") + ".pdf";
-            String filePath = pdfDir + fileName;
+            String fileName =
+                    numeroCompleto.replace("/", "_") + ".pdf";
+            // PDF in memory
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(filePath));
+            PdfWriter.getInstance(document, outputStream);
             document.open();
-            // Título
+            // =========================
+            // CONTENIDO PDF
+            // =========================
             Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
-            Paragraph title = new Paragraph(tipo.equals("BOLETA") ? "BOLETA ELECTRÓNICA" : "FACTURA ELECTRÓNICA", titleFont);
+            Paragraph title = new Paragraph(
+                    tipo.equals("BOLETA")
+                            ? "BOLETA ELECTRÓNICA"
+                            : "FACTURA ELECTRÓNICA",
+                    titleFont
+            );
             title.setAlignment(Element.ALIGN_CENTER);
             document.add(title);
             document.add(new Paragraph(" "));
-            // Información del restaurante
             Font boldFont = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
             document.add(new Paragraph("LE BON GOUT", boldFont));
             document.add(new Paragraph("Av. Tacna y Arica 1234 - Arequipa, Perú"));
             document.add(new Paragraph("RUC: 20601234567"));
             document.add(new Paragraph("Teléfono: +51 963 168 458"));
             document.add(new Paragraph(" "));
-            // Información del comprobante
-            document.add(new Paragraph("Número: " + numeroCompleto, boldFont));
-            document.add(new Paragraph("Fecha: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
-            document.add(new Paragraph("Mesa: " + mesaNumero));
+            document.add(
+                    new Paragraph(
+                            "Número: " + numeroCompleto,
+                            boldFont
+                    )
+            );
 
-            if (tipo.equals("FACTURA") && ruc != null && !ruc.isEmpty()) {
+            document.add(
+                    new Paragraph(
+                            "Fecha: " +
+                                    LocalDateTime.now().format(
+                                            DateTimeFormatter.ofPattern(
+                                                    "dd/MM/yyyy HH:mm:ss"
+                                            )
+                                    )
+                    )
+            );
+
+            document.add(
+                    new Paragraph("Mesa: " + mesaNumero)
+            );
+
+            if (tipo.equals("FACTURA")
+                    && ruc != null
+                    && !ruc.isEmpty()) {
+
                 document.add(new Paragraph("RUC: " + ruc));
-                document.add(new Paragraph("Razón Social: " + razonSocial));
+
+                document.add(
+                        new Paragraph(
+                                "Razón Social: " + razonSocial
+                        )
+                );
             }
+
             document.add(new Paragraph(" "));
-            // Tabla de producto
+
             PdfPTable table = new PdfPTable(2);
+
             table.setWidthPercentage(100);
-            table.setSpacingBefore(10f);
-            table.setSpacingAfter(10f);
-            PdfPCell cell1 = new PdfPCell(new Paragraph("Descripción", boldFont));
-            PdfPCell cell2 = new PdfPCell(new Paragraph("Total", boldFont));
+
+            PdfPCell cell1 =
+                    new PdfPCell(
+                            new Paragraph("Descripción", boldFont)
+                    );
+
+            PdfPCell cell2 =
+                    new PdfPCell(
+                            new Paragraph("Total", boldFont)
+                    );
+
             table.addCell(cell1);
             table.addCell(cell2);
+
             table.addCell("Consumo en mesa");
-            table.addCell("S/ " + String.format("%.2f", total));
+
+            table.addCell(
+                    "S/ " + String.format("%.2f", total)
+            );
+
             document.add(table);
-            // Total
+
             document.add(new Paragraph(" "));
-            Paragraph totalParagraph = new Paragraph("TOTAL A PAGAR: S/ " + String.format("%.2f", total), boldFont);
+
+            Paragraph totalParagraph =
+                    new Paragraph(
+                            "TOTAL A PAGAR: S/ "
+                                    + String.format("%.2f", total),
+                            boldFont
+                    );
+
             totalParagraph.setAlignment(Element.ALIGN_RIGHT);
+
             document.add(totalParagraph);
-            // Mensaje de agradecimiento
+
             document.add(new Paragraph(" "));
-            Paragraph gracias = new Paragraph("Gracias por su visita, que tenga buen día", new Font(Font.FontFamily.HELVETICA, 10, Font.ITALIC));
+
+            Paragraph gracias =
+                    new Paragraph(
+                            "Gracias por su visita",
+                            new Font(
+                                    Font.FontFamily.HELVETICA,
+                                    10,
+                                    Font.ITALIC
+                            )
+                    );
+
             gracias.setAlignment(Element.ALIGN_CENTER);
+
             document.add(gracias);
+
             document.close();
-            return filePath;
-        } catch (IOException | DocumentException e) {
-            throw new FileStorageException("NO se pudo guardar el recibo");
+
+            // =========================
+            // SUBIR A S3
+            // =========================
+
+            byte[] pdfBytes = outputStream.toByteArray();
+
+            PutObjectRequest request =
+                    PutObjectRequest.builder()
+                            .bucket(bucketName)
+                            .key(fileName)
+                            .contentType("application/pdf")
+                            .build();
+
+            s3Client.putObject(
+                    request,
+                    RequestBody.fromBytes(pdfBytes)
+            );
+
+            // =========================
+            // RETORNAR URL
+            // =========================
+
+            return String.format(
+                    "https://%s.s3.%s.amazonaws.com/%s",
+                    bucketName,
+                    region,
+                    fileName
+            );
+
+        } catch (Exception e) {
+            throw new FileStorageException(
+                    "No se pudo generar el PDF"
+            );
         }
     }
 }
