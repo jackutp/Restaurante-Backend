@@ -22,12 +22,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class EventoController {
     private final EventoService eventoService;
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<EventoResponseDTO> createEvento(@Valid @RequestBody EventoRequestDTO dto) {
         EventoResponseDTO response = eventoService.createEvento(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<Page<EventoResponseDTO>> getAllEventos(
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(eventoService.getAllEventos(pageable));

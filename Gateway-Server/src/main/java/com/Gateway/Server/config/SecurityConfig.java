@@ -1,4 +1,6 @@
+
 package com.Gateway.Server.config;
+
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,11 +46,9 @@ public class SecurityConfig {
         });
         return filter;
     }
-
     // ─────────────────────────────────────────────
     // ENDPOINTS COMPLETAMENTE PÚBLICOS (sin token)
     // ─────────────────────────────────────────────
-
     /** POST públicos: login, registro y creación de eventos/reservas desde el landing */
     private static final String[] PUBLIC_POST_ENDPOINTS = {
             "/api/usuarios/login",
@@ -56,16 +56,13 @@ public class SecurityConfig {
             "/api/eventos",        // Formulario de cotización público (landing)
             "/api/reservas"        // Formulario de reserva público (landing)
     };
-
     /** GET públicos: catálogo de productos visible sin autenticación */
     private static final String[] PUBLIC_GET_ENDPOINTS = {
             "/api/productos/**"
     };
-
     // ─────────────────────────────────────────────
     // ENDPOINTS POR ROL
     // ─────────────────────────────────────────────
-
     /** Solo ADMINISTRADOR: gestión de inventario, mermas, proveedores y usuarios */
     private static final String[] ADMIN_ONLY_ENDPOINTS = {
             "/api/insumos/**",

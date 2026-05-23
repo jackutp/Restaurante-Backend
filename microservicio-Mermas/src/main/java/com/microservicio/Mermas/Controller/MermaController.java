@@ -22,7 +22,7 @@ public class MermaController {
     @Autowired
     private  MermaServiceWrite mermaWrite;
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(mermaRead.findAll());
     }
@@ -48,7 +48,7 @@ public class MermaController {
         return ResponseEntity.ok(mermaRead.getInsumos());
     }
 
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<?> create(@Valid @RequestBody MermaRequestDTO mermaDTO) {
         MermaDTO saved = mermaWrite.save(mermaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);

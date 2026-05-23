@@ -19,13 +19,13 @@ public class ReservaController {
     @Autowired
     private ReservaService reservaService;
 
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<ReservaResponseDTO> crearReserva(@Valid @RequestBody CrearReservaRequestDTO request) {
         ReservaResponseDTO reserva = reservaService.crearReserva(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(reserva);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ReservaResponseDTO>> listarTodas() {
         return ResponseEntity.ok(reservaService.listarTodas());
     }

@@ -9,7 +9,7 @@ import java.util.List;
 @FeignClient(name = "microservicio-producto")
 public interface ProductoFeignClient {
 
-    @GetMapping("/productos")
+    @GetMapping("/productos/all")
     List<ProductoDTO> getAllProductos();
 
     @GetMapping("/productos/{id}")
