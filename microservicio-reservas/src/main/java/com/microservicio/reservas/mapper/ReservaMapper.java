@@ -16,22 +16,22 @@ public class ReservaMapper {
         if (dto == null) return null;
 
         Reserva reserva = new Reserva();
-        reserva.setNombre(dto.getNombre());
-        reserva.setApellido(dto.getApellido());
-        reserva.setEmail(dto.getEmail());
-        reserva.setTelefono(dto.getTelefono());
+        reserva.setNombre(dto.nombre());
+        reserva.setApellido(dto.apellido());
+        reserva.setEmail(dto.email());
+        reserva.setTelefono(dto.telefono());
 
         // Convertir String a LocalDate
-        if (dto.getFecha() != null && !dto.getFecha().isEmpty()) {
-            reserva.setFecha(LocalDate.parse(dto.getFecha(), DATE_FORMATTER));
+        if (dto.fecha() != null && !dto.fecha().isEmpty()) {
+            reserva.setFecha(LocalDate.parse(dto.fecha(), DATE_FORMATTER));
         }
 
-        reserva.setHora(dto.getHora());
-        reserva.setPersonas(dto.getPersonas());
-        reserva.setExperiencia(dto.getExperiencia());
-        reserva.setAlergias(dto.getAlergias());
-        reserva.setRequerimientos(dto.getRequerimientos());
-        reserva.setNecesidades(dto.getNecesidades());
+        reserva.setHora(dto.hora());
+        reserva.setPersonas(dto.personas());
+        reserva.setExperiencia(dto.experiencia());
+        reserva.setAlergias(dto.alergias());
+        reserva.setRequerimientos(dto.requerimientos());
+        reserva.setNecesidades(dto.necesidades());
 
         return reserva;
     }
@@ -39,29 +39,24 @@ public class ReservaMapper {
     public ReservaResponseDTO toResponseDTO(Reserva reserva) {
         if (reserva == null) return null;
 
-        ReservaResponseDTO dto = new ReservaResponseDTO();
-        dto.setId(reserva.getId());
-        dto.setCodigo(reserva.getCodigo());
-        dto.setEstado(reserva.getEstado());
-        dto.setNombre(reserva.getNombre());
-        dto.setApellido(reserva.getApellido());
-        dto.setEmail(reserva.getEmail());
-        dto.setTelefono(reserva.getTelefono());
-
-        // Convertir LocalDate a String para la respuesta
-        if (reserva.getFecha() != null) {
-            dto.setFecha(reserva.getFecha().toString());
-        }
-
-        dto.setHora(reserva.getHora());
-        dto.setPersonas(reserva.getPersonas());
-        dto.setExperiencia(reserva.getExperiencia());
-        dto.setAlergias(reserva.getAlergias());
-        dto.setRequerimientos(reserva.getRequerimientos());
-        dto.setNecesidades(reserva.getNecesidades());
-        dto.setCreatedAt(reserva.getCreatedAt());
-        dto.setUpdatedAt(reserva.getUpdatedAt());
-
+        ReservaResponseDTO dto = new ReservaResponseDTO(
+            reserva.getId(),
+            reserva.getCodigo(),
+            reserva.getEstado(),
+            reserva.getNombre(),
+            reserva.getApellido(),
+            reserva.getEmail(),
+            reserva.getTelefono(),
+            reserva.getFecha().toString(),
+            reserva.getHora(),
+            reserva.getPersonas(),
+            reserva.getExperiencia(),
+            reserva.getAlergias(),
+            reserva.getRequerimientos(),
+            reserva.getNecesidades(),
+            reserva.getCreatedAt(),
+            reserva.getUpdatedAt()
+        );
         return dto;
     }
 }

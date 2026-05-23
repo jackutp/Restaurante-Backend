@@ -5,6 +5,7 @@ import com.microservicio.reservas.dto.ReservaResponseDTO;
 import com.microservicio.reservas.entity.EstadoReserva;
 import com.microservicio.reservas.service.ReservaService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +16,8 @@ import java.util.List;
 @RequestMapping("/reservas")
 public class ReservaController {
 
-    private final ReservaService reservaService;
-
-    public ReservaController(ReservaService reservaService) {
-        this.reservaService = reservaService;
-    }
+    @Autowired
+    private ReservaService reservaService;
 
     @PostMapping
     public ResponseEntity<ReservaResponseDTO> crearReserva(@Valid @RequestBody CrearReservaRequestDTO request) {
