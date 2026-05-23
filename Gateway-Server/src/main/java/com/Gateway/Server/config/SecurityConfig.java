@@ -46,66 +46,84 @@ public class SecurityConfig {
        return filter;
    }
 
-    private static final String[] PUBLIC_ENDPOINTS = {
+    private static final String[] PUBLIC_POST_ENDPOINTS = {
             "/api/usuarios/login",
             "/api/usuarios/registro"
     };
     private static final String[] PUBLIC_GET_ENDPOINTS = {
             "/api/productos/**"
     };
+    // -------------
+    // ADMIN ONLY
+    // -------------
     private static final String[] ADMIN_ENDPOINTS = {
             "/api/insumos/**",
             "/api/mermas/**",
-            "/api/proveedores/**"
+            "/api/proveedores/**",
+            "/api/usuarios/**"
     };
+    // -------------
+    // ADMIN Y CLIENTE
+    // -------------
     private static final String[] ADMIN_CLIENTE_ENDPOINTS = {
             "/api/eventos/**",
             "/api/reservas/**"
     };
-    private static final  String[] MESERO_ENDPOINTS = {
-            //Aquí van los pagos, etc
+    // -------------
+    // ADMIN, MESERO Y CLIENTE
+    // -------------
+    private static final String[] COCINA_ENDPOINTS = {
+            "/api/pedidos/**",
+            "/api/cocina/**"
     };
-    private static final String[] COCINERO_MESERO_ENDPOINTS = {
-            "/api/pedidos/**"
+    // -------------
+    // ADMIN Y MESERO
+    // -------------
+    private static  final String[] MESERO_ADMIN_EDNPOINTS = {
+           "/api/pagos/**",
+            "/api/mesas/**"
     };
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http, JwtAuthenticationManager authManager){
         return http
+                //Deshabilitamos seguridad por default
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+                //Filtro JWT
                 .addFilterAt(
                         jwtAuthenticationWebFilter(authManager),
                         SecurityWebFiltersOrder.AUTHENTICATION
                 )
+                //MANEJO DE EXCEPCIONES
                 .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint((swe, e) ->
                 {
                     swe.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
                     return swe.getResponse().setComplete();
                 }))
+                //REGLAS DE AUTENTICACIÓN
                 .authorizeExchange(exchange -> exchange
                         //CORS
                         .pathMatchers(HttpMethod.OPTIONS, "/**")
                         .permitAll()
                         //Publicos
-                        .pathMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS)
+                        .pathMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS)
                         .permitAll()
                         //Catálogo productos público
                         .pathMatchers(HttpMethod.GET, PUBLIC_GET_ENDPOINTS)
                         .permitAll()
                         //Admin
-                        .pathMatchers(HttpMethod.GET, "/api/usuarios/**")
-                        .hasAuthority("ADMINISTRADOR")
-                        .pathMatchers(HttpMethod.PUT, "/api/usuarios/**")
-                        .hasAuthority("ADMINISTRADOR")
-                        .pathMatchers(HttpMethod.DELETE, "/api/usuarios/**")
-                        .hasAuthority("ADMINISTRADOR")
                         .pathMatchers(ADMIN_ENDPOINTS)
                         .hasAuthority("ADMINISTRADOR")
                         //Cliente/admin
                         .pathMatchers(ADMIN_CLIENTE_ENDPOINTS)
                         .hasAnyAuthority("CLIENTE", "ADMINISTRADOR")
                         //Mesero
-                        .pathMatchers(COCINERO_MESERO_ENDPOINTS)
+                        .pathMatchers(COCINA_ENDPOINTS)
                         .hasAnyAuthority("MESERO", "COCINERO", "ADMINISTRADOR")
+                        //Mesero + admin
+                        .pathMatchers(MESERO_ADMIN_EDNPOINTS)
+                        .hasAnyAuthority("MESERO", "ADMINISTRADOR")
                         //Default
                         .anyExchange()
                         .authenticated()

@@ -11,4 +11,3 @@ spring:
       username: postgres
       password: kenyiaqp10
       driver-class-name: org.postgresql.Driver
-    # Configuracion de Eureka (Service Discovery)
