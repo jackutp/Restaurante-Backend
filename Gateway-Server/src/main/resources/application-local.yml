@@ -37,14 +37,12 @@ spring:
                 - Path=/api/insumos/**
               filters:
                 - StripPrefix=1
-
             - id: microservicio-producto
               uri: lb://microservicio-producto
               predicates:
                 - Path=/api/productos/**
               filters:
                 - StripPrefix=1
-
             - id: microservicio-proveedor
               uri: lb://microservicio-proveedor
               predicates:
@@ -57,20 +55,45 @@ spring:
                 - Path=/api/mermas/**
               filters:
                 - StripPrefix=1
-            - id: microservice-user
-              uri: lb://microservice-user
-              predicates:
-                - Path=/api/usuarios/**
-              filters:
-                - StripPrefix=1
-            - id: microservice-reservas
-              uri: lb://microservicio-reservas
-              predicates:
-                - Path=/api/reservas/**
-
             - id: microservicio-eventos
               uri: lb://microservicio-eventos
               predicates:
                 - Path=/api/eventos/**
+              filters:
+                - StripPrefix=1
+            - id: microservicio-mesas
+              uri: lb://microservicio-mesas
+              predicates:
+                - Path=/api/mesas/**
+              filters:
+                - StripPrefix=1
+            - id: microservicio-pedidos
+              uri: lb://microservicio-pedidos
+              predicates:
+                - Path=/api/pedidos/**
+              filters:
+                - StripPrefix=1
+            - id: microservicio-cocina
+              uri: lb://microservicio-cocina
+              predicates:
+                - Path=/api/cocina/**
+              filters:
+                - StripPrefix=1
+            - id: microservicio-pagos
+              uri: lb://microservicio-pagos
+              predicates:
+                - Path=/api/pagos/**
+              filters:
+                - StripPrefix=1
+            - id: microservicio-users
+              uri: lb://microservicio-users
+              predicates:
+                - Path=/api/usuarios/**
+              filters:
+                - StripPrefix=1
+            - id: microservicio-reservas
+              uri: lb://microservicio-reservas
+              predicates:
+                - Path=/api/reservas/**
               filters:
                 - StripPrefix=1
