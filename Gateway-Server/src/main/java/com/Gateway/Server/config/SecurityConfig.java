@@ -53,12 +53,22 @@ public class SecurityConfig {
     private static final String[] PUBLIC_POST_ENDPOINTS = {
             "/api/usuarios/login",
             "/api/usuarios/registro",
-            "/api/eventos",        // Formulario de cotización público (landing)
-            "/api/reservas"        // Formulario de reserva público (landing)
+            "/api/eventos/**",        // Formulario de cotización público (landing)
+            "/api/reservas/**"
+
     };
     /** GET públicos: catálogo de productos visible sin autenticación */
     private static final String[] PUBLIC_GET_ENDPOINTS = {
-            "/api/productos/**"
+            "/api/productos/**",
+            //cambiar a futuro
+            "/api/proveedores/**",
+            "/api/mermas/**",
+            "/api/insumos/**",
+            "/api/mesas/**",
+            "/api/pagos/**",
+            "/api/reservas/**",
+            "/api/eventos/**",
+            "/api/cocina/**",
     };
     // ─────────────────────────────────────────────
     // ENDPOINTS POR ROL
