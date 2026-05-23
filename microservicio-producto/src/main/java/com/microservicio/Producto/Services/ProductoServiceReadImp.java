@@ -4,9 +4,7 @@ import com.microservicio.Producto.Entities.Categoria;
 import com.microservicio.Producto.Entities.Producto;
 import com.microservicio.Producto.Mapper.ProductoMapper;
 import com.microservicio.Producto.Repositories.ProductoRepository;
-import com.microservicio.Producto.Utils.ImageStorageService;
 import com.microservicio.Producto.Utils.ImageUtils;
-import com.microservicio.Producto.Utils.S3ImageStorageService;
 import com.microservicio.Producto.dto.ProductoDTO;
 import com.microservicio.Producto.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +21,7 @@ public class ProductoServiceReadImp implements ProductoServiceRead{
     @Autowired
     private  ProductoMapper productoMapper;
     @Autowired
-    //private  ImageUtils imageUtils;
-    private ImageStorageService imageStorageService;
+    private  ImageUtils imageUtils;
 
     @Override
     @Transactional(readOnly = true)
@@ -49,7 +46,7 @@ public class ProductoServiceReadImp implements ProductoServiceRead{
         if (producto.getImagenProducto() == null) {
             throw new ResourceNotFoundException("El producto no tiene imagen asociada");
         }
-        return imageStorageService.getImage(producto.getImagenProducto());
+        return imageUtils.obtenerImagen(producto.getImagenProducto());
     }
 
     @Override

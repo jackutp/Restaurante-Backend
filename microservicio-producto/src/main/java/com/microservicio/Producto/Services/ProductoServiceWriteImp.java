@@ -3,7 +3,6 @@ package com.microservicio.Producto.Services;
 import com.microservicio.Producto.Entities.Producto;
 import com.microservicio.Producto.Mapper.ProductoMapper;
 import com.microservicio.Producto.Repositories.ProductoRepository;
-import com.microservicio.Producto.Utils.ImageStorageService;
 import com.microservicio.Producto.Utils.ImageUtils;
 import com.microservicio.Producto.dto.ProductoDTO;
 import com.microservicio.Producto.exception.FileStorageException;
@@ -23,8 +22,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
     @Autowired
     private  ProductoMapper productoMapper;
     @Autowired
-    //private  ImageUtils imageUtils;
-    private ImageStorageService imageStorageService;
+    private  ImageUtils imageUtils;
 
     @Override
     @Transactional
@@ -35,7 +33,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
 
             // Guardar imagen si existe
             if (imagen != null && !imagen.isEmpty()) {
-                String imagenPath = imageStorageService.saveImage(imagen);
+                String imagenPath = imageUtils.guardarImagen(imagen);
                 producto.setImagenProducto(imagenPath);
             }
 
@@ -63,10 +61,10 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
             try {
                 // Eliminar imagen anterior si existe
                 if (existingProducto.getImagenProducto() != null) {
-                    imageStorageService.deleteImage(existingProducto.getImagenProducto());
+                    imageUtils.eliminarImagen(existingProducto.getImagenProducto());
                 }
                 // Guardar nueva imagen
-                String imagenPath = imageStorageService.saveImage(imagen);
+                String imagenPath = imageUtils.guardarImagen(imagen);
                 existingProducto.setImagenProducto(imagenPath);
             } catch (IOException e) {
                 throw new FileStorageException("Error al actualizar la imagen: " + e.getMessage());
@@ -83,7 +81,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
         // Eliminar la imagen asociada
         if (producto.getImagenProducto() != null) {
-            imageStorageService.deleteImage(producto.getImagenProducto());
+            imageUtils.eliminarImagen(producto.getImagenProducto());
         }
 
         productoRepository.deleteById(id);
@@ -112,10 +110,10 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
         try {
             // Eliminar imagen anterior
             if (producto.getImagenProducto() != null) {
-                imageStorageService.deleteImage(producto.getImagenProducto());
+                imageUtils.eliminarImagen(producto.getImagenProducto());
             }
             // Guardar nueva imagen
-            String imagenPath = imageStorageService.saveImage(imagen);
+            String imagenPath = imageUtils.guardarImagen(imagen);
             producto.setImagenProducto(imagenPath);
             productoRepository.save(producto);
 
@@ -131,7 +129,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
 
         if (producto.getImagenProducto() != null) {
-            imageStorageService.deleteImage(producto.getImagenProducto());
+            imageUtils.eliminarImagen(producto.getImagenProducto());
             producto.setImagenProducto(null);
             productoRepository.save(producto);
         }
