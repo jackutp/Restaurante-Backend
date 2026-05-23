@@ -21,10 +21,6 @@ public class MermaServiceWriteImp implements MermaServiceWrite{
     private  MermaRepository mermaRepository;
     @Autowired
     private  MermaMapper mermaMapper;
-    @Autowired
-    private  ProductoFeignClient productoFeignClient;
-    @Autowired
-    private  InsumoFeignClient insumoFeignClient;
 
     @Override
     @Transactional

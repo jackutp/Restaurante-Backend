@@ -23,7 +23,10 @@
 	</developers>
 
     <modules>
+		<module>microservicio-cocina</module>
+		<module>microservicio-pagos</module>
 		<module>microservicio-eventos</module>
+		<module>microservicio-mesas</module>
 		<module>microservicio-producto</module>
 		<module>microservicio-Insumos</module>
 		<module>microservicio-proveedor</module>
@@ -31,6 +34,7 @@
 		<module>Gateway-Server</module>
 		<module>eureka-server</module>
 		<module>reserva</module>
+		<module>microservicio-reservas</module>
   	    <module>users</module>
         <module>microservicio-Mermas</module>
     </modules>

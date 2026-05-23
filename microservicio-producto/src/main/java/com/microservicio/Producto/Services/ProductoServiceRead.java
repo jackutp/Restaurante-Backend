@@ -10,10 +10,11 @@ import java.util.Optional;
 public interface ProductoServiceRead {
     // READ básico
     List<ProductoDTO> findAll();
-    Optional<ProductoDTO> findById(Integer id);
+    ProductoDTO findById(Integer id);
     // Métodos específicos para imágenes
     byte[] getImagen(Integer id);
     // Métodos de búsqueda
     List<ProductoDTO> findByCategoria(Categoria categoria);
     List<ProductoDTO> findByPrecioRange(Double min, Double max);
+    Integer getStock(Integer id);
 }

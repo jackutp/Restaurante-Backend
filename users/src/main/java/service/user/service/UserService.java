@@ -107,7 +107,26 @@ public class UserService {
                 .orElseThrow(() -> new resourceNotFoundException("Usuario no encontrado"));
         return toResponseDTO(usuario);
     }
+    @Transactional
+    public UserResponseDTO createUserByAdmin(UserRegistroDTO dto, TipoUser tipo) {
+        if (usuarioRepository.existsByEmail(dto.email())) {
+            throw new RuntimeException("El email ya está registrado");
+        }
+        if (usuarioRepository.existsByDni(dto.dni())) {
+            throw new RuntimeException("El DNI ya está registrado");
+        }
+        User usuario = User.builder()
+                .nombre(dto.nombre())
+                .apellido(dto.apellido())
+                .dni(dto.dni())
+                .email(dto.email())
+                .clave(passwordEncoder.encode(dto.clave()))
+                .tipo(tipo)
+                .build();
 
+        usuario = usuarioRepository.save(usuario);
+        return toResponseDTO(usuario);
+    }
     private UserResponseDTO toResponseDTO(User u) {
         return new UserResponseDTO(
                 u.getIdUsuario(),
@@ -119,4 +138,5 @@ public class UserService {
                 jwtService.getToken(u)
         );
     }
+
 }

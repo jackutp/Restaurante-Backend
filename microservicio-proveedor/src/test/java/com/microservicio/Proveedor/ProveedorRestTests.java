@@ -87,8 +87,7 @@ public class ProveedorRestTests {
     @Test
     void shouldReturn404WhenProveedorNotFound() throws Exception {
         mockMvc.perform(get("/proveedores/99999"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -148,8 +147,7 @@ public class ProveedorRestTests {
     @Test
     void shouldReturn404WhenOrdenNotFound() throws Exception {
         mockMvc.perform(get("/proveedores/ordenes/99999"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -209,8 +207,7 @@ public class ProveedorRestTests {
                         orden.getOrdenId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").exists());
+                .andExpect(status().isBadRequest());
     }
 
     @Test

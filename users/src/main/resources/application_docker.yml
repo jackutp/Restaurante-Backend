@@ -3,19 +3,12 @@ jwt:
 spring:
   datasource:
     write:
-      jdbc-url: jdbc:mysql://${USERS_WRITE_DB}/restaurante?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      jdbc-url: jdbc:postgresql://${USERS_WRITE_DB}/users_db
       username: ${USERNAME_WRITE_DB}
       password: ${PASSWORD_WRITE_DB}
-      driver-class-name: com.mysql.cj.jdbc.Driver
+      driver-class-name: org.postgresql.Driver
     read:
-      jdbc-url: jdbc:mysql://localhost:3306/restaurante?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      jdbc-url: jdbc:postgresql://${USERS_READ_DB}/users_db
       username: ${USERNAME_READ_DB}
       password: ${PASSWORD_READ_DB}
-      driver-class-name: com.mysql.cj.jdbc.Driver
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_URL}
-  instance:
-    prefer-ip-address: true
-#    enabled: false
+      driver-class-name: org.postgresql.Driver

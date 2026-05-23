@@ -21,7 +21,7 @@ public class Insumos {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoInsumo estadoInsumo = EstadoInsumo.VACIO;
-    // Método para actualizar el estado según el stock
+    // Actualizar el estado según el stock
     public void actualizarEstado() {
         if (stock <= 0) {
             this.estadoInsumo = EstadoInsumo.VACIO;

@@ -42,7 +42,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
             return productoMapper.toDTO(saved);
 
         } catch (IOException e) {
-            throw new RuntimeException("Error al guardar el producto: " + e.getMessage());
+            throw new FileStorageException("Error al guardar el producto: " + e.getMessage());
         }
     }
 
@@ -50,7 +50,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
     @Transactional
     public ProductoDTO update(Integer id, ProductoDTO productoDTO, MultipartFile imagen) {
         Producto existingProducto = productoRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
         // Actualizar campos
         existingProducto.setNombre(productoDTO.getNombre());
         existingProducto.setDescripcion(productoDTO.getDescripcion());
@@ -118,7 +118,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
             productoRepository.save(producto);
 
         } catch (IOException e) {
-            throw new RuntimeException("Error al actualizar la imagen: " + e.getMessage());
+            throw new FileStorageException("Error al actualizar la imagen: " + e.getMessage());
         }
     }
 

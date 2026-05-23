@@ -1,10 +1,10 @@
 server:
-  port: 8080
+  port: 8220
 spring:
   profiles:
     default: local
   application:
-    name: microservice-user
+    name: microservice-users
   jpa:
     hibernate:
       ddl-auto: update
@@ -18,3 +18,12 @@ spring:
     sql:
       init:
         mode: always
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      default-zone: ${EUREKA_URL:http://localhost:8761/eureka}

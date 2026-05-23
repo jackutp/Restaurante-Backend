@@ -3,6 +3,7 @@ package com.microservicio.eventos.Services;
 import com.microservicio.eventos.Entities.EventoRequest;
 import com.microservicio.eventos.Entities.EventoStatus;
 import com.microservicio.eventos.Exceptions.ResourceNotFoundException;
+import com.microservicio.eventos.Exceptions.ResourceNotFoundException;
 import com.microservicio.eventos.dto.EventoRequestDTO;
 import com.microservicio.eventos.dto.EventoResponseDTO;
 import com.microservicio.eventos.dto.EventoStatusUpdateDTO;
@@ -85,8 +86,7 @@ public class EventoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Evento no encontrado con ID: " + id));
         return eventoMapper.toResponseDTO(evento);
     }
-
-    // Actualizar estado del evento
+    // Actualizar evento
     @Transactional
     public EventoResponseDTO updateEventoStatus(Long id, EventoStatusUpdateDTO updateDTO) {
         EventoRequest evento = eventoRepository.findById(id)

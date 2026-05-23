@@ -12,9 +12,10 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 import service.user.dto.UserLoginRequestDTO;
-import service.user.model.User;
+import service.user.jwt.JwtService;
 import service.user.model.TipoUser;
 import service.user.dto.UserRegistroDTO;
+import service.user.model.User;
 import service.user.repository.UserRepository;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,212 +28,298 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class UserRestTests {
     @Autowired
     private MockMvc mockMvc;
+
     @Autowired
     private ObjectMapper objectMapper;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private UserRegistroDTO buildRegistroDTO() {
-        return new UserRegistroDTO(
-                "Kenji",
-                "Perez",
-                "44411122",
-                "kenji@test.com",
-                "password123"
-        );
-    }
+    @Autowired
+    private JwtService jwtService;
 
-    private UserLoginRequestDTO buildLoginDTO() {
-        return new UserLoginRequestDTO(
-                "kenji@test.com",
-                "password123"
-        );
-    }
+    private User adminUser;
+    private String adminToken;
+
+    private User clienteUser;
+    private String clienteToken;
 
     @BeforeEach
-    void setup() {
-        if (!userRepository.existsByEmail("admin@test.com")) {
-            User admin = User.builder()
-                    .nombre("Admin")
-                    .apellido("Principal")
-                    .dni("99999999")
-                    .email("admin@test.com")
-                    .clave(passwordEncoder.encode("admin123"))
-                    .tipo(TipoUser.ADMINISTRADOR)
-                    .build();
-            userRepository.save(admin);
-        }
-    }
-    @Test
-    void shouldRegisterUser() throws Exception {
-        UserRegistroDTO dto = buildRegistroDTO();
-        mockMvc.perform(post("/usuarios/registro")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.idUsuario").exists())
-                .andExpect(jsonPath("$.nombre").value("Kenji"))
-                .andExpect(jsonPath("$.apellido").value("Perez"))
-                .andExpect(jsonPath("$.email").value("kenji@test.com"))
-                .andExpect(jsonPath("$.tipo").value("CLIENTE"))
-                .andExpect(jsonPath("$.token").isNotEmpty());
+    void setUp() {
+
+        adminUser = new User();
+        adminUser.setNombre("Admin");
+        adminUser.setApellido("Principal");
+        adminUser.setDni("33334444");
+        adminUser.setEmail("admin@test.com");
+        adminUser.setClave(passwordEncoder.encode("admin123"));
+        adminUser.setTipo(TipoUser.ADMINISTRADOR);
+
+        userRepository.save(adminUser);
+
+        adminToken = jwtService.getToken(adminUser);
+
+        clienteUser = new User();
+        clienteUser.setNombre("Cliente");
+        clienteUser.setApellido("Normal");
+        clienteUser.setDni("87654321");
+        clienteUser.setEmail("cliente@test.com");
+        clienteUser.setClave(passwordEncoder.encode("cliente123"));
+        clienteUser.setTipo(TipoUser.CLIENTE);
+
+        userRepository.save(clienteUser);
+
+        clienteToken = jwtService.getToken(clienteUser);
     }
 
     @Test
-    void shouldLoginUser() throws Exception {
-        User user = User.builder()
-                .nombre("Kenji")
-                .apellido("Perez")
-                .dni("44411122")
-                .email("kenji@test.com")
-                .clave(passwordEncoder.encode("password123"))
-                .tipo(TipoUser.CLIENTE)
-                .build();
-        userRepository.save(user);
-        UserLoginRequestDTO loginDTO = buildLoginDTO();
+    void contextLoads() {
+    }
+
+    @Test
+    void login_ShouldReturnToken() throws Exception {
+
+        UserLoginRequestDTO request =
+                new UserLoginRequestDTO(
+                        "admin@test.com",
+                        "admin123"
+                );
+
         mockMvc.perform(post("/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginDTO)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("kenji@test.com"))
-                .andExpect(jsonPath("$.token").isNotEmpty());
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andExpect(jsonPath("$.email").value("admin@test.com"));
     }
 
     @Test
-    void shouldFailLoginWithWrongPassword() throws Exception {
-        User user = User.builder()
-                .nombre("Kenji")
-                .apellido("Perez")
-                .dni("44411122")
-                .email("kenji@test.com")
-                .clave(passwordEncoder.encode("password123"))
-                .tipo(TipoUser.CLIENTE)
-                .build();
-        userRepository.save(user);
-        UserLoginRequestDTO badLogin = new UserLoginRequestDTO(
-                "kenji@test.com",
-                "wrongpassword"
-        );
+    void login_ShouldReturnUnauthorized_WhenPasswordIncorrect() throws Exception {
+        UserLoginRequestDTO request =
+                new UserLoginRequestDTO(
+                        "admin@test.com",
+                        "incorrecta"
+                );
         mockMvc.perform(post("/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(badLogin)))
-                .andExpect(status().isForbidden());
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
-    void shouldGetAllUsers() throws Exception {
-        User user = User.builder()
-                .nombre("Kenji")
-                .apellido("Perez")
-                .dni("44411122")
-                .email("kenji@test.com")
-                .clave(passwordEncoder.encode("password123"))
-                .tipo(TipoUser.CLIENTE)
-                .build();
-        userRepository.save(user);
-        mockMvc.perform(get("/usuarios"))
-                .andExpect(status().isForbidden());
-    }
+    void login_ShouldReturnBadRequest_WhenEmailInvalid() throws Exception {
 
-    @Test
-    void shouldGetUserById() throws Exception {
-        User user = User.builder()
-                .nombre("Kenji")
-                .apellido("Perez")
-                .dni("44411122")
-                .email("kenji@test.com")
-                .clave(passwordEncoder.encode("password123"))
-                .tipo(TipoUser.CLIENTE)
-                .build();
-        User saved = userRepository.save(user);
-        mockMvc.perform(get("/usuarios/" + saved.getIdUsuario()))
-                .andExpect(status().isForbidden());
-    }
+        UserLoginRequestDTO request =
+                new UserLoginRequestDTO(
+                        "correo-invalido",
+                        "admin123"
+                );
 
-    @Test
-    void shouldUpdateUser() throws Exception {
-        User user = User.builder()
-                .nombre("Kenji")
-                .apellido("Perez")
-                .dni("44411122")
-                .email("kenji@test.com")
-                .clave(passwordEncoder.encode("password123"))
-                .tipo(TipoUser.CLIENTE)
-                .build();
-        User saved = userRepository.save(user);
-        UserRegistroDTO updatedDTO = new UserRegistroDTO(
-                "Mario",
-                "Gomez",
-                "66611122",
-                "mario@test.com",
-                "newpassword123"
-        );
-        mockMvc.perform(put("/usuarios/" + saved.getIdUsuario())
-                        .param("tipo", "ADMINISTRADOR")
+        mockMvc.perform(post("/usuarios/login")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedDTO)))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void shouldDeleteUser() throws Exception {
-        User user = User.builder()
-                .nombre("Kenji")
-                .apellido("Perez")
-                .dni("44411122")
-                .email("kenji@test.com")
-                .clave(passwordEncoder.encode("password123"))
-                .tipo(TipoUser.CLIENTE)
-                .build();
-        User saved = userRepository.save(user);
-        mockMvc.perform(delete("/usuarios/" + saved.getIdUsuario()))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenRegisteringInvalidUser() throws Exception {
-        UserRegistroDTO invalidDTO = new UserRegistroDTO(
-                "",
-                "",
-                "123",
-                "bad-email",
-                "123"
-        );
-        mockMvc.perform(post("/usuarios/registro")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDTO)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void shouldReturnConflictWhenEmailAlreadyExists() throws Exception {
-        User existing = User.builder()
-                .nombre("Kenji")
-                .apellido("Perez")
-                .dni("44411122")
-                .email("kenji@test.com")
-                .clave(passwordEncoder.encode("password123"))
-                .tipo(TipoUser.CLIENTE)
-                .build();
-        userRepository.save(existing);
-        UserRegistroDTO dto = buildRegistroDTO();
+    void registro_ShouldCreateUser() throws Exception {
+
+        UserRegistroDTO dto =
+                new UserRegistroDTO(
+                        "Juan",
+                        "Perez",
+                        "11112222",
+                        "juan@test.com",
+                        "password123"
+                );
+
         mockMvc.perform(post("/usuarios/registro")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isConflict());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.nombre").value("Juan"))
+                .andExpect(jsonPath("$.apellido").value("Perez"))
+                .andExpect(jsonPath("$.dni").value("11112222"))
+                .andExpect(jsonPath("$.email").value("juan@test.com"))
+                .andExpect(jsonPath("$.tipo").value("CLIENTE"));
     }
 
     @Test
-    void shouldReturnNotFoundWhenUserDoesNotExist() throws Exception {
-        mockMvc.perform(get("/usuarios/99999")).andExpect(status().isForbidden());
+    void registro_ShouldReturnBadRequest_WhenEmailInvalid() throws Exception {
+
+        UserRegistroDTO dto =
+                new UserRegistroDTO(
+                        "Juan",
+                        "Perez",
+                        "11112222",
+                        "correo-invalido",
+                        "password123"
+                );
+
+        mockMvc.perform(post("/usuarios/registro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void shouldReturnUnauthorizedWhenNoCredentialsProvidedToProtectedEndpoints() throws Exception {
-        mockMvc.perform(get("/usuarios")).andExpect(status().isForbidden());
-        mockMvc.perform(get("/usuarios/1")).andExpect(status().isForbidden());
-        mockMvc.perform(delete("/usuarios/1")).andExpect(status().isForbidden());
+    void registro_ShouldReturnBadRequest_WhenDniInvalid() throws Exception {
+
+        UserRegistroDTO dto =
+                new UserRegistroDTO(
+                        "Juan",
+                        "Perez",
+                        "123",
+                        "juan@test.com",
+                        "password123"
+                );
+
+        mockMvc.perform(post("/usuarios/registro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void registro_ShouldReturnBadRequest_WhenPasswordTooShort() throws Exception {
+
+        UserRegistroDTO dto =
+                new UserRegistroDTO(
+                        "Juan",
+                        "Perez",
+                        "11112222",
+                        "juan@test.com",
+                        "123"
+                );
+
+        mockMvc.perform(post("/usuarios/registro")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void listarTodos_ShouldReturnUsers() throws Exception {
+
+        mockMvc.perform(get("/usuarios")
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray());
+    }
+
+    @Test
+    void listarTodos_ShouldReturnUnauthorized_WhenNoToken() throws Exception {
+
+        mockMvc.perform(get("/usuarios"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void buscarPorId_ShouldReturnUser() throws Exception {
+        mockMvc.perform(get("/usuarios/" + adminUser.getIdUsuario())
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("admin@test.com"));
+    }
+
+    @Test
+    void buscarPorId_ShouldReturnNotFound() throws Exception {
+
+        mockMvc.perform(get("/usuarios/99999")
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void actualizar_ShouldUpdateUser() throws Exception {
+
+        UserRegistroDTO dto =
+                new UserRegistroDTO(
+                        "AdminActualizado",
+                        "Principal",
+                        "99998888",
+                        "adminupdated@test.com",
+                        "password123"
+                );
+
+        mockMvc.perform(put("/usuarios/" + adminUser.getIdUsuario())
+                        .header("Authorization", "Bearer " + adminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nombre").value("AdminActualizado"))
+                .andExpect(jsonPath("$.email").value("adminupdated@test.com"));
+    }
+
+    @Test
+    void eliminar_ShouldDeleteUser() throws Exception {
+
+        mockMvc.perform(delete("/usuarios/" + clienteUser.getIdUsuario())
+                        .header("Authorization", "Bearer " + adminToken))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void createUserByAdmin_ShouldCreateUser() throws Exception {
+
+        UserRegistroDTO dto =
+                new UserRegistroDTO(
+                        "Nuevo",
+                        "Admin",
+                        "99998888",
+                        "nuevoadmin@test.com",
+                        "password123"
+                );
+
+        mockMvc.perform(post("/usuarios/admin/create")
+                        .param("tipo", "ADMINISTRADOR")
+                        .header("Authorization", "Bearer " + adminToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.email").value("nuevoadmin@test.com"))
+                .andExpect(jsonPath("$.tipo").value("ADMINISTRADOR"));
+    }
+
+    @Test
+    void createUserByAdmin_ShouldReturnForbidden_WhenUserIsNotAdmin() throws Exception {
+
+        UserRegistroDTO dto =
+                new UserRegistroDTO(
+                        "Nuevo",
+                        "Usuario",
+                        "44445555",
+                        "nuevo@test.com",
+                        "password123"
+                );
+
+        mockMvc.perform(post("/usuarios/admin/create")
+                        .param("tipo", "CLIENTE")
+                        .header("Authorization", "Bearer " + clienteToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void createUserByAdmin_ShouldReturnUnauthorized_WhenNoToken() throws Exception {
+
+        UserRegistroDTO dto =
+                new UserRegistroDTO(
+                        "Nuevo",
+                        "Usuario",
+                        "44445555",
+                        "nuevo@test.com",
+                        "password123"
+                );
+
+        mockMvc.perform(post("/usuarios/admin/create")
+                        .param("tipo", "CLIENTE")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isUnauthorized());
     }
 }

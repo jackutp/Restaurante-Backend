@@ -1,13 +1,10 @@
 package com.microservicio.eventos.Mapper;
-
 import com.microservicio.eventos.Entities.EventoRequest;
 import com.microservicio.eventos.dto.EventoRequestDTO;
 import com.microservicio.eventos.dto.EventoResponseDTO;
 import org.springframework.stereotype.Component;
-
 @Component
 public class EventoMapper {
-
     public EventoRequest toEntity(EventoRequestDTO dto) {
         EventoRequest entity = new EventoRequest();
         entity.setName(dto.getName());
@@ -23,7 +20,6 @@ public class EventoMapper {
         entity.setMarketingAccepted(dto.getMarketingAccepted());
         return entity;
     }
-
     public EventoResponseDTO toResponseDTO(EventoRequest entity) {
         EventoResponseDTO dto = new EventoResponseDTO();
         dto.setId(entity.getId());

@@ -68,9 +68,9 @@ class MicroservicioProveedorApplicationTests {
 	@Test
 	void shouldFindProveedorById() {
 		ProveedorDTO saved = proveedorWrite.save(buildProveedorDTO());
-		Optional<ProveedorDTO> found = proveedorRead.findById(saved.getProveedorid());
-		Assertions.assertThat(found).isPresent();
-		Assertions.assertThat(found.get().getNombre()).isEqualTo("Proveedor Test");
+		ProveedorDTO found = proveedorRead.findById(saved.getProveedorid());
+		Assertions.assertThat(found).isNotNull();
+		Assertions.assertThat(found.getNombre()).isEqualTo("Proveedor Test");
 	}
 
 	@Test
@@ -96,8 +96,7 @@ class MicroservicioProveedorApplicationTests {
 	void shouldDeleteProveedor() {
 		ProveedorDTO saved = proveedorWrite.save(buildProveedorDTO());
 		proveedorWrite.delete(saved.getProveedorid());
-		Optional<ProveedorDTO> found = proveedorRead.findById(saved.getProveedorid());
-		Assertions.assertThat(found).isEmpty();
+		Assertions.assertThatThrownBy(() -> proveedorRead.findById(saved.getProveedorid())).isInstanceOf(ResourceNotFoundException.class);
 	}
 
 	@Test
@@ -127,9 +126,9 @@ class MicroservicioProveedorApplicationTests {
 	void shouldFindOrdenById() {
 		ProveedorDTO proveedor = proveedorWrite.save(buildProveedorDTO());
 		OrdenCompraDTO saved = ordenWrite.create(buildOrdenDTO(proveedor.getProveedorid()));
-		Optional<OrdenCompraDTO> found = ordenRead.findById(saved.getOrdenId());
-		Assertions.assertThat(found).isPresent();
-		Assertions.assertThat(found.get().getOrdenId()).isEqualTo(saved.getOrdenId());
+		OrdenCompraDTO found = ordenRead.findById(saved.getOrdenId());
+		Assertions.assertThat(found).isNotNull();
+		Assertions.assertThat(found.getOrdenId()).isEqualTo(saved.getOrdenId());
 	}
 
 	@Test
@@ -167,8 +166,7 @@ class MicroservicioProveedorApplicationTests {
 		ProveedorDTO proveedor = proveedorWrite.save(buildProveedorDTO());
 		OrdenCompraDTO saved = ordenWrite.create(buildOrdenDTO(proveedor.getProveedorid()));
 		ordenWrite.delete(saved.getOrdenId());
-		Optional<OrdenCompraDTO> found = ordenRead.findById(saved.getOrdenId());
-		Assertions.assertThat(found).isEmpty();
+		Assertions.assertThatThrownBy(() -> ordenRead.findById(saved.getOrdenId())).isInstanceOf(ResourceNotFoundException.class);
 	}
 
 	@Test

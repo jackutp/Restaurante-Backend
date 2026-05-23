@@ -3,6 +3,7 @@ package com.microservicio.Proveedor.Services.proveedor;
 import com.microservicio.Proveedor.Mapper.ProveedorMapper;
 import com.microservicio.Proveedor.Repositories.ProveedorRepository;
 import com.microservicio.Proveedor.dto.ProveedorDTO;
+import com.microservicio.Proveedor.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +30,8 @@ public class ProveedorServiceReadImp implements ProveedorServiceRead{
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<ProveedorDTO> findById(Integer id) {
-        return proveedorRepository.findById(id)
-                .map(proveedorMapper::toDTO);
+    public ProveedorDTO findById(Integer id) {
+        return proveedorRepository.findById(id).map(proveedorMapper::toDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("No se enconctró proveedor con el id: " + id));
     }
 }
