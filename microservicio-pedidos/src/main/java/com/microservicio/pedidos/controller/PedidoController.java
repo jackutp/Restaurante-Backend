@@ -30,7 +30,7 @@ public class PedidoController {
     public ResponseEntity<List<PedidoResponseDTO>> getPedidosByEstado(@PathVariable EstadoPedido estado) {
         return ResponseEntity.ok(pedidoService.getPedidosByEstado(estado));
     }
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<PedidoResponseDTO> crearPedido(@Valid @RequestBody CrearPedidoRequestDTO request) {
         PedidoResponseDTO newPedido = pedidoService.crearPedido(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newPedido);

@@ -3,15 +3,15 @@ jwt:
 spring:
   datasource:
     write:
-      jdbc-url: jdbc:postgresql://localhost:5432/users_db
+      jdbc-url: jdbc:postgresql://localhost:5433/users_db
       username: postgres
-      password: kenyiaqp10
+      password: admin
       driver-class-name: org.postgresql.Driver
 
     read:
       jdbc-url: jdbc:postgresql://localhost:5433/users_db
       username: postgres
-      password: kenyiaqp10
+      password: admin
       driver-class-name: org.postgresql.Driver
 #eureka:
 #  client:
