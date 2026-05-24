@@ -1,4 +1,4 @@
-ARG MODULE=microservicio-pedidso
+ARG MODULE=microservicio-pedidos
 FROM eclipse-temurin:21-jdk as builder
 WORKDIR /app
 ARG MODULE=-microservicio-pedidos

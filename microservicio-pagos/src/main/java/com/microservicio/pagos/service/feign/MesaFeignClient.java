@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "microservicio-mesas", url = "http://localhost:8216")
+@FeignClient(name = "microservicio-mesas")
 public interface MesaFeignClient {
 
     @PutMapping("/mesas/numero/{numero}/estado")

@@ -1,7 +1,7 @@
 ARG MODULE=microservicio-cocina
 FROM eclipse-temurin:21-jdk as builder
 WORKDIR /app
-ARG MODULE=-microservicio-cocina
+ARG MODULE=microservicio-cocina
 COPY ${MODULE} /app/${MODULE}
 COPY pom.xml .
 #RUN ./mvnw clean package -DskipTests

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "microservicio-mesas", url = "http://localhost:8216")
+@FeignClient(name = "microservicio-mesas")
 public interface MesaFeignClient {
 
     @PutMapping("/mesas/numero/{numero}/estado")

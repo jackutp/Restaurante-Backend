@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import java.util.Map;
 
-@FeignClient(name = "microservicio-pedidos", url = "http://localhost:8217")
+@FeignClient(name = "microservicio-pedidos")
 public interface PedidoFeignClient {
 
     @PatchMapping("/pedidos/orden/{ordenId}/estado")
