@@ -12,7 +12,5 @@ public enum EstadoSolicitud {
         this.descripcion = descripcion;
     }
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+    public String getDescripcion() { return descripcion; }
 }

@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
-@EnableDiscoveryClient  // ← AGREGAR ESTA ANOTACIÓN
+@EnableDiscoveryClient
 public class MicroservicioSolicitudesApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(MicroservicioSolicitudesApplication.class, args);

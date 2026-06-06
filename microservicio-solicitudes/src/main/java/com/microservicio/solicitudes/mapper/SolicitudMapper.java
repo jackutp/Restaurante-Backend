@@ -12,9 +12,20 @@ public class SolicitudMapper {
 
         SolicitudDTO dto = new SolicitudDTO();
         dto.setId(solicitud.getId());
+        dto.setCodigoTicket(solicitud.getCodigoTicket());
         dto.setTitulo(solicitud.getTitulo());
-        dto.setDescripcion(solicitud.getDescripcion());  // ← Verifica este campo
+        dto.setDescripcion(solicitud.getDescripcion());
+        dto.setTipoSolicitud(solicitud.getTipoSolicitud());
         dto.setEstado(solicitud.getEstado());
+        dto.setPrioridad(solicitud.getPrioridad());
+        dto.setFechaVencimiento(solicitud.getFechaVencimiento());
+        dto.setSlaFechaLimite(solicitud.getSlaFechaLimite());
+        dto.setUsuarioSolicitante(solicitud.getUsuarioSolicitante());
+        dto.setAreaSolicitante(solicitud.getAreaSolicitante());
+        dto.setResponsableAsignado(solicitud.getResponsableAsignado());
+        dto.setFechaAsignacion(solicitud.getFechaAsignacion());
+        dto.setFechaResolucion(solicitud.getFechaResolucion());
+        dto.setResolucion(solicitud.getResolucion());
         dto.setJiraTicketId(solicitud.getJiraTicketId());
         dto.setJiraUrl(solicitud.getJiraUrl());
         dto.setFechaCreacion(solicitud.getFechaCreacion());
@@ -28,12 +39,22 @@ public class SolicitudMapper {
 
         Solicitud solicitud = new Solicitud();
         solicitud.setId(dto.getId());
+        solicitud.setCodigoTicket(dto.getCodigoTicket());
         solicitud.setTitulo(dto.getTitulo());
-        solicitud.setDescripcion(dto.getDescripcion());  // ← Verifica este campo
+        solicitud.setDescripcion(dto.getDescripcion());
+        solicitud.setTipoSolicitud(dto.getTipoSolicitud());
         solicitud.setEstado(dto.getEstado());
+        solicitud.setPrioridad(dto.getPrioridad());
+        solicitud.setFechaVencimiento(dto.getFechaVencimiento());
+        solicitud.setSlaFechaLimite(dto.getSlaFechaLimite());
+        solicitud.setUsuarioSolicitante(dto.getUsuarioSolicitante());
+        solicitud.setAreaSolicitante(dto.getAreaSolicitante());
+        solicitud.setResponsableAsignado(dto.getResponsableAsignado());
+        solicitud.setFechaAsignacion(dto.getFechaAsignacion());
+        solicitud.setFechaResolucion(dto.getFechaResolucion());
+        solicitud.setResolucion(dto.getResolucion());
         solicitud.setJiraTicketId(dto.getJiraTicketId());
         solicitud.setJiraUrl(dto.getJiraUrl());
-        // No mapear fechas porque se setean automáticamente con @PrePersist
 
         return solicitud;
     }
