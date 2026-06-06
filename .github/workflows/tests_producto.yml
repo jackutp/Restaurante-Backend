@@ -3,9 +3,13 @@ on:
   pull_request:
     branches:
       - master
+    paths:
+      - 'microservicio-producto/**'
   push:
     branches:
       - master
+    paths:
+      - 'microservicio-producto/**'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -70,7 +74,7 @@ jobs:
           -p 5432 \
           -U postgres \
           -d productos_db \
-          -f database/schema_productos.sql
+          -f microservicio-producto/database/schema_productos.sql
       - name: Load schema into read database
         run: |
           PGPASSWORD=kenyiaqp10 psql \
@@ -78,19 +82,21 @@ jobs:
           -p 5433 \
           -U postgres \
           -d productos_db \
-          -f database/schema_productos.sql
+          -f microservicio-producto/database/schema_productos.sql
       - name: Run tests
+        working-directory: microservicio-producto
         run: mvn clean test -Dspring.profiles.active=tests
       - name: Build application
+        working-directory: microservicio-producto
         run: mvn clean package -DskipTests
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
           name: productos-artifact
-          path: target/*.jar
+          path: microservicio-producto/target/*.jar
       - name: Upload tests report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: productos-tests-reports
-          path: target/surefire-reports/
+          path: microservicio-producto/target/surefire-reports/

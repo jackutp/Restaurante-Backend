@@ -3,9 +3,13 @@ on:
   pull_request:
     branches:
       - master
+    paths:
+      - 'microservicio-Mermas/**'
   push:
     branches:
       - master
+    paths:
+      - 'microservicio-Mermas/**'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,7 +17,7 @@ jobs:
       postgres-write:
         image: postgres:16
         env:
-          POSTGRES_DB: pagos_db
+          POSTGRES_DB: mermas_db
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: kenyiaqp10
         ports:
@@ -26,7 +30,7 @@ jobs:
       postgres-read:
         image: postgres:16
         env:
-          POSTGRES_DB: pagos_db
+          POSTGRES_DB: mermas_db
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: kenyiaqp10
         ports:
@@ -69,28 +73,30 @@ jobs:
           -h localhost \
           -p 5432 \
           -U postgres \
-          -d pagos_db \
-          -f database/schema_pagos.sql
+          -d mermas_db \
+          -f microservicio-Mermas/database/schema_mermas.sql
       - name: Load schema into read database
         run: |
           PGPASSWORD=kenyiaqp10 psql \
           -h localhost \
           -p 5433 \
           -U postgres \
-          -d pagos_db \
-          -f database/schema_pagos.sql
+          -d mermas_db \
+          -f microservicio-Mermas/database/schema_mermas.sql
       - name: Run tests
+        working-directory: microservicio-Mermas
         run: mvn clean test -Dspring.profiles.active=tests
       - name: Build application
+        working-directory: microservicio-Mermas
         run: mvn clean package -DskipTests
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pagos-artifact
-          path: target/*.jar
+          name: mermas-artifact
+          path: microservicio-Mermas/target/*.jar
       - name: Upload tests report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pagos-tests-reports
-          path: target/surefire-reports/
+          name: mermas-tests-reports
+          path: microservicio-Mermas/target/surefire-reports/
