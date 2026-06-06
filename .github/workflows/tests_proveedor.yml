@@ -3,9 +3,13 @@ on:
   pull_request:
     branches:
       - master
+    paths:
+      - 'microservicio-proveedor/**'
   push:
     branches:
       - master
+    paths:
+      - 'microservicio-proveedor/**'
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -13,7 +17,7 @@ jobs:
       postgres-write:
         image: postgres:16
         env:
-          POSTGRES_DB: pedidos_db
+          POSTGRES_DB: proveedores_db
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: kenyiaqp10
         ports:
@@ -26,7 +30,7 @@ jobs:
       postgres-read:
         image: postgres:16
         env:
-          POSTGRES_DB: pedidos_db
+          POSTGRES_DB: proveedores_db
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: kenyiaqp10
         ports:
@@ -69,28 +73,30 @@ jobs:
           -h localhost \
           -p 5432 \
           -U postgres \
-          -d pedidos_db \
-          -f database/schema_pedidos.sql
+          -d proveedores_db \
+          -f microservicio-proveedor/database/schema_proveedores.sql
       - name: Load schema into read database
         run: |
           PGPASSWORD=kenyiaqp10 psql \
           -h localhost \
           -p 5433 \
           -U postgres \
-          -d pedidos_db \
-          -f database/schema_pedidos.sql
+          -d proveedores_db \
+          -f microservicio-proveedor/database/schema_proveedores.sql
       - name: Run tests
+        working-directory: microservicio-proveedor
         run: mvn clean test -Dspring.profiles.active=tests
       - name: Build application
+        working-directory: microservicio-proveedor
         run: mvn clean package -DskipTests
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: pedidos-artifact
-          path: target/*.jar
+          name: proveedores-artifact
+          path: microservicio-proveedor/target/*.jar
       - name: Upload tests report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: pedido-tests-reports
-          path: target/surefire-reports/
+          name: proveedores-tests-reports
+          path: microservicio-proveedor/target/surefire-reports/
