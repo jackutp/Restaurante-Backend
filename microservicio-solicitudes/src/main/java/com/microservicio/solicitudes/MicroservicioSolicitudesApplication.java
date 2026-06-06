@@ -1,0 +1,13 @@
+package com.microservicio.solicitudes;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+@SpringBootApplication
+@EnableDiscoveryClient  // ← AGREGAR ESTA ANOTACIÓN
+public class MicroservicioSolicitudesApplication {
+	public static void main(String[] args) {
+		SpringApplication.run(MicroservicioSolicitudesApplication.class, args);
+	}
+}

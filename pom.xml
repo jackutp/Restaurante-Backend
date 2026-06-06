@@ -23,6 +23,7 @@
 	</developers>
 
     <modules>
+		<module>microservicio-solicitudes</module>
 		<module>microservicio-cocina</module>
 		<module>microservicio-pagos</module>
 		<module>microservicio-eventos</module>

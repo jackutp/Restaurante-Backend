@@ -101,6 +101,12 @@ spring:
                 - Path=/api/reservas/**
               filters:
                 - StripPrefix=1
+            - id: microservicio-solicitudes
+              uri: lb://microservicio-solicitudes
+              predicates:
+                - Path=/api/solicitudes/**
+              filters:
+                - StripPrefix=1
 eureka:
   client:
     service-url:
