@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("local")
+@ActiveProfiles("tests")
 @Transactional
 public class ProveedorRestTests {
     @Autowired
@@ -71,7 +71,7 @@ public class ProveedorRestTests {
     @Test
     void shouldGetAllProveedores() throws Exception {
         createProveedor();
-        mockMvc.perform(get("/proveedores"))
+        mockMvc.perform(get("/proveedores/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -93,7 +93,7 @@ public class ProveedorRestTests {
     @Test
     void shouldCreateProveedor() throws Exception {
         ProveedorRequestDTO dto = buildProveedorDTO();
-        mockMvc.perform(post("/proveedores")
+        mockMvc.perform(post("/proveedores/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())

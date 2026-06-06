@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("local")
+@ActiveProfiles("tests")
 @Transactional
 public class ProductoRestTests {
     @Autowired
@@ -39,7 +39,7 @@ public class ProductoRestTests {
     @Test
     void shouldCreateProducto() throws Exception {
         MockMultipartFile image = buildImage();
-        mockMvc.perform(multipart("/productos")
+        mockMvc.perform(multipart("/productos/crear")
                                 .file(image)
                                 .param("nombre", "Pizza Test")
                                 .param("descripcion", "Pizza familiar")
@@ -56,7 +56,7 @@ public class ProductoRestTests {
     void shouldFindProductoById() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos")
+                        multipart("/productos/crear")
                                 .file(image)
                                 .param("nombre", "Hamburguesa")
                                 .param("descripcion", "Doble carne")
@@ -129,7 +129,7 @@ public class ProductoRestTests {
     void shouldUpdateProducto() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos")
+                        multipart("/productos/crear")
                                 .file(image)
                                 .param("nombre", "Original")
                                 .param("descripcion", "Original Desc")
@@ -171,7 +171,7 @@ public class ProductoRestTests {
     void shouldUpdateStock() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos")
+                        multipart("/productos/crear")
                                 .file(image)
                                 .param("nombre", "Stock Test")
                                 .param("descripcion", "Descripcion")
@@ -201,7 +201,7 @@ public class ProductoRestTests {
     void shouldDeleteProducto() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos")
+                        multipart("/productos/crear")
                                 .file(image)
                                 .param("nombre", "Eliminar")
                                 .param("descripcion", "Descripcion")
@@ -221,7 +221,7 @@ public class ProductoRestTests {
     void shouldUpdateImagen() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos")
+                        multipart("/productos/crear")
                                 .file(image)
                                 .param("nombre", "Imagen")
                                 .param("descripcion", "Descripcion")
@@ -256,7 +256,7 @@ public class ProductoRestTests {
     void shouldDeleteImagen() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos")
+                        multipart("/productos/crear")
                                 .file(image)
                                 .param("nombre", "Imagen Delete")
                                 .param("descripcion", "Descripcion")

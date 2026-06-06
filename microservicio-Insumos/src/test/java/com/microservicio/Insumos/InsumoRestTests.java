@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("local")
+@ActiveProfiles("tests")
 @Transactional
 public class InsumoRestTests {
     @Autowired
@@ -46,7 +46,7 @@ public class InsumoRestTests {
 
         InsumoRequestDTO dto = buildRequestDTO();
 
-        mockMvc.perform(post("/insumos")
+        mockMvc.perform(post("/insumos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
@@ -62,7 +62,7 @@ public class InsumoRestTests {
 
         InsumoRequestDTO dto = buildRequestDTO();
 
-        String response = mockMvc.perform(post("/insumos")
+        String response = mockMvc.perform(post("/insumos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -85,11 +85,11 @@ public class InsumoRestTests {
 
         InsumoRequestDTO dto = buildRequestDTO();
 
-        mockMvc.perform(post("/insumos")
+        mockMvc.perform(post("/insumos/crear")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
 
-        mockMvc.perform(get("/insumos"))
+        mockMvc.perform(get("/insumos/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$").isNotEmpty());
@@ -100,7 +100,7 @@ public class InsumoRestTests {
 
         InsumoRequestDTO dto = buildRequestDTO();
 
-        mockMvc.perform(post("/insumos")
+        mockMvc.perform(post("/insumos/crear")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
 
@@ -117,7 +117,7 @@ public class InsumoRestTests {
 
         InsumoRequestDTO dto = buildRequestDTO();
 
-        mockMvc.perform(post("/insumos")
+        mockMvc.perform(post("/insumos/crear")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
 
@@ -133,7 +133,7 @@ public class InsumoRestTests {
 
         InsumoRequestDTO dto = buildRequestDTO();
 
-        String response = mockMvc.perform(post("/insumos")
+        String response = mockMvc.perform(post("/insumos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -162,7 +162,7 @@ public class InsumoRestTests {
 
         InsumoRequestDTO dto = buildRequestDTO();
 
-        String response = mockMvc.perform(post("/insumos")
+        String response = mockMvc.perform(post("/insumos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -183,7 +183,7 @@ public class InsumoRestTests {
 
         InsumoRequestDTO dto = buildRequestDTO();
 
-        String response = mockMvc.perform(post("/insumos")
+        String response = mockMvc.perform(post("/insumos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -216,11 +216,11 @@ public class InsumoRestTests {
 
         InsumoRequestDTO dto = buildRequestDTO();
 
-        mockMvc.perform(post("/insumos")
+        mockMvc.perform(post("/insumos/crear")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
 
-        mockMvc.perform(post("/insumos")
+        mockMvc.perform(post("/insumos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
@@ -244,7 +244,7 @@ public class InsumoRestTests {
         InsumoRequestDTO dto = buildRequestDTO();
         dto.setNombre("");
 
-        mockMvc.perform(post("/insumos")
+        mockMvc.perform(post("/insumos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
@@ -256,7 +256,7 @@ public class InsumoRestTests {
         InsumoRequestDTO dto = buildRequestDTO();
         dto.setUnidadMedida(null);
 
-        mockMvc.perform(post("/insumos")
+        mockMvc.perform(post("/insumos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());

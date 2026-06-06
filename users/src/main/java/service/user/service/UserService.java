@@ -1,6 +1,7 @@
 package service.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.transaction.annotation.Transactional;
 import service.user.exception.ConflictException;
 import service.user.jwt.JwtService;
@@ -15,7 +16,6 @@ import service.user.exception.resourceNotFoundException;
 import service.user.model.User;
 import service.user.model.TipoUser;
 import service.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
@@ -36,6 +36,7 @@ public class UserService {
     public UserResponseDTO login(UserLoginRequestDTO request){
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
         UserDetails user = usuarioRepository.findByEmail(request.email()).orElseThrow();
+
         return toResponseDTO((User) user);
     }
     // REGISTRO (solo clientes)

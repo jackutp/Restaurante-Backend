@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("tests")
 @Transactional
 class MicroservicioCocinaApplicationTests {
 	@Autowired
