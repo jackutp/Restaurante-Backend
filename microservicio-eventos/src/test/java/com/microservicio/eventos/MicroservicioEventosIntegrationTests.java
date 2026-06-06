@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("tests")
 @Transactional
 class MicroservicioEventosIntegrationTests {
 

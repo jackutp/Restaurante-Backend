@@ -27,7 +27,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("tests")
 @Transactional
 class MicroservicioPagosApplicationTests {
 	@Autowired

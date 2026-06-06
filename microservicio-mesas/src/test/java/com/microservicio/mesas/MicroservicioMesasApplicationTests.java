@@ -23,7 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("tests")
 @Transactional
 class MicroservicioMesasApplicationTests {
 	@Autowired

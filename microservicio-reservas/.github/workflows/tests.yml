@@ -1,0 +1,96 @@
+name: CI
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres-write:
+        image: postgres:16
+        env:
+          POSTGRES_DB: users_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: kenyiaqp10
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+      postgres-read:
+        image: postgres:16
+        env:
+          POSTGRES_DB: users_db
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: kenyiaqp10
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@v4
+      - name: Setup & install java 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: maven
+      - name: Install postgresql client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+      - name: Wait for postgres
+        run: |
+          until pg_isready -h localhost -p 5432 -U postgres
+          do
+            echo "Waiting for postgres-write"
+            sleep 2
+          done
+          
+          
+          until pg_isready -h localhost -p 5433 -U postgres
+          do
+            echo "Waiting for postgres-read"
+            sleep 2
+          done
+      - name: Load schema into write database
+        run: |
+          PGPASSWORD=kenyiaqp10 psql \
+          -h localhost \
+          -p 5432 \
+          -U postgres \
+          -d users_db \
+          -f database/schema_users.sql
+      - name: Load schema into read database
+        run: |
+          PGPASSWORD=kenyiaqp10 psql \
+          -h localhost \
+          -p 5433 \
+          -U postgres \
+          -d users_db \
+          -f database/schema_users.sql
+      - name: Run tests
+        run: mvn clean test -Dspring.profiles.active=tests
+      - name: Build application
+        run: mvn clean package -DskipTests
+      - name: Upload JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: users-artifact
+          path: target/*.jar
+      - name: Upload tests report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: users-tests-reports
+          path: target/surefire-reports/

@@ -24,7 +24,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("tests")
 @Transactional
 class MicroservicioReservasApplicationTests {
 	@Autowired

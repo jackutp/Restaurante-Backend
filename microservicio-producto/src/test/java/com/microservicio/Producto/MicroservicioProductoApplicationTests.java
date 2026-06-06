@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("tests")
 @Transactional
 class MicroservicioProductoApplicationTests {
 	@Autowired
