@@ -66,7 +66,7 @@ public class PedidoRestTests {
     void getAllPedidos_ShouldReturnOk() throws Exception {
         when(pedidoService.getAllPedidos()).thenReturn(List.of(pedidoResponse));
 
-        mockMvc.perform(get("/pedidos"))
+        mockMvc.perform(get("/pedidos/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].ordenId").value("ORD-123ABC"))
@@ -111,7 +111,7 @@ public class PedidoRestTests {
         when(pedidoService.crearPedido(any(CrearPedidoRequestDTO.class)))
                 .thenReturn(pedidoResponse);
 
-        mockMvc.perform(post("/pedidos")
+        mockMvc.perform(post("/pedidos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -126,7 +126,7 @@ public class PedidoRestTests {
         request.setMesaNumero(0);
         request.setItems(List.of());
 
-        mockMvc.perform(post("/pedidos")
+        mockMvc.perform(post("/pedidos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());

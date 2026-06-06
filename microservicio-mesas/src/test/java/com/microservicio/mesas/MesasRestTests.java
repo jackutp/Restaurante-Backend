@@ -51,7 +51,7 @@ public class MesasRestTests {
 
     @Test
     void createMesa_ShouldCreateMesa() throws Exception {
-        mockMvc.perform(post("/mesas")
+        mockMvc.perform(post("/mesas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(crearMesaRequest)))
                 .andExpect(status().isCreated())
@@ -71,7 +71,7 @@ public class MesasRestTests {
                         EstadoMesa.DISPONIBLE
                 )
         );
-        mockMvc.perform(post("/mesas")
+        mockMvc.perform(post("/mesas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(crearMesaRequest)))
                 .andExpect(status().isConflict())
@@ -83,7 +83,7 @@ public class MesasRestTests {
         CrearMesaRequestDTO request = new CrearMesaRequestDTO();
         request.setNumero(0);
         request.setCapacidad(4);
-        mockMvc.perform(post("/mesas")
+        mockMvc.perform(post("/mesas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -94,7 +94,7 @@ public class MesasRestTests {
     void getAllMesas_ShouldReturnAllMesas() throws Exception {
          mesaRepository.save(new Mesa(4, 4, EstadoMesa.DISPONIBLE ));
         mesaRepository.save(new Mesa( 5, 6, EstadoMesa.OCUPADO ));
-        mockMvc.perform(get("/mesas"))
+        mockMvc.perform(get("/mesas/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(5));
     }

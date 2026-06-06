@@ -57,7 +57,7 @@ public class ReservasRestTests {
     @Test
     void crearReserva_ShouldReturnCreated() throws Exception {
 
-        mockMvc.perform(post("/reservas")
+        mockMvc.perform(post("/reservas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -87,7 +87,7 @@ public class ReservasRestTests {
                         null
                 );
 
-        mockMvc.perform(post("/reservas")
+        mockMvc.perform(post("/reservas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
@@ -111,7 +111,7 @@ public class ReservasRestTests {
                         null
                 );
 
-        mockMvc.perform(post("/reservas")
+        mockMvc.perform(post("/reservas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
@@ -135,7 +135,7 @@ public class ReservasRestTests {
                         null
                 );
 
-        mockMvc.perform(post("/reservas")
+        mockMvc.perform(post("/reservas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
@@ -159,7 +159,7 @@ public class ReservasRestTests {
                         null
                 );
 
-        mockMvc.perform(post("/reservas")
+        mockMvc.perform(post("/reservas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest());
@@ -168,11 +168,11 @@ public class ReservasRestTests {
     @Test
     void listarTodas_ShouldReturnReservas() throws Exception {
 
-        mockMvc.perform(post("/reservas")
+        mockMvc.perform(post("/reservas/crear")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
 
-        mockMvc.perform(get("/reservas"))
+        mockMvc.perform(get("/reservas/all"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -180,7 +180,7 @@ public class ReservasRestTests {
     @Test
     void listarPorEstado_ShouldReturnReservas() throws Exception {
 
-        mockMvc.perform(post("/reservas")
+        mockMvc.perform(post("/reservas/crear")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request)));
 
@@ -219,7 +219,7 @@ public class ReservasRestTests {
                         null
                 );
 
-        mockMvc.perform(post("/reservas")
+        mockMvc.perform(post("/reservas/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(todayRequest)))
                 .andExpect(status().isCreated());
@@ -233,7 +233,7 @@ public class ReservasRestTests {
     void obtenerPorId_ShouldReturnReserva() throws Exception {
 
         String response =
-                mockMvc.perform(post("/reservas")
+                mockMvc.perform(post("/reservas/crear")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                         .andReturn()
@@ -260,7 +260,7 @@ public class ReservasRestTests {
     void obtenerPorCodigo_ShouldReturnReserva() throws Exception {
 
         String response =
-                mockMvc.perform(post("/reservas")
+                mockMvc.perform(post("/reservas/crear")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                         .andReturn()
@@ -286,7 +286,7 @@ public class ReservasRestTests {
     void actualizarEstado_ShouldUpdateEstado() throws Exception {
 
         String response =
-                mockMvc.perform(post("/reservas")
+                mockMvc.perform(post("/reservas/crear")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
                         .andReturn()

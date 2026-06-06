@@ -204,18 +204,23 @@ public class UserRestTests {
     @Test
     void listarTodos_ShouldReturnUsers() throws Exception {
 
-        mockMvc.perform(get("/usuarios")
+        mockMvc.perform(get("/usuarios/all")
                         .header("Authorization", "Bearer " + adminToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
 
+    /*
+    This test is being commented-out since the token-authentication logic is being done by the gateway.
+    A second layer of token handling MAY be added in the future. I'm NOT making any promises that this will be case.
+    This is being commented-out and not deleted outright since, if I WERE to add this second layer, the test would be useful.
     @Test
     void listarTodos_ShouldReturnUnauthorized_WhenNoToken() throws Exception {
 
-        mockMvc.perform(get("/usuarios"))
+        mockMvc.perform(get("/usuarios/all"))
                 .andExpect(status().isUnauthorized());
     }
+     */
 
     @Test
     void buscarPorId_ShouldReturnUser() throws Exception {
@@ -284,6 +289,11 @@ public class UserRestTests {
                 .andExpect(jsonPath("$.tipo").value("ADMINISTRADOR"));
     }
 
+    /*
+    This set of tests is no longer needed as anyone can create a user as a part of the registering process, but the role will always be "CLIENTE" by default.
+    Therefore, limiting the creation of an account to the admin is redundant.
+    However, the system admin can create AND modify the role of a user. This is useful for MESEROS and COCINEROS.
+    Still, I'll not delete it outright just in case.
     @Test
     void createUserByAdmin_ShouldReturnForbidden_WhenUserIsNotAdmin() throws Exception {
 
@@ -322,4 +332,5 @@ public class UserRestTests {
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isUnauthorized());
     }
+    */
 }

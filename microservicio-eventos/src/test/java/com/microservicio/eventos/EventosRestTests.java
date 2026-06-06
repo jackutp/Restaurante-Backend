@@ -50,7 +50,7 @@ public class EventosRestTests {
     @Test
     void shouldCreateEvento() throws Exception{
         EventoRequestDTO evento = buildEventoRequestDto();
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(evento)))
                 .andExpect(status().isCreated())
@@ -64,7 +64,7 @@ public class EventosRestTests {
 
         EventoRequestDTO dto = buildEventoRequestDto();
 
-        String response = mockMvc.perform(post("/eventos")
+        String response = mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -84,11 +84,11 @@ public class EventosRestTests {
 
         EventoRequestDTO dto = buildEventoRequestDto();
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
 
-        mockMvc.perform(get("/eventos")
+        mockMvc.perform(get("/eventos/all")
                         .param("page", "0")
                         .param("size", "10")
                         .param("sort", "createdAt,desc"))
@@ -102,7 +102,7 @@ public class EventosRestTests {
 
         EventoRequestDTO dto = buildEventoRequestDto();
 
-        String response = mockMvc.perform(post("/eventos")
+        String response = mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -134,7 +134,7 @@ public class EventosRestTests {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setEmail("invalid-email");
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -146,7 +146,7 @@ public class EventosRestTests {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setName("");
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -158,7 +158,7 @@ public class EventosRestTests {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setDate(LocalDate.now().minusDays(1));
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -170,7 +170,7 @@ public class EventosRestTests {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setAttendees(999);
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -182,7 +182,7 @@ public class EventosRestTests {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setPrivacyAccepted(false);
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -194,7 +194,7 @@ public class EventosRestTests {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setAgeConfirmed(false);
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -206,7 +206,7 @@ public class EventosRestTests {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setComments("short");
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
@@ -218,7 +218,7 @@ public class EventosRestTests {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setPhone("abc123");
 
-        mockMvc.perform(post("/eventos")
+        mockMvc.perform(post("/eventos/crear")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
