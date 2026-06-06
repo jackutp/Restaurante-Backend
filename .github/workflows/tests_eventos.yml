@@ -1,4 +1,4 @@
-name: CI
+name: CI-Eventos
 on:
   pull_request:
     branches:
