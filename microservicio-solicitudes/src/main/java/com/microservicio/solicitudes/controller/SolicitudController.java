@@ -141,4 +141,37 @@ public class SolicitudController {
         ));
         return ResponseEntity.ok(new ApiResponseDTO(true, "Configuración del sistema", config));
     }
+
+    //new
+    // En SolicitudController.java - Agregar estos endpoints
+
+    @PutMapping("/{id}/responsable")
+    public ResponseEntity<ApiResponseDTO> actualizarResponsable(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+        log.info("PUT /solicitudes/{}/responsable", id);
+        try {
+            String responsable = body.get("responsable");
+            SolicitudDTO updated = solicitudService.actualizarResponsable(id, responsable);
+            return ResponseEntity.ok(new ApiResponseDTO(true, "Responsable actualizado", updated));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponseDTO(false, e.getMessage(), null));
+        }
+    }
+
+    @PutMapping("/{id}/resolucion")
+    public ResponseEntity<ApiResponseDTO> actualizarResolucion(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> body) {
+        log.info("PUT /solicitudes/{}/resolucion", id);
+        try {
+            String resolucion = body.get("resolucion");
+            SolicitudDTO updated = solicitudService.actualizarResolucion(id, resolucion);
+            return ResponseEntity.ok(new ApiResponseDTO(true, "Resolución actualizada", updated));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponseDTO(false, e.getMessage(), null));
+        }
+    }
 }

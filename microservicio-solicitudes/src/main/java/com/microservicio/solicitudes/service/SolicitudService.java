@@ -30,12 +30,10 @@ public class SolicitudService {
     public SolicitudDTO crearSolicitud(CrearSolicitudDTO dto) {
         log.info("Creando solicitud - Tipo: {}, Título: {}", dto.getTipoSolicitud(), dto.getTitulo());
 
-        // Validar tipo
         if (dto.getTipoSolicitud() == null) {
-            throw new RuntimeException("El tipo de solicitud es requerido (SERVICIO, INFORMACION o ACCESO)");
+            throw new RuntimeException("El tipo de solicitud es requerido");
         }
 
-        // Crear entidad
         Solicitud solicitud = new Solicitud();
         solicitud.setTipoSolicitud(dto.getTipoSolicitud());
         solicitud.setTitulo(dto.getTitulo());
@@ -43,19 +41,21 @@ public class SolicitudService {
         solicitud.setEstado(EstadoSolicitud.PENDIENTE);
         solicitud.setPrioridad(convertirPrioridad(dto.getPrioridad()));
 
+        // ===== ASIGNAR NUEVOS CAMPOS =====
+        solicitud.setUsuarioSolicitante(dto.getUsuarioSolicitante());
+        solicitud.setAreaSolicitante(dto.getAreaSolicitante());
+        solicitud.setResponsableAsignado(dto.getResponsableAsignado());
+
         if (dto.getFechaVencimiento() != null) {
             solicitud.setFechaVencimiento(dto.getFechaVencimiento().atStartOfDay());
         }
 
-        // Calcular SLA
         calcularSLA(solicitud);
 
-        // Guardar localmente
         Solicitud saved = solicitudRepository.save(solicitud);
-        log.info("Solicitud guardada localmente - Código: {}", saved.getCodigoTicket());
+        log.info("Solicitud guardada - Código: {}", saved.getCodigoTicket());
 
         try {
-            // Preparar DTO para Jira
             SolicitudJiraDTO jiraDTO = new SolicitudJiraDTO();
             jiraDTO.setTipoSolicitud(dto.getTipoSolicitud());
             jiraDTO.setTitulo(dto.getTitulo());
@@ -63,20 +63,16 @@ public class SolicitudService {
             jiraDTO.setPrioridad(dto.getPrioridad());
             jiraDTO.setFechaVencimiento(dto.getFechaVencimiento());
             jiraDTO.setLabels(dto.getLabels());
-            jiraDTO.setAssignee(dto.getAssignee());
+            jiraDTO.setAssignee(dto.getResponsableAsignado() != null ? dto.getResponsableAsignado() : dto.getAssignee());
             jiraDTO.setSubtareas(dto.getSubtareas());
 
-            // Crear ticket en Jira
             String jiraKey = jiraService.crearTicketEnJira(jiraDTO);
 
             saved.setJiraTicketId(jiraKey);
             saved.setJiraUrl(jiraService.getTicketUrl(jiraKey));
 
             Solicitud updated = solicitudRepository.save(saved);
-            log.info("Solicitud actualizada con ticket Jira: {}", jiraKey);
-
             return solicitudMapper.toDTO(updated);
-
         } catch (Exception e) {
             log.error("Error al crear ticket en Jira: {}", e.getMessage());
             return solicitudMapper.toDTO(saved);
@@ -180,5 +176,38 @@ public class SolicitudService {
 
     public long contarPorTipo(TipoSolicitud tipo) {
         return solicitudRepository.countByTipoSolicitud(tipo);
+    }
+
+    //new
+    @Transactional
+    public SolicitudDTO actualizarResponsable(Long id, String responsable) {
+        log.info("Actualizando responsable de solicitud {}: {}", id, responsable);
+
+        Solicitud solicitud = solicitudRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada con ID: " + id));
+
+        solicitud.setResponsableAsignado(responsable);
+        if (solicitud.getFechaAsignacion() == null) {
+            solicitud.setFechaAsignacion(LocalDateTime.now());
+        }
+
+        Solicitud updated = solicitudRepository.save(solicitud);
+        return solicitudMapper.toDTO(updated);
+    }
+
+    @Transactional
+    public SolicitudDTO actualizarResolucion(Long id, String resolucion) {
+        log.info("Actualizando resolución de solicitud {}: {}", id, resolucion);
+
+        Solicitud solicitud = solicitudRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Solicitud no encontrada con ID: " + id));
+
+        solicitud.setResolucion(resolucion);
+        if (solicitud.getEstado() == EstadoSolicitud.COMPLETADA && solicitud.getFechaResolucion() == null) {
+            solicitud.setFechaResolucion(LocalDateTime.now());
+        }
+
+        Solicitud updated = solicitudRepository.save(solicitud);
+        return solicitudMapper.toDTO(updated);
     }
 }

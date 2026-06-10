@@ -11,7 +11,7 @@ import java.util.List;
 public class CrearSolicitudDTO {
 
     @NotNull(message = "El tipo de solicitud es requerido")
-    private TipoSolicitud tipoSolicitud;  // SERVICIO, INFORMACION, ACCESO
+    private TipoSolicitud tipoSolicitud;
 
     @NotBlank(message = "El título es requerido")
     private String titulo;
@@ -19,9 +19,14 @@ public class CrearSolicitudDTO {
     @NotBlank(message = "La descripción es requerida")
     private String descripcion;
 
-    private String prioridad;  // Highest, High, Medium, Low, Lowest
+    private String prioridad;
     private LocalDate fechaVencimiento;
     private List<String> labels;
     private String assignee;
     private List<SubtareaDTO> subtareas;
+
+    // NUEVOS CAMPOS
+    private String usuarioSolicitante;
+    private String areaSolicitante;
+    private String responsableAsignado;
 }
