@@ -8,6 +8,8 @@ import com.microservicio.Producto.Utils.ImageUtils;
 import com.microservicio.Producto.dto.ProductoDTO;
 import com.microservicio.Producto.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,4 +76,11 @@ public class ProductoServiceReadImp implements ProductoServiceRead{
         Producto producto = productoRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
         return producto.getStock();
     }
+
+    @Override
+    public Page<ProductoDTO> findAllPaged(Pageable pageable) {
+        return null;
+    }
+
+
 }

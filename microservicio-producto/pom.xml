@@ -112,6 +112,12 @@
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-core</artifactId>
+			<version>1.16.5</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -122,7 +128,25 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
+
+
+			<!-- Micrometer para Prometheus -->
+			<dependency>
+				<groupId>io.micrometer</groupId>
+				<artifactId>micrometer-registry-prometheus</artifactId>
+			</dependency>
+
+			<!-- Para métricas de caché y JVM -->
+			<dependency>
+				<groupId>io.micrometer</groupId>
+				<artifactId>micrometer-core</artifactId>
+			</dependency>
 		</dependencies>
+
+
+
+
+
 	</dependencyManagement>
 
 	<build>
@@ -179,3 +203,4 @@
 	</build>
 
 </project>
+

@@ -6,6 +6,8 @@ import com.microservicio.Producto.dto.ProductoDTO;
 import com.microservicio.Producto.exception.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 @RestController
 @RequestMapping("/productos")
 public class ProductoController {
@@ -23,9 +27,10 @@ public class ProductoController {
     private ProductoServiceRead productoRead;
 
     // GET: Listar todos los productos
-    @GetMapping("/all")
-    public ResponseEntity<List<ProductoDTO>> getAllProductos() {
-        return ResponseEntity.ok(productoRead.findAll());
+    @GetMapping
+    public ResponseEntity<Page<ProductoDTO>> getAllProductosPaged(Pageable pageable) {
+        Page<ProductoDTO> page = productoRead.findAllPaged(pageable);
+        return ResponseEntity.ok(page);
     }
     // GET: Obtener producto por ID
     @GetMapping("/{id}")
@@ -113,5 +118,22 @@ public class ProductoController {
     public ResponseEntity<?> getStock(@PathVariable Integer id) {
         Integer stock = productoRead.getStock(id);
         return ResponseEntity.ok(Map.of("stock", stock));
+    }
+    //Metricas GNW
+    private final MeterRegistry meterRegistry;
+    private final Timer getProductosTimer;
+
+    public ProductoController(MeterRegistry meterRegistry) {
+        this.meterRegistry = meterRegistry;
+        this.getProductosTimer = Timer.builder("productos.get.all")
+                .description("Tiempo de respuesta de GET /productos/all")
+                .register(meterRegistry);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductoDTO>> getAllProductos() {
+        return getProductosTimer.record(() ->
+                ResponseEntity.ok(productoRead.findAll())
+        );
     }
 }
