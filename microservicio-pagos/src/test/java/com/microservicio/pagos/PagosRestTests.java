@@ -1,8 +1,10 @@
 package com.microservicio.pagos;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microservicio.pagos.aws.StorageService;
 import com.microservicio.pagos.dto.ProcesarPagoRequestDTO;
 import com.microservicio.pagos.entity.Comprobante;
+import com.microservicio.pagos.exception.ResourceNotFoundException;
 import com.microservicio.pagos.repository.ComprobanteRepository;
 import com.microservicio.pagos.repository.PagoRepository;
 import com.microservicio.pagos.service.PdfGeneratorService;
@@ -28,6 +30,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("tests")
@@ -43,6 +46,8 @@ public class PagosRestTests {
     private ComprobanteRepository comprobanteRepository;
     @Autowired
     private PdfGeneratorService pdfGeneratorService;
+    @MockitoBean
+    private StorageService storageService;
     @MockitoBean
     private MesaFeignClient mesaFeignClient;
     @MockitoBean
@@ -85,7 +90,9 @@ public class PagosRestTests {
 
     @Test
     void procesarPago_ShouldGenerateComprobante() throws Exception {
-
+        //This when was added to make this test work after using a MockitoBean instead of autowired for the storageService
+        //If the test uses an autowired REAL storageService it passes as usual
+        when(storageService.uploadBytes(any(byte[].class), anyString(), anyString())).thenReturn("fake-s3-key.pdf");
         request.setTipoComprobante("BOLETA");
 
         mockMvc.perform(
@@ -184,15 +191,7 @@ public class PagosRestTests {
 
     @Test
     void descargarPdf_ShouldReturnPdf() throws Exception {
-
-        String path = pdfGeneratorService.generarComprobantePdf(
-                "BOLETA",
-                "B001-999999",
-                5,
-                120.0,
-                null,
-                null
-        );
+        when(storageService.getFile(anyString())).thenReturn("fake-pdf".getBytes());
 
         Comprobante comprobante = new Comprobante();
 
@@ -203,7 +202,7 @@ public class PagosRestTests {
         comprobante.setOrdenId("ORD-999");
         comprobante.setMesaNumero(5);
         comprobante.setTotal(120.0);
-        comprobante.setPdfUrl(path);
+        comprobante.setPdfUrl("test-key.pdf");
         comprobante.setCreatedAt(LocalDateTime.now());
 
         comprobante = comprobanteRepository.save(comprobante);
@@ -232,6 +231,7 @@ public class PagosRestTests {
         comprobante.setCreatedAt(LocalDateTime.now());
 
         comprobante = comprobanteRepository.save(comprobante);
+        when(storageService.getFile("archivo-inexistente.pdf")).thenThrow(new ResourceNotFoundException("PDF no encontrado"));
 
         mockMvc.perform(get("/pagos/comprobantes/" + comprobante.getId() + "/pdf"))
                 .andExpect(status().isNotFound());
@@ -239,9 +239,8 @@ public class PagosRestTests {
 
     @Test
     void descargarPdf_ShouldReturnInternalServerError_WhenComprobanteNotExists() throws Exception {
-
         mockMvc.perform(get("/pagos/comprobantes/99999/pdf"))
-                .andExpect(status().isInternalServerError());
+                .andExpect(status().isNotFound());
     }
 
     @Test

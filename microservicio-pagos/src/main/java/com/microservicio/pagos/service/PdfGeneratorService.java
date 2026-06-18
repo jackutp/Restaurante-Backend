@@ -1,11 +1,15 @@
 package com.microservicio.pagos.service;
+
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.qrcode.ByteArray;
 import com.microservicio.pagos.exception.FileStorageException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,23 +17,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+
 @Service
 public class PdfGeneratorService {
-    @Value("${pdf.storage.path:./pdfs/}")
-    private String pdfDir;
-    public String generarComprobantePdf(String tipo, String numeroCompleto,
+    public byte[] generarComprobantePdf(String tipo, String numeroCompleto,
                                         Integer mesaNumero, Double total,
                                         String ruc, String razonSocial) {
         try {
-            // Crear directorio
-            Path path = Paths.get(pdfDir);
-            if (!Files.exists(path)) {
-                Files.createDirectories(path);
-            }
-            String fileName = numeroCompleto.replace("/", "_") + ".pdf";
-            String filePath = pdfDir + fileName;
             Document document = new Document();
-            PdfWriter.getInstance(document, new FileOutputStream(filePath));
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            PdfWriter.getInstance(document, outputStream);
             document.open();
             // Título
             Font titleFont = new Font(Font.FontFamily.HELVETICA, 18, Font.BOLD);
@@ -77,8 +74,8 @@ public class PdfGeneratorService {
             gracias.setAlignment(Element.ALIGN_CENTER);
             document.add(gracias);
             document.close();
-            return filePath;
-        } catch (IOException | DocumentException e) {
+            return outputStream.toByteArray();
+        } catch (DocumentException e) {
             throw new FileStorageException("NO se pudo guardar el recibo");
         }
     }
