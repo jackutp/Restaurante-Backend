@@ -4,6 +4,7 @@ import com.microservicio.Producto.Entities.Producto;
 import com.microservicio.Producto.Mapper.ProductoMapper;
 import com.microservicio.Producto.Repositories.ProductoRepository;
 import com.microservicio.Producto.Utils.ImageUtils;
+import com.microservicio.Producto.aws.StorageService;
 import com.microservicio.Producto.dto.ProductoDTO;
 import com.microservicio.Producto.exception.FileStorageException;
 import com.microservicio.Producto.exception.ResourceNotFoundException;
@@ -22,7 +23,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
     @Autowired
     private  ProductoMapper productoMapper;
     @Autowired
-    private  ImageUtils imageUtils;
+    private StorageService storageService;
 
     @Override
     @Transactional
@@ -33,7 +34,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
 
             // Guardar imagen si existe
             if (imagen != null && !imagen.isEmpty()) {
-                String imagenPath = imageUtils.guardarImagen(imagen);
+                String imagenPath = storageService.uploadFile(imagen);
                 producto.setImagenProducto(imagenPath);
             }
 
@@ -61,10 +62,10 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
             try {
                 // Eliminar imagen anterior si existe
                 if (existingProducto.getImagenProducto() != null) {
-                    imageUtils.eliminarImagen(existingProducto.getImagenProducto());
+                    storageService.deleteFile(existingProducto.getImagenProducto());
                 }
                 // Guardar nueva imagen
-                String imagenPath = imageUtils.guardarImagen(imagen);
+                String imagenPath = storageService.uploadFile(imagen);
                 existingProducto.setImagenProducto(imagenPath);
             } catch (IOException e) {
                 throw new FileStorageException("Error al actualizar la imagen: " + e.getMessage());
@@ -81,7 +82,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con id: " + id));
         // Eliminar la imagen asociada
         if (producto.getImagenProducto() != null) {
-            imageUtils.eliminarImagen(producto.getImagenProducto());
+            storageService.deleteFile(producto.getImagenProducto());
         }
 
         productoRepository.deleteById(id);
@@ -110,10 +111,10 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
         try {
             // Eliminar imagen anterior
             if (producto.getImagenProducto() != null) {
-                imageUtils.eliminarImagen(producto.getImagenProducto());
+                storageService.deleteFile(producto.getImagenProducto());
             }
             // Guardar nueva imagen
-            String imagenPath = imageUtils.guardarImagen(imagen);
+            String imagenPath = storageService.uploadFile(imagen);
             producto.setImagenProducto(imagenPath);
             productoRepository.save(producto);
 
@@ -129,7 +130,7 @@ public class ProductoServiceWriteImp implements ProductoServiceWrite{
                 .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado"));
 
         if (producto.getImagenProducto() != null) {
-            imageUtils.eliminarImagen(producto.getImagenProducto());
+            storageService.deleteFile(producto.getImagenProducto());
             producto.setImagenProducto(null);
             productoRepository.save(producto);
         }

@@ -2,10 +2,8 @@ package com.microservicio.Producto.Services;
 
 import com.microservicio.Producto.Entities.Categoria;
 import com.microservicio.Producto.dto.ProductoDTO;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ProductoServiceRead {
     // READ básico
