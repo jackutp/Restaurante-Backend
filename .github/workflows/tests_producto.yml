@@ -72,7 +72,7 @@ jobs:
           done
       - name: Load schema into write database
         run: |
-          PGPASSWORD=kenyiaqp10 psql \
+          PGPASSWORD=password psql \
           -h localhost \
           -p 5432 \
           -U postgres \
@@ -80,7 +80,7 @@ jobs:
           -f microservicio-producto/database/schema_productos.sql
       - name: Load schema into read database
         run: |
-          PGPASSWORD=kenyiaqp10 psql \
+          PGPASSWORD=password psql \
           -h localhost \
           -p 5433 \
           -U postgres \
