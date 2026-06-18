@@ -3,13 +3,13 @@ spring:
     write:
       jdbc-url: jdbc:postgresql://localhost:5432/eventos_db
       username: postgres
-      password: kenyiaqp10
+      password: password
       driver-class-name: org.postgresql.Driver
     read:
       #jdbc-url: jdbc:postgresql://localhost:5433/eventos_db
       jdbc-url: jdbc:postgresql://localhost:5433/eventos_db
       username: postgres
-      password: kenyiaqp10
+      password: password
       driver-class-name: org.postgresql.Driver
   cloud:
     discovery:

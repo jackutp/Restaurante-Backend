@@ -22,7 +22,7 @@ jobs:
         env:
           POSTGRES_DB: pagos_db
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: kenyiaqp10
+          POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
         options: >-
@@ -35,7 +35,7 @@ jobs:
         env:
           POSTGRES_DB: pagos_db
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: kenyiaqp10
+          POSTGRES_PASSWORD: password
         ports:
           - 5433:5432
         options: >-

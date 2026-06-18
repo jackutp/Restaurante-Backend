@@ -5,11 +5,11 @@ spring:
     write:
       jdbc-url: jdbc:postgresql://localhost:5432/users_db
       username: postgres
-      password: kenyiaqp10
+      password: password
       driver-class-name: org.postgresql.Driver
 
     read:
       jdbc-url: jdbc:postgresql://localhost:5433/users_db
       username: postgres
-      password: kenyiaqp10
+      password: password
       driver-class-name: org.postgresql.Driver
