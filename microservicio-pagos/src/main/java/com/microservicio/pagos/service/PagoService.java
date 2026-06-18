@@ -1,8 +1,12 @@
 package com.microservicio.pagos.service;
+
+import com.microservicio.pagos.aws.StorageService;
 import com.microservicio.pagos.dto.*;
 import com.microservicio.pagos.entity.*;
 import com.microservicio.pagos.exception.ExternalServiceException;
+import com.microservicio.pagos.exception.FileStorageException;
 import com.microservicio.pagos.exception.MetricsGenerationException;
+import com.microservicio.pagos.exception.ResourceNotFoundException;
 import com.microservicio.pagos.repository.PagoRepository;
 import com.microservicio.pagos.repository.ComprobanteRepository;
 import com.microservicio.pagos.service.feign.MesaFeignClient;
@@ -13,23 +17,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
 @Service
 public class PagoService {
     @Autowired
-    private  PagoRepository pagoRepository;
+    private PagoRepository pagoRepository;
     @Autowired
-    private  ComprobanteRepository comprobanteRepository;
+    private ComprobanteRepository comprobanteRepository;
     @Autowired
-    private  MesaFeignClient mesaFeignClient;
+    private MesaFeignClient mesaFeignClient;
     @Autowired
-    private  PedidoFeignClient pedidoFeignClient;
+    private PedidoFeignClient pedidoFeignClient;
     @Autowired
-    private  PdfGeneratorService pdfGeneratorService;
+    private PdfGeneratorService pdfGeneratorService;
     @Autowired
-    private  NumeracionComprobanteUtil numeracionUtil;
+    private NumeracionComprobanteUtil numeracionUtil;
+
+    @Autowired
+    private StorageService storageService;
 
     @Transactional
     public ProcesarPagoResponseDTO procesarPago(ProcesarPagoRequestDTO request) {
@@ -58,16 +68,23 @@ public class PagoService {
         response.setComprobante(comprobanteDTO);
         return response;
     }
+
     private ComprobanteResponseDTO generarComprobante(ProcesarPagoRequestDTO request) {
         String tipo = request.getTipoComprobante();
         String numeroCompleto = numeracionUtil.generarNumeroComprobante(tipo);
         String serie = numeroCompleto.substring(0, 4);
         Integer correlativo = numeracionUtil.obtenerCorrelativo(serie);
         // Generar PDF
-        String pdfPath = pdfGeneratorService.generarComprobantePdf(
+        byte[] pdfBytes = pdfGeneratorService.generarComprobantePdf(
                 tipo, numeroCompleto, request.getMesaNumero(),
                 request.getTotal(), request.getRuc(), request.getRazonSocial()
         );
+        String pdfKey;
+        try {
+            pdfKey = storageService.uploadBytes(pdfBytes, numeroCompleto + ".pdf", "application/pdf");
+        } catch (IOException e) {
+            throw new FileStorageException("No se pudo subir el PDF a S3");
+        }
         // Guardar comprobante en BD
         Comprobante comprobante = new Comprobante();
         comprobante.setTipo(tipo);
@@ -79,7 +96,7 @@ public class PagoService {
         comprobante.setOrdenId(request.getOrdenId());
         comprobante.setMesaNumero(request.getMesaNumero());
         comprobante.setTotal(request.getTotal());
-        comprobante.setPdfUrl(pdfPath);
+        comprobante.setPdfUrl(pdfKey);
         comprobante.setCreatedAt(LocalDateTime.now());
         comprobante = comprobanteRepository.save(comprobante);
         ComprobanteResponseDTO response = new ComprobanteResponseDTO();
@@ -90,6 +107,8 @@ public class PagoService {
         response.setTotal(comprobante.getTotal());
         return response;
     }
+
+    @Transactional
     private void liberarMesa(Integer numeroMesa) {
         try {
             // Cambiar estado a DISPONIBLE
@@ -107,6 +126,17 @@ public class PagoService {
             throw new ExternalServiceException("No se pudo liberar la mesa: Servicio no disponible");
         }
     }
+
+    @Transactional(readOnly = true)
+    public byte[] descargarComprobante(Long comprobanteId) {
+        Comprobante comprobante = comprobanteRepository.findById(comprobanteId).orElseThrow(() -> new ResourceNotFoundException("Comprobante no encontrado"));
+        try {
+            return storageService.getFile(comprobante.getPdfUrl());
+        } catch (IOException e) {
+            throw new FileStorageException("No se pudo descargar el PDF");
+        }
+    }
+
     @Transactional
     private void actualizarEstadoPedido(String ordenId) {
         try {
@@ -118,6 +148,7 @@ public class PagoService {
             throw new ExternalServiceException("Error al actualizar pedido: " + ordenId + ": Servicio no disponible");
         }
     }
+
     // metricas
     @Transactional(readOnly = true)
     public MetricasPagosResponseDTO getMetricas() {

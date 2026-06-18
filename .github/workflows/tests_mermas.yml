@@ -19,7 +19,7 @@ jobs:
         env:
           POSTGRES_DB: mermas_db
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: kenyiaqp10
+          POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
         options: >-
@@ -32,7 +32,7 @@ jobs:
         env:
           POSTGRES_DB: mermas_db
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: kenyiaqp10
+          POSTGRES_PASSWORD: password
         ports:
           - 5433:5432
         options: >-
@@ -69,7 +69,7 @@ jobs:
           done
       - name: Load schema into write database
         run: |
-          PGPASSWORD=kenyiaqp10 psql \
+          PGPASSWORD=password psql \
           -h localhost \
           -p 5432 \
           -U postgres \
@@ -77,7 +77,7 @@ jobs:
           -f microservicio-Mermas/database/schema_mermas.sql
       - name: Load schema into read database
         run: |
-          PGPASSWORD=kenyiaqp10 psql \
+          PGPASSWORD=password psql \
           -h localhost \
           -p 5433 \
           -U postgres \

@@ -4,13 +4,15 @@ import com.microservicio.Producto.Entities.Categoria;
 import com.microservicio.Producto.Entities.Producto;
 import com.microservicio.Producto.Mapper.ProductoMapper;
 import com.microservicio.Producto.Repositories.ProductoRepository;
-import com.microservicio.Producto.Utils.ImageUtils;
+import com.microservicio.Producto.aws.StorageService;
 import com.microservicio.Producto.dto.ProductoDTO;
+import com.microservicio.Producto.exception.FileStorageException;
 import com.microservicio.Producto.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,7 +23,7 @@ public class ProductoServiceReadImp implements ProductoServiceRead{
     @Autowired
     private  ProductoMapper productoMapper;
     @Autowired
-    private  ImageUtils imageUtils;
+    private StorageService storageService;
 
     @Override
     @Transactional(readOnly = true)
@@ -46,7 +48,11 @@ public class ProductoServiceReadImp implements ProductoServiceRead{
         if (producto.getImagenProducto() == null) {
             throw new ResourceNotFoundException("El producto no tiene imagen asociada");
         }
-        return imageUtils.obtenerImagen(producto.getImagenProducto());
+        try {
+            return storageService.getFile(producto.getImagenProducto());
+        } catch (IOException e) {
+            throw new FileStorageException("No se pudo encontrar la imagen: " + e);
+        }
     }
 
     @Override

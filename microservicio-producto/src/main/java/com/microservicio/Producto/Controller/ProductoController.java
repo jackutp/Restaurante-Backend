@@ -3,15 +3,13 @@ import com.microservicio.Producto.Entities.Categoria;
 import com.microservicio.Producto.Services.ProductoServiceRead;
 import com.microservicio.Producto.Services.ProductoServiceWrite;
 import com.microservicio.Producto.dto.ProductoDTO;
-import com.microservicio.Producto.exception.ResourceNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 @RestController
