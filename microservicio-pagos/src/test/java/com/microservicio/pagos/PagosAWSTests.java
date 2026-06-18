@@ -7,6 +7,7 @@ import com.microservicio.pagos.exception.ResourceNotFoundException;
 import com.microservicio.pagos.service.PagoService;
 import com.microservicio.pagos.service.PdfGeneratorService;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +25,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @SpringBootTest
 @ActiveProfiles("tests")
 @Transactional
+@Tag("aws")
 public class PagosAWSTests {
     @Autowired
     private StorageService storageService;

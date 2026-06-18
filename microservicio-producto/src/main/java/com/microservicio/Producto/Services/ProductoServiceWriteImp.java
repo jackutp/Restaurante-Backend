@@ -3,12 +3,10 @@ package com.microservicio.Producto.Services;
 import com.microservicio.Producto.Entities.Producto;
 import com.microservicio.Producto.Mapper.ProductoMapper;
 import com.microservicio.Producto.Repositories.ProductoRepository;
-import com.microservicio.Producto.Utils.ImageUtils;
 import com.microservicio.Producto.aws.StorageService;
 import com.microservicio.Producto.dto.ProductoDTO;
 import com.microservicio.Producto.exception.FileStorageException;
 import com.microservicio.Producto.exception.ResourceNotFoundException;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @Service
-public class ProductoServiceWriteImp implements ProductoServiceWrite{
+public class ProductoServiceWriteImp implements ProductoServiceWrite {
     @Autowired
-    private  ProductoRepository productoRepository;
+    private ProductoRepository productoRepository;
     @Autowired
-    private  ProductoMapper productoMapper;
+    private ProductoMapper productoMapper;
     @Autowired
     private StorageService storageService;
 

@@ -4,6 +4,7 @@ import com.microservicio.Producto.aws.StorageService;
 import com.microservicio.Producto.exception.ResourceNotFoundException;
 import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 @SpringBootTest
 @ActiveProfiles("tests")
 @Transactional
+@Tag("aws")
 public class ProductosAWSTest {
     @Autowired
     private StorageService storageService;
