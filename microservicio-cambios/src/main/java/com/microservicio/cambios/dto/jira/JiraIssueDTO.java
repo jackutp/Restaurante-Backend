@@ -1,15 +1,15 @@
 package com.microservicio.cambios.dto.jira;
 
-import lombok.Data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@Data
-public class JiraIssueDTO {
-    private String key;
-    private String summary;
-    private String description;
-    private String status;
+public record JiraIssueDTO(
+        String key,
+        String summary,
+        String description,
+        String status,
 
-    @JsonProperty("project_key")
-    private String projectKey;
+        @JsonProperty("project_key")
+        String projectKey
+) {
+
 }

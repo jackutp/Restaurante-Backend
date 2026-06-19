@@ -1,11 +1,12 @@
 package com.microservicio.cambios.dto.solicitud_servicio;
 
-import com.microservicio.cambios.enums.EstadoSolicitud;
+import com.microservicio.cambios.enums.EstadoCambio;
 import com.microservicio.cambios.enums.solicitud_servicio.TipoSolicitud;
 import com.microservicio.cambios.enums.solicitud_servicio.Prioridad;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public class SolicitudDTO {
     private String titulo;
     private String descripcion;
     private TipoSolicitud tipoSolicitud;
-    private EstadoSolicitud estado;
+    private EstadoCambio estado;
     private Prioridad prioridad;
     private LocalDateTime fechaVencimiento;
     private LocalDateTime slaFechaLimite;

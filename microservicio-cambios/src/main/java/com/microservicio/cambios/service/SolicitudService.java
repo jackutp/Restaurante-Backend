@@ -4,15 +4,16 @@ import com.microservicio.cambios.dto.solicitud_servicio.CrearSolicitudDTO;
 import com.microservicio.cambios.dto.solicitud_servicio.SolicitudDTO;
 import com.microservicio.cambios.dto.solicitud_servicio.SolicitudJiraDTO;
 import com.microservicio.cambios.entity.solicitud_servicio.Solicitud;
-import com.microservicio.cambios.enums.EstadoSolicitud;
+import com.microservicio.cambios.enums.EstadoCambio;
 import com.microservicio.cambios.enums.solicitud_servicio.Prioridad;
 import com.microservicio.cambios.enums.solicitud_servicio.TipoSolicitud;
-import com.microservicio.cambios.mapper.SolicitudMapper;
+import com.microservicio.cambios.mapper.CambioMapper;
 import com.microservicio.cambios.repository.SolicitudRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
 public class SolicitudService {
 
     private final SolicitudRepository solicitudRepository;
-    private final SolicitudMapper solicitudMapper;
+    private final CambioMapper solicitudMapper;
     private final JiraService jiraService;
 
     @Transactional
@@ -38,7 +39,7 @@ public class SolicitudService {
         solicitud.setTipoSolicitud(dto.getTipoSolicitud());
         solicitud.setTitulo(dto.getTitulo());
         solicitud.setDescripcion(dto.getDescripcion());
-        solicitud.setEstado(EstadoSolicitud.PENDIENTE);
+        solicitud.setEstado(EstadoCambio.PENDIENTE);
         solicitud.setPrioridad(convertirPrioridad(dto.getPrioridad()));
 
         // ===== ASIGNAR NUEVOS CAMPOS =====
@@ -100,20 +101,20 @@ public class SolicitudService {
     }
 
     @Transactional
-    public SolicitudDTO actualizarEstado(Long id, EstadoSolicitud nuevoEstado) {
+    public SolicitudDTO actualizarEstado(Long id, EstadoCambio nuevoEstado) {
         log.info("Actualizando estado de solicitud {} a {}", id, nuevoEstado);
 
         Solicitud solicitud = solicitudRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada con ID: " + id));
 
-        EstadoSolicitud estadoAnterior = solicitud.getEstado();
+        EstadoCambio estadoAnterior = solicitud.getEstado();
         solicitud.setEstado(nuevoEstado);
 
-        if (nuevoEstado == EstadoSolicitud.EN_PROCESO && solicitud.getFechaAsignacion() == null) {
+        if (nuevoEstado == EstadoCambio.EN_PROCESO && solicitud.getFechaAsignacion() == null) {
             solicitud.setFechaAsignacion(LocalDateTime.now());
         }
 
-        if (nuevoEstado == EstadoSolicitud.COMPLETADA) {
+        if (nuevoEstado == EstadoCambio.COMPLETADA) {
             solicitud.setFechaResolucion(LocalDateTime.now());
         }
 
@@ -148,7 +149,7 @@ public class SolicitudService {
                 .collect(Collectors.toList());
     }
 
-    public List<SolicitudDTO> listarPorEstado(EstadoSolicitud estado) {
+    public List<SolicitudDTO> listarPorEstado(EstadoCambio estado) {
         return solicitudRepository.findByEstado(estado).stream()
                 .map(solicitudMapper::toDTO)
                 .collect(Collectors.toList());
@@ -160,7 +161,7 @@ public class SolicitudService {
                 .collect(Collectors.toList());
     }
 
-    public List<SolicitudDTO> listarPorTipoYEstado(TipoSolicitud tipo, EstadoSolicitud estado) {
+    public List<SolicitudDTO> listarPorTipoYEstado(TipoSolicitud tipo, EstadoCambio estado) {
         return solicitudRepository.findByTipoSolicitudAndEstado(tipo, estado).stream()
                 .map(solicitudMapper::toDTO)
                 .collect(Collectors.toList());
@@ -170,7 +171,7 @@ public class SolicitudService {
         return solicitudRepository.count();
     }
 
-    public long contarPorEstado(EstadoSolicitud estado) {
+    public long contarPorEstado(EstadoCambio estado) {
         return solicitudRepository.countByEstado(estado);
     }
 
@@ -203,7 +204,7 @@ public class SolicitudService {
                 .orElseThrow(() -> new RuntimeException("Solicitud no encontrada con ID: " + id));
 
         solicitud.setResolucion(resolucion);
-        if (solicitud.getEstado() == EstadoSolicitud.COMPLETADA && solicitud.getFechaResolucion() == null) {
+        if (solicitud.getEstado() == EstadoCambio.COMPLETADA && solicitud.getFechaResolucion() == null) {
             solicitud.setFechaResolucion(LocalDateTime.now());
         }
 

@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microservicio.cambios.dto.solicitud_servicio.SolicitudJiraDTO;
 import com.microservicio.cambios.dto.solicitud_servicio.SubtareaDTO;
-import com.microservicio.cambios.enums.solicitud_servicio.TipoSolicitud;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;

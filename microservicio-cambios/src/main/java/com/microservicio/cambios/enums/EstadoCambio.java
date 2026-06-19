@@ -1,6 +1,6 @@
 package com.microservicio.cambios.enums;
 
-public enum EstadoSolicitud {
+public enum EstadoCambio {
     PENDIENTE("Pendiente"),
     EN_PROCESO("En Proceso"),
     COMPLETADA("Completada"),
@@ -8,9 +8,11 @@ public enum EstadoSolicitud {
 
     private final String descripcion;
 
-    EstadoSolicitud(String descripcion) {
+    EstadoCambio(String descripcion) {
         this.descripcion = descripcion;
     }
 
-    public String getDescripcion() { return descripcion; }
+    public String getDescripcion() {
+        return descripcion;
+    }
 }

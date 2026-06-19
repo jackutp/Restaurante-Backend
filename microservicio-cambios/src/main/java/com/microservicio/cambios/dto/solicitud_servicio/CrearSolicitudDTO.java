@@ -1,9 +1,10 @@
 package com.microservicio.cambios.dto.solicitud_servicio;
 
-import com.microservicio.cambios.enums.solicitud_servicio.TipoSolicitud;
+import com.microservicio.cambios.enums.T;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 import java.time.LocalDate;
 import java.util.List;
 

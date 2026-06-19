@@ -3,7 +3,7 @@ package com.microservicio.cambios.controller;
 import com.microservicio.cambios.dto.jira.ApiResponseDTO;
 import com.microservicio.cambios.dto.solicitud_servicio.CrearSolicitudDTO;
 import com.microservicio.cambios.dto.solicitud_servicio.SolicitudDTO;
-import com.microservicio.cambios.enums.EstadoSolicitud;
+import com.microservicio.cambios.enums.EstadoCambio;
 import com.microservicio.cambios.enums.solicitud_servicio.TipoSolicitud;
 import com.microservicio.cambios.enums.solicitud_servicio.Prioridad;
 import com.microservicio.cambios.service.SolicitudService;
@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class SolicitudController {
     @PutMapping("/{id}/estado")
     public ResponseEntity<ApiResponseDTO> actualizarEstado(
             @PathVariable Long id,
-            @RequestParam EstadoSolicitud estado) {
+            @RequestParam EstadoCambio estado) {
         log.info("PUT /solicitudes/{}/estado?estado={}", id, estado);
         try {
             SolicitudDTO updated = solicitudService.actualizarEstado(id, estado);
@@ -85,7 +86,7 @@ public class SolicitudController {
     }
 
     @GetMapping("/estado/{estado}")
-    public ResponseEntity<ApiResponseDTO> listarPorEstado(@PathVariable EstadoSolicitud estado) {
+    public ResponseEntity<ApiResponseDTO> listarPorEstado(@PathVariable EstadoCambio estado) {
         log.info("GET /solicitudes/estado/{}", estado);
         List<SolicitudDTO> solicitudes = solicitudService.listarPorEstado(estado);
         return ResponseEntity.ok(new ApiResponseDTO(true, "Solicitudes con estado " + estado, solicitudes));
@@ -101,7 +102,7 @@ public class SolicitudController {
     @GetMapping("/tipo/{tipo}/estado/{estado}")
     public ResponseEntity<ApiResponseDTO> listarPorTipoYEstado(
             @PathVariable TipoSolicitud tipo,
-            @PathVariable EstadoSolicitud estado) {
+            @PathVariable EstadoCambio estado) {
         log.info("GET /solicitudes/tipo/{}/estado/{}", tipo, estado);
         List<SolicitudDTO> solicitudes = solicitudService.listarPorTipoYEstado(tipo, estado);
         return ResponseEntity.ok(new ApiResponseDTO(true, "Solicitudes filtradas", solicitudes));
@@ -113,10 +114,10 @@ public class SolicitudController {
 
         Map<String, Object> estadisticas = new HashMap<>();
         estadisticas.put("total", solicitudService.contarTotal());
-        estadisticas.put("pendientes", solicitudService.contarPorEstado(EstadoSolicitud.PENDIENTE));
-        estadisticas.put("en_proceso", solicitudService.contarPorEstado(EstadoSolicitud.EN_PROCESO));
-        estadisticas.put("completadas", solicitudService.contarPorEstado(EstadoSolicitud.COMPLETADA));
-        estadisticas.put("rechazadas", solicitudService.contarPorEstado(EstadoSolicitud.RECHAZADA));
+        estadisticas.put("pendientes", solicitudService.contarPorEstado(EstadoCambio.PENDIENTE));
+        estadisticas.put("en_proceso", solicitudService.contarPorEstado(EstadoCambio.EN_PROCESO));
+        estadisticas.put("completadas", solicitudService.contarPorEstado(EstadoCambio.COMPLETADA));
+        estadisticas.put("rechazadas", solicitudService.contarPorEstado(EstadoCambio.RECHAZADA));
 
         Map<String, Long> porTipo = new HashMap<>();
         porTipo.put("servicio", solicitudService.contarPorTipo(TipoSolicitud.SERVICIO));
@@ -131,7 +132,7 @@ public class SolicitudController {
     public ResponseEntity<ApiResponseDTO> getConfiguracion() {
         Map<String, Object> config = new HashMap<>();
         config.put("tiposSolicitud", TipoSolicitud.values());
-        config.put("estados", EstadoSolicitud.values());
+        config.put("estados", EstadoCambio.values());
         config.put("prioridades", Prioridad.values());
         config.put("flujoTrabajo", Map.of(
                 "PENDIENTE", List.of("EN_PROCESO", "RECHAZADA"),
