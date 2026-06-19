@@ -1,6 +1,6 @@
-package com.microservicio.solicitudes.dto.solicitud_servicio;
+package com.microservicio.cambios.dto.solicitud_servicio;
 
-import com.microservicio.solicitudes.enums.TipoSolicitud;
+import com.microservicio.cambios.enums.solicitud_servicio.TipoSolicitud;
 import lombok.Data;
 import java.time.LocalDate;
 import java.util.List;

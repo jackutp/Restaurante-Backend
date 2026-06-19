@@ -1,8 +1,8 @@
-package com.microservicio.solicitudes.dto.solicitud_servicio;
+package com.microservicio.cambios.dto.solicitud_servicio;
 
-import com.microservicio.solicitudes.enums.EstadoSolicitud;
-import com.microservicio.solicitudes.enums.TipoSolicitud;
-import com.microservicio.solicitudes.enums.Prioridad;
+import com.microservicio.cambios.enums.EstadoSolicitud;
+import com.microservicio.cambios.enums.solicitud_servicio.TipoSolicitud;
+import com.microservicio.cambios.enums.solicitud_servicio.Prioridad;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
