@@ -1,4 +1,4 @@
-package com.microservicio.solicitudes.dto;
+package com.microservicio.solicitudes.dto.solicitud_servicio;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

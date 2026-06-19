@@ -1,4 +1,4 @@
-package com.microservicio.solicitudes.enums;
+package com.microservicio.solicitudes.enums.solicitud_servicio;
 
 public enum Prioridad {
     ALTA("Alta", "Requiere atención inmediata", 1),

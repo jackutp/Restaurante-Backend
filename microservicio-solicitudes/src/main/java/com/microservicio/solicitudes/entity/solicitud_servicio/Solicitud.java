@@ -1,8 +1,8 @@
-package com.microservicio.solicitudes.entity;
+package com.microservicio.solicitudes.entity.solicitud_servicio;
 
-import com.microservicio.solicitudes.enums.EstadoSolicitud;
-import com.microservicio.solicitudes.enums.TipoSolicitud;
-import com.microservicio.solicitudes.enums.Prioridad;
+import com.microservicio.solicitudes.enums.jira.EstadoSolicitud;
+import com.microservicio.solicitudes.enums.solicitud_servicio.TipoSolicitud;
+import com.microservicio.solicitudes.enums.solicitud_servicio.Prioridad;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;

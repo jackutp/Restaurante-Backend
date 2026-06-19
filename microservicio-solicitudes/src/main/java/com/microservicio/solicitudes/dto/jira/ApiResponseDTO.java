@@ -1,4 +1,4 @@
-package com.microservicio.solicitudes.dto;
+package com.microservicio.solicitudes.dto.jira;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

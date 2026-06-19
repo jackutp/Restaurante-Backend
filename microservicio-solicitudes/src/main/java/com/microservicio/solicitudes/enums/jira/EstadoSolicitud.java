@@ -1,4 +1,4 @@
-package com.microservicio.solicitudes.enums;
+package com.microservicio.solicitudes.enums.jira;
 
 public enum EstadoSolicitud {
     PENDIENTE("Pendiente"),

@@ -1,7 +1,7 @@
-package com.microservicio.solicitudes.mapper;
+package com.microservicio.solicitudes.mapper.solicitud_servicio;
 
-import com.microservicio.solicitudes.dto.SolicitudDTO;
-import com.microservicio.solicitudes.entity.Solicitud;
+import com.microservicio.solicitudes.dto.solicitud_servicio.SolicitudDTO;
+import com.microservicio.solicitudes.entity.solicitud_servicio.Solicitud;
 import org.springframework.stereotype.Component;
 
 @Component

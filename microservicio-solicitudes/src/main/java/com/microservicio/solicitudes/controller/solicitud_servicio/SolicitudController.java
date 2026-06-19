@@ -1,12 +1,12 @@
-package com.microservicio.solicitudes.controller;
+package com.microservicio.solicitudes.controller.solicitud_servicio;
 
-import com.microservicio.solicitudes.dto.ApiResponseDTO;
-import com.microservicio.solicitudes.dto.CrearSolicitudDTO;
-import com.microservicio.solicitudes.dto.SolicitudDTO;
-import com.microservicio.solicitudes.enums.EstadoSolicitud;
-import com.microservicio.solicitudes.enums.TipoSolicitud;
-import com.microservicio.solicitudes.enums.Prioridad;
-import com.microservicio.solicitudes.service.SolicitudService;
+import com.microservicio.solicitudes.dto.jira.ApiResponseDTO;
+import com.microservicio.solicitudes.dto.solicitud_servicio.CrearSolicitudDTO;
+import com.microservicio.solicitudes.dto.solicitud_servicio.SolicitudDTO;
+import com.microservicio.solicitudes.enums.jira.EstadoSolicitud;
+import com.microservicio.solicitudes.enums.solicitud_servicio.TipoSolicitud;
+import com.microservicio.solicitudes.enums.solicitud_servicio.Prioridad;
+import com.microservicio.solicitudes.service.solicitud_servicio.SolicitudService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

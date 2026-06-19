@@ -1,4 +1,4 @@
-package com.microservicio.solicitudes.enums;
+package com.microservicio.solicitudes.enums.solicitud_servicio;
 
 public enum TipoSolicitud {
     SERVICIO("Servicio", "Soporte técnico, atención, configuración"),

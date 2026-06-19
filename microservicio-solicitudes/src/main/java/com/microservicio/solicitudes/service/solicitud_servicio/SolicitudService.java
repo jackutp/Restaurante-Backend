@@ -1,14 +1,14 @@
-package com.microservicio.solicitudes.service;
+package com.microservicio.solicitudes.service.solicitud_servicio;
 
-import com.microservicio.solicitudes.dto.CrearSolicitudDTO;
-import com.microservicio.solicitudes.dto.SolicitudDTO;
-import com.microservicio.solicitudes.dto.SolicitudJiraDTO;
-import com.microservicio.solicitudes.entity.Solicitud;
-import com.microservicio.solicitudes.enums.EstadoSolicitud;
-import com.microservicio.solicitudes.enums.Prioridad;
-import com.microservicio.solicitudes.enums.TipoSolicitud;
-import com.microservicio.solicitudes.mapper.SolicitudMapper;
-import com.microservicio.solicitudes.repository.SolicitudRepository;
+import com.microservicio.solicitudes.dto.solicitud_servicio.CrearSolicitudDTO;
+import com.microservicio.solicitudes.dto.solicitud_servicio.SolicitudDTO;
+import com.microservicio.solicitudes.dto.solicitud_servicio.SolicitudJiraDTO;
+import com.microservicio.solicitudes.entity.solicitud_servicio.Solicitud;
+import com.microservicio.solicitudes.enums.jira.EstadoSolicitud;
+import com.microservicio.solicitudes.enums.solicitud_servicio.Prioridad;
+import com.microservicio.solicitudes.enums.solicitud_servicio.TipoSolicitud;
+import com.microservicio.solicitudes.mapper.solicitud_servicio.SolicitudMapper;
+import com.microservicio.solicitudes.repository.solicitud_servicio.SolicitudRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

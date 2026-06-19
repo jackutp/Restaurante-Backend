@@ -1,6 +1,6 @@
-package com.microservicio.solicitudes.dto;
+package com.microservicio.solicitudes.dto.solicitud_servicio;
 
-import com.microservicio.solicitudes.enums.TipoSolicitud;
+import com.microservicio.solicitudes.enums.solicitud_servicio.TipoSolicitud;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

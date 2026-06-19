@@ -1,8 +1,8 @@
-package com.microservicio.solicitudes.repository;
+package com.microservicio.solicitudes.repository.solicitud_servicio;
 
-import com.microservicio.solicitudes.entity.Solicitud;
-import com.microservicio.solicitudes.enums.EstadoSolicitud;
-import com.microservicio.solicitudes.enums.TipoSolicitud;
+import com.microservicio.solicitudes.entity.solicitud_servicio.Solicitud;
+import com.microservicio.solicitudes.enums.jira.EstadoSolicitud;
+import com.microservicio.solicitudes.enums.solicitud_servicio.TipoSolicitud;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;

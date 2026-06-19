@@ -1,10 +1,10 @@
-package com.microservicio.solicitudes.service;
+package com.microservicio.solicitudes.service.solicitud_servicio;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microservicio.solicitudes.dto.SolicitudJiraDTO;
-import com.microservicio.solicitudes.dto.SubtareaDTO;
-import com.microservicio.solicitudes.enums.TipoSolicitud;
+import com.microservicio.solicitudes.dto.solicitud_servicio.SolicitudJiraDTO;
+import com.microservicio.solicitudes.dto.solicitud_servicio.SubtareaDTO;
+import com.microservicio.solicitudes.enums.solicitud_servicio.TipoSolicitud;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
