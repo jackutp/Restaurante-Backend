@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +26,9 @@ public class SolicitudController {
 
     private final SolicitudService solicitudService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<ApiResponseDTO> crearSolicitud(@Valid @RequestBody CrearSolicitudDTO dto) {
-        log.info("POST /solicitudes - Tipo: {}", dto.getTipoSolicitud());
+        log.info("POST /solicitudes/create - Tipo: {}", dto.getTipoSolicitud());
         try {
             SolicitudDTO created = solicitudService.crearSolicitud(dto);
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -39,9 +40,9 @@ public class SolicitudController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<ApiResponseDTO> listarTodas() {
-        log.info("GET /solicitudes - Listando todas");
+        log.info("GET /solicitudes/all - Listando todas");
         List<SolicitudDTO> solicitudes = solicitudService.listarTodas();
         return ResponseEntity.ok(new ApiResponseDTO(true, "Listado de solicitudes", solicitudes));
     }

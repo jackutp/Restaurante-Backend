@@ -20,6 +20,7 @@ public class CambioMapper {
                 cambio.getEstado(),
                 cambio.getRiesgo(),
                 cambio.getSistemaAfectado(),
+                cambio.getPlanRollback(),
                 cambio.getUsuarioSolicitante(),
                 cambio.getAreaSolicitante(),
                 cambio.getResponsableAsignado(),
@@ -30,6 +31,7 @@ public class CambioMapper {
                 cambio.getFechaActualizacion(),
                 cambio.getFechaAprobacion(),
                 cambio.getFechaImplementacion(),
+                cambio.getFechaCierre(),
                 cambio.getFechaVencimiento()
         );
     }
@@ -48,6 +50,7 @@ public class CambioMapper {
         cambio.setEstado(dto.estado());
         cambio.setRiesgo(dto.riesgo());
         cambio.setSistemaAfectado(dto.sistemaAfectado());
+        cambio.setPlanRollback(dto.planRollback());
         cambio.setUsuarioSolicitante(dto.usuarioSolicitante());
         cambio.setAreaSolicitante(dto.areaSolicitante());
         cambio.setResponsableAsignado(dto.responsableAsignado());

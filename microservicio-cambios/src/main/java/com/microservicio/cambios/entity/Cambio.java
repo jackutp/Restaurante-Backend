@@ -70,6 +70,9 @@ public class Cambio {
     @Column(name = "sistema_afectado")
     private String sistemaAfectado; //docker, microservicio-productos, postgres, github-actions, etc
 
+    @Column(name = "plan_rollback", length = 3000)
+    private String planRollback;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RiesgoCambio riesgo = RiesgoCambio.MEDIO;
@@ -82,6 +85,9 @@ public class Cambio {
 
     @Column(name = "fecha_implementacion")
     private LocalDateTime fechaImplementacion;
+
+    @Column(name = "fecha_cierre")
+    private LocalDateTime fechaCierre;
 
     @PrePersist
     protected void onCreate() {
