@@ -14,12 +14,12 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationManager implements ReactiveAuthenticationManager {
-    private final JwtService jwtService;
+    private JwtService jwtService;
 
     @Override
     public Mono<Authentication> authenticate(Authentication authentication) {
         String token = authentication.getCredentials().toString();
-        if(!jwtService.isTokenValid(token)){
+        if (!jwtService.isTokenValid(token)) {
             return Mono.error(new BadCredentialsException("Invalid token"));
         }
         String email = jwtService.getUsernameFromToken(token);
