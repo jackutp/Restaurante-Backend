@@ -49,7 +49,9 @@ public class SecurityConfig {
     // ─────────────────────────────────────────────
     // ENDPOINTS COMPLETAMENTE PÚBLICOS (sin token)
     // ─────────────────────────────────────────────
-    /** POST públicos: login, registro y creación de eventos/reservas desde el landing */
+    /**
+     * POST públicos: login, registro y creación de eventos/reservas desde el landing
+     */
     private static final String[] PUBLIC_POST_ENDPOINTS = {
             "/api/usuarios/login",
             "/api/usuarios/registro",
@@ -57,7 +59,9 @@ public class SecurityConfig {
             "/api/reservas/**"
 
     };
-    /** GET públicos: catálogo de productos visible sin autenticación */
+    /**
+     * GET públicos: catálogo de productos visible sin autenticación
+     */
     private static final String[] PUBLIC_GET_ENDPOINTS = {
             "/api/productos/**",
             //cambiar a futuro
@@ -73,7 +77,9 @@ public class SecurityConfig {
     // ─────────────────────────────────────────────
     // ENDPOINTS POR ROL
     // ─────────────────────────────────────────────
-    /** Solo ADMINISTRADOR: gestión de inventario, mermas, proveedores y usuarios */
+    /**
+     * Solo ADMINISTRADOR: gestión de inventario, mermas, proveedores y usuarios
+     */
     private static final String[] ADMIN_ONLY_ENDPOINTS = {
             "/api/insumos/**",
             "/api/mermas/**",
@@ -106,7 +112,9 @@ public class SecurityConfig {
      */
     private static final String[] ALL_AUTHENTICATED_ENDPOINTS = {
             "/api/reservas/**",
-            "/api/eventos/**"
+            "/api/eventos/**",
+            "/api/solicitudes/**",
+            "/api/cambios/**"
     };
 
     @Bean
