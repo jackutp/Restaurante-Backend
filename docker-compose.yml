@@ -64,33 +64,6 @@ services:
       - eureka-server
       - cocina-write-db
       - cocina-read-db
-
-  cocina-write-db:
-    image: postgres:16
-    container_name: cocina-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: cocina_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5433:5432"
-    volumes:
-      - cocina_write_data:/var/lib/postgresql/data
-
-  cocina-read-db:
-    image: postgres:16
-    container_name: cocina-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: cocina_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5434:5432"
-    volumes:
-      - cocina_read_data:/var/lib/postgresql/data
-
   # =====================================================
   # EVENTOS
   # =====================================================
@@ -119,33 +92,6 @@ services:
       - eureka-server
       - eventos-write-db
       - eventos-read-db
-
-  eventos-write-db:
-    image: postgres:16
-    container_name: eventos-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: eventos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5435:5432"
-    volumes:
-      - eventos_write_data:/var/lib/postgresql/data
-
-  eventos-read-db:
-    image: postgres:16
-    container_name: eventos-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: eventos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5436:5432"
-    volumes:
-      - eventos_read_data:/var/lib/postgresql/data
-
   # =====================================================
   # INSUMOS
   # =====================================================
@@ -174,33 +120,6 @@ services:
       - eureka-server
       - insumos-write-db
       - insumos-read-db
-
-  insumos-write-db:
-    image: postgres:16
-    container_name: insumos-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: insumos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5437:5432"
-    volumes:
-      - insumos_write_data:/var/lib/postgresql/data
-
-  insumos-read-db:
-    image: postgres:16
-    container_name: insumos-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: insumos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5438:5432"
-    volumes:
-      - insumos_read_data:/var/lib/postgresql/data
-
   # =====================================================
   # MERMAS
   # =====================================================
@@ -229,33 +148,6 @@ services:
       - eureka-server
       - mermas-write-db
       - mermas-read-db
-
-  mermas-write-db:
-    image: postgres:16
-    container_name: mermas-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: mermas_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5439:5432"
-    volumes:
-      - mermas_write_data:/var/lib/postgresql/data
-
-  mermas-read-db:
-    image: postgres:16
-    container_name: mermas-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: mermas_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5440:5432"
-    volumes:
-      - mermas_read_data:/var/lib/postgresql/data
-
   # =====================================================
   # PAGOS
   # =====================================================
@@ -285,31 +177,7 @@ services:
       - pagos-write-db
       - pagos-read-db
 
-  pagos-write-db:
-    image: postgres:16
-    container_name: pagos-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: pagos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5441:5432"
-    volumes:
-      - pagos_write_data:/var/lib/postgresql/data
 
-  pagos-read-db:
-    image: postgres:16
-    container_name: pagos-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: pagos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5442:5432"
-    volumes:
-      - pagos_read_data:/var/lib/postgresql/data
 
   # =====================================================
   # PEDIDOS
@@ -339,33 +207,6 @@ services:
       - eureka-server
       - pedidos-write-db
       - pedidos-read-db
-
-  pedidos-write-db:
-    image: postgres:16
-    container_name: pedidos-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: pedidos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5443:5432"
-    volumes:
-      - pedidos_write_data:/var/lib/postgresql/data
-
-  pedidos-read-db:
-    image: postgres:16
-    container_name: pedidos-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: pedidos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5444:5432"
-    volumes:
-      - pedidos_read_data:/var/lib/postgresql/data
-
   # =====================================================
   # PRODUCTOS
   # =====================================================
@@ -394,33 +235,6 @@ services:
       - eureka-server
       - productos-write-db
       - productos-read-db
-
-  productos-write-db:
-    image: postgres:16
-    container_name: productos-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: productos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5445:5432"
-    volumes:
-      - productos_write_data:/var/lib/postgresql/data
-
-  productos-read-db:
-    image: postgres:16
-    container_name: productos-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: productos_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5446:5432"
-    volumes:
-      - productos_read_data:/var/lib/postgresql/data
-
   # =====================================================
   # PROVEEDOR
   # =====================================================
@@ -450,32 +264,6 @@ services:
       - proveedor-write-db
       - proveedor-read-db
 
-  proveedor-write-db:
-    image: postgres:16
-    container_name: proveedor-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: proveedores_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5447:5432"
-    volumes:
-      - proveedor_write_data:/var/lib/postgresql/data
-
-  proveedor-read-db:
-    image: postgres:16
-    container_name: proveedor-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: proveedores_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5448:5432"
-    volumes:
-      - proveedor_read_data:/var/lib/postgresql/data
-
   # =====================================================
   # RESERVAS
   # =====================================================
@@ -504,33 +292,6 @@ services:
       - eureka-server
       - reservas-write-db
       - reservas-read-db
-
-  reservas-write-db:
-    image: postgres:16
-    container_name: reservas-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: reserva
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5449:5432"
-    volumes:
-      - reservas_write_data:/var/lib/postgresql/data
-
-  reservas-read-db:
-    image: postgres:16
-    container_name: reservas-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: reserva
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5450:5432"
-    volumes:
-      - reservas_read_data:/var/lib/postgresql/data
-
   # =====================================================
   # USERS
   # =====================================================
@@ -560,51 +321,3 @@ services:
       - eureka-server
       - users-write-db
       - users-read-db
-
-  users-write-db:
-    image: postgres:16
-    container_name: users-write-db
-    restart: always
-    environment:
-      POSTGRES_DB: users_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5451:5432"
-    volumes:
-      - users_write_data:/var/lib/postgresql/data
-
-  users-read-db:
-    image: postgres:16
-    container_name: users-read-db
-    restart: always
-    environment:
-      POSTGRES_DB: users_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5452:5432"
-    volumes:
-      - users_read_data:/var/lib/postgresql/data
-
-volumes:
-  cocina_write_data:
-  cocina_read_data:
-  eventos_write_data:
-  eventos_read_data:
-  insumos_write_data:
-  insumos_read_data:
-  mermas_write_data:
-  mermas_read_data:
-  pagos_write_data:
-  pagos_read_data:
-  pedidos_write_data:
-  pedidos_read_data:
-  productos_write_data:
-  productos_read_data:
-  proveedor_write_data:
-  proveedor_read_data:
-  reservas_write_data:
-  reservas_read_data:
-  users_write_data:
-  users_read_data:
