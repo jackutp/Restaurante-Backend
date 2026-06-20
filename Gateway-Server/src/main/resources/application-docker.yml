@@ -15,6 +15,7 @@ spring:
               '[/**]':
                 allowed-origin-patterns:
                   - ${FRONTEND_URL}
+                  - "http://localhost:3000"
                 allowed-methods:
                   - GET
                   - POST
@@ -78,5 +79,11 @@ spring:
               uri: lb://microservicio-solicitudes
               predicates:
                 - Path=/api/solicitudes/**
+              filters:
+                - StripPrefix=1
+            - id: microservicio-cambios
+              uri: lb://microservicio-cambios
+              predicates:
+                - Path=/api/cambios/**
               filters:
                 - StripPrefix=1

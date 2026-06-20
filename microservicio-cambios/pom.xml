@@ -14,7 +14,7 @@
     <groupId>com.microservicio-cambio</groupId>
     <artifactId>microservicio-cambios</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>microservicio-cambio</name>
+    <name>microservicio-cambios</name>
     <description>Microservicio para gestión de cambios con integración Jira</description>
 
     <properties>
