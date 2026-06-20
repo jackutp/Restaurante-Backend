@@ -1,5 +1,3 @@
-jwt:
-  secret: "3KTMZ7An77+TnowBQVy0+Nop3ADuwmIIbcTszYkOAYY="
 spring:
   cloud:
     gateway:

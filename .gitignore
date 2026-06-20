@@ -34,3 +34,4 @@ build/
 
 ### CREDENTIALS ##
 .env
+resolved-compose.yml
