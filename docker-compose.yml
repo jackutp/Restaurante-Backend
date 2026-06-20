@@ -1,4 +1,19 @@
 version: "3.9"
+x-service-defaults: &service-defaults
+  restart: always
+x-service-env: &service-env
+  SPRING_PROFILES_ACTIVE: docker
+  EUREKA_URL: ${EUREKA_URL}
+  WRITE_SERVER: ${WRITE_SERVER}
+  READ_SERVER: ${READ_SERVER}
+  WRITE_PORT: ${WRITE_PORT}
+  READ_PORT: ${READ_PORT}
+  USERNAME_WRITE_DB: ${USERNAME_WRITE_DB}
+  PASSWORD_WRITE_DB: ${PASSWORD_WRITE_DB}
+  USERNAME_READ_DB: ${USERNAME_READ_DB}
+  PASSWORD_READ_DB: ${PASSWORD_READ_DB}
+  ACCESS_KEY: ${ACCESS_KEY}
+  SECRET_KEY: ${SECRET_KEY}
 services:
   # =====================================================
   # EUREKA SERVER
@@ -9,315 +24,249 @@ services:
       dockerfile: Dockerfile
       args:
         MODULE: eureka-server
-    container_name: eureka-server
+    image: italomoroco/eureka-server:latest
     ports:
       - "8761:8761"
     restart: always
     environment:
       SPRING_PROFILES_ACTIVE: docker
   # =====================================================
-  # GATEWAY SERVER
+  # GATEWAY
   # =====================================================
+
   gateway-server:
+    <<: *service-defaults
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: Gateway-Server
-    container_name: gateway-server
+    image: italomoroco/gateway-server:latest
+
     ports:
       - "8090:8090"
-    restart: always
+
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
-      FRONTEND_URL: http://localhost:4200
-      SECRET: mysecretkey
-    depends_on:
-      - eureka-server
+      <<: *service-env
+      FRONTEND_URL: ${FRONTEND_URL}
+
+  # =====================================================
+  # CAMBIOS
+  # =====================================================
+
+  microservicio-cambios:
+    <<: *service-defaults
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: microservicio-cambios
+
+    image: italomoroco/microservicio-cambios:latest
+
+    ports:
+      - "8081:8081"
+    environment:
+      <<: *service-env
 
   # =====================================================
   # COCINA
   # =====================================================
+
   microservicio-cocina:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: microservicio-cocina
-    container_name: microservicio-cocina
+
+    image: italomoroco/microservicio-cocina:latest
+
     ports:
       - "8218:8218"
-    restart: always
+
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
-
-      COCINA_WRITE_DB: cocina-write-db:5432
-      COCINA_READ_DB: cocina-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - cocina-write-db
-      - cocina-read-db
+      <<: *service-env
   # =====================================================
   # EVENTOS
   # =====================================================
+
   microservicio-eventos:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: microservice-eventos
-    container_name: microservicio-eventos
+
+    image: italomoroco/microservicio-eventos:latest
+
     ports:
       - "8215:8215"
-    restart: always
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
+      <<: *service-env
 
-      EVENTOS_WRITE_DB: eventos-write-db:5432
-      EVENTOS_READ_DB: eventos-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - eventos-write-db
-      - eventos-read-db
   # =====================================================
   # INSUMOS
   # =====================================================
+
   microservicio-insumos:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: microservice-Insumos
-    container_name: microservicio-insumos
+
+    image: italomoroco/microservicio-insumos:latest
+
     ports:
       - "8100:8100"
-    restart: always
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
+      <<: *service-env
 
-      INSUMOS_WRITE_DB: insumos-write-db:5432
-      INSUMOS_READ_DB: insumos-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - insumos-write-db
-      - insumos-read-db
   # =====================================================
   # MERMAS
   # =====================================================
+
   microservicio-mermas:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: microservice-Mermas
-    container_name: microservicio-mermas
+
+    image: italomoroco/microservicio-mermas:latest
+
     ports:
       - "8300:8300"
-    restart: always
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
+      <<: *service-env
 
-      MERMAS_WRITE_DB: mermas-write-db:5432
-      MERMAS_READ_DB: mermas-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - mermas-write-db
-      - mermas-read-db
   # =====================================================
   # PAGOS
   # =====================================================
+
   microservicio-pagos:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: microservicio-pagos
-    container_name: microservicio-pagos
+
+    image: italomoroco/microservicio-pagos:latest
+
     ports:
       - "8219:8219"
-    restart: always
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
-
-      PAGOS_WRITE_DB: pagos-write-db:5432
-      PAGOS_READ_DB: pagos-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - pagos-write-db
-      - pagos-read-db
-
-
+      <<: *service-env
 
   # =====================================================
   # PEDIDOS
   # =====================================================
+
   microservicio-pedidos:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: microservicio-pedidos
-    container_name: microservicio-pedidos
+
+    image: italomoroco/microservicio-pedidos:latest
+
     ports:
       - "8217:8217"
-    restart: always
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
+      <<: *service-env
 
-      PEDIDOS_WRITE_DB: pedidos-write-db:5432
-      PEDIDOS_READ_DB: pedidos-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - pedidos-write-db
-      - pedidos-read-db
   # =====================================================
   # PRODUCTOS
   # =====================================================
+
   microservicio-producto:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: microservice-producto
-    container_name: microservicio-producto
+
+    image: italomoroco/microservicio-producto:latest
+
     ports:
       - "8083:8083"
-    restart: always
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
+      <<: *service-env
 
-      PRODUCTOS_WRITE_DB: productos-write-db:5432
-      PRODUCTOS_READ_DB: productos-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - productos-write-db
-      - productos-read-db
   # =====================================================
   # PROVEEDOR
   # =====================================================
+
   microservicio-proveedor:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: microservice-proveedor
-    container_name: microservicio-proveedor
+
+    image: italomoroco/microservicio-proveedor:latest
+
     ports:
       - "8200:8200"
-    restart: always
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
-
-      PROVEEDOR_WRITE_DB: proveedor-write-db:5432
-      PROVEEDOR_READ_DB: proveedor-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - proveedor-write-db
-      - proveedor-read-db
+      <<: *service-env
 
   # =====================================================
   # RESERVAS
   # =====================================================
+
   microservicio-reservas:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: microservicio-reservas
-    container_name: microservicio-reservas
+
+    image: italomoroco/microservicio-reservas:latest
+
     ports:
       - "8082:8082"
-    restart: always
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
+      <<: *service-env
 
-      RESERVAS_WRITE_DB: reservas-write-db:5432
-      RESERVAS_READ_DB: reservas-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - reservas-write-db
-      - reservas-read-db
   # =====================================================
   # USERS
   # =====================================================
+
   microservicio-users:
+    <<: *service-defaults
+
     build:
       context: .
       dockerfile: Dockerfile
       args:
         MODULE: users
-    container_name: microservicio-users
+
+    image: italomoroco/microservicio-users:latest
+
     ports:
       - "8220:8220"
-    restart: always
+
     environment:
-      SPRING_PROFILES_ACTIVE: docker
-      EUREKA_URL: http://eureka-server:8761/eureka
-      SECRET: mysecretkey
-
-      USERS_WRITE_DB: users-write-db:5432
-      USERS_READ_DB: users-read-db:5432
-
-      USERNAME_WRITE_DB: postgres
-      PASSWORD_WRITE_DB: postgres
-      USERNAME_READ_DB: postgres
-      PASSWORD_READ_DB: postgres
-    depends_on:
-      - eureka-server
-      - users-write-db
-      - users-read-db
+      <<: *service-env

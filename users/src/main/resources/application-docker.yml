@@ -1,14 +1,12 @@
-jwt:
-  secret: ${SECRET}
 spring:
   datasource:
     write:
-      jdbc-url: jdbc:postgresql://${USERS_WRITE_DB}/users_db
+      jdbc-url: jdbc:postgresql://${USERS_WRITE_DB}:${WRITE_PORT}/users_db
       username: ${USERNAME_WRITE_DB}
       password: ${PASSWORD_WRITE_DB}
       driver-class-name: org.postgresql.Driver
     read:
-      jdbc-url: jdbc:postgresql://${USERS_READ_DB}/users_db
+      jdbc-url: jdbc:postgresql://${USERS_READ_DB}:${READ_PORT}/users_db
       username: ${USERNAME_READ_DB}
       password: ${PASSWORD_READ_DB}
       driver-class-name: org.postgresql.Driver

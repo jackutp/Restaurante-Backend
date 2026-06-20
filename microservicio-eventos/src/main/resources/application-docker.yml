@@ -1,12 +1,12 @@
 spring:
   datasource:
     write:
-      jdbc-url: jdbc:postgresql://${WRITE_SERVER}/eventos_db
+      jdbc-url: jdbc:postgresql://${WRITE_SERVER}:${WRITE_PORT}/eventos_db
       username: ${USERNAME_WRITE_DB}
       password: ${PASSWORD_WRITE_DB}
       driver-class-name: org.postgresql.Driver
     read:
-      jdbc-url: jdbc:postgresql://${READ_SERVER}/eventos_db
+      jdbc-url: jdbc:postgresql://${READ_SERVER}:${READ_PORT}/eventos_db
       username: ${USERNAME_READ_DB}
       password: ${PASSWORD_READ_DB}
       driver-class-name: org.postgresql.Driver

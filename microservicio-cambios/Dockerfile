@@ -1,5 +1,5 @@
 ARG MODULE=microservicio-cambios
-FROM eclipse-temurin:21-jdk as builder
+FROM eclipse-temurin:25-jdk as builder
 WORKDIR /app
 ARG MODULE=microservicio-cambios
 COPY ${MODULE} /app/${MODULE}
@@ -7,7 +7,7 @@ COPY pom.xml .
 #RUN ./mvnw clean package -DskipTests
 RUN chmod +x /app/${MODULE}/mvnw && /app/${MODULE}/mvnw -f /app/${MODULE}/pom.xml clean package -DskipTests
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:25-jre
 ARG MODULE=microservicio-cambios
 WORKDIR /app
 COPY --from=builder /app/${MODULE}/target/*.jar app.jar
