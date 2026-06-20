@@ -107,6 +107,12 @@ spring:
                 - Path=/api/solicitudes/**
               filters:
                 - StripPrefix=1
+            - id: microservicio-cambios
+              uri: lb://microservicio-cambios
+              predicates:
+                - Path=/api/cambios/**
+              filters:
+                - StripPrefix=1
 eureka:
   client:
     service-url:

@@ -38,6 +38,7 @@
 		<module>microservicio-reservas</module>
   	    <module>users</module>
         <module>microservicio-Mermas</module>
+		<module>microservicio-cambios</module>
     </modules>
     <scm>
 		<connection/>
