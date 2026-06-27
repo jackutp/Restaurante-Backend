@@ -1,4 +1,5 @@
 package com.microservicio.Proveedor.Controller;
+
 import com.microservicio.Proveedor.dto.OrdenCompraRequestDTO;
 import com.microservicio.Proveedor.Services.orden_compra.OrdenCompraReadService;
 import com.microservicio.Proveedor.Services.orden_compra.OrdenCompraWriteService;
@@ -15,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,16 +25,16 @@ import java.util.Map;
 public class ProveedorController {
 
     @Autowired
-    private  OrdenCompraReadService ordenCompraRead;
+    private OrdenCompraReadService ordenCompraRead;
     @Autowired
-    private  OrdenCompraWriteService ordenCompraWrite;
+    private OrdenCompraWriteService ordenCompraWrite;
     @Autowired
-    private  ProveedorServiceRead proveedorRead;
+    private ProveedorServiceRead proveedorRead;
     @Autowired
-    private  ProveedorServiceWrite proveedorWrite;
+    private ProveedorServiceWrite proveedorWrite;
     // ============ PROVEEDORES CRUD ============
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> getAllProveedores() {
         return ResponseEntity.ok(proveedorRead.findAll());
     }
@@ -43,7 +45,7 @@ public class ProveedorController {
         return ResponseEntity.ok(proveedor);
     }
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<?> createProveedor(@Valid @RequestBody ProveedorRequestDTO proveedorDTO) {
         ProveedorDTO saved = proveedorWrite.save(proveedorDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);

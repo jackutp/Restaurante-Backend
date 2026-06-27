@@ -26,7 +26,7 @@ public class SolicitudController {
 
     private final SolicitudService solicitudService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<ApiResponseDTO> crearSolicitud(@Valid @RequestBody CrearSolicitudDTO dto) {
         log.info("POST /solicitudes/create - Tipo: {}", dto.getTipoSolicitud());
         try {
@@ -40,7 +40,7 @@ public class SolicitudController {
         }
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<ApiResponseDTO> listarTodas() {
         log.info("GET /solicitudes/all - Listando todas");
         List<SolicitudDTO> solicitudes = solicitudService.listarTodas();

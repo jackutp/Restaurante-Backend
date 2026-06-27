@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
 
 @RestController
@@ -24,7 +25,7 @@ public class InsumoController {
     private InsumoServiceWrite insumoWrite;
 
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(insumoRead.findAll());
     }
@@ -70,7 +71,7 @@ public class InsumoController {
         return ResponseEntity.ok(insumoRead.findOutOfStock());
     }
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody InsumoRequestDTO insumoDTO) {
         try {
             InsumoDTO saved = insumoWrite.save(insumoDTO);
