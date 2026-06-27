@@ -39,6 +39,7 @@ public class MermasRestTests {
     private ProductoFeignClient productoFeignClient;
     @MockitoBean
     private InsumoFeignClient insumoFeignClient;
+
     private MermaRequestDTO buildRequestDTO() {
         MermaRequestDTO dto = new MermaRequestDTO();
         dto.setTipoMerma(TipoMerma.INSUMO);
@@ -49,10 +50,11 @@ public class MermasRestTests {
         dto.setUnidadMedida("KG");
         return dto;
     }
+
     @Test
     void shouldCreateMerma() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
-        mockMvc.perform(post("/mermas/crear")
+        mockMvc.perform(post("/mermas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
@@ -64,10 +66,10 @@ public class MermasRestTests {
     @Test
     void shouldGetAllMermas() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
-        mockMvc.perform(post("/mermas/crear")
+        mockMvc.perform(post("/mermas")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
-        mockMvc.perform(get("/mermas/all"))
+        mockMvc.perform(get("/mermas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$").isNotEmpty());
@@ -76,7 +78,7 @@ public class MermasRestTests {
     @Test
     void shouldGetMermaById() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
-        String response = mockMvc.perform(post("/mermas/crear")
+        String response = mockMvc.perform(post("/mermas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -98,7 +100,7 @@ public class MermasRestTests {
     @Test
     void shouldFindByTipo() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
-        mockMvc.perform(post("/mermas/crear")
+        mockMvc.perform(post("/mermas")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
         mockMvc.perform(get("/mermas/tipo/INSUMO"))
@@ -109,7 +111,7 @@ public class MermasRestTests {
     @Test
     void shouldUpdateMerma() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
-        String response = mockMvc.perform(post("/mermas/crear")
+        String response = mockMvc.perform(post("/mermas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -133,7 +135,7 @@ public class MermasRestTests {
     @Test
     void shouldDeleteMerma() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
-        String response = mockMvc.perform(post("/mermas/crear")
+        String response = mockMvc.perform(post("/mermas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -150,7 +152,7 @@ public class MermasRestTests {
     void shouldRejectBlankNombreMerma() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
         dto.setNombreMerma("");
-        mockMvc.perform(post("/mermas/crear")
+        mockMvc.perform(post("/mermas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
@@ -160,7 +162,7 @@ public class MermasRestTests {
     void shouldRejectBlankCantidad() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
         dto.setCantidad("");
-        mockMvc.perform(post("/mermas/crear")
+        mockMvc.perform(post("/mermas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
@@ -170,7 +172,7 @@ public class MermasRestTests {
     void shouldRejectBlankMotivo() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
         dto.setMotivo("");
-        mockMvc.perform(post("/mermas/crear")
+        mockMvc.perform(post("/mermas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
@@ -180,7 +182,7 @@ public class MermasRestTests {
     void shouldRejectNullTipoMerma() throws Exception {
         MermaRequestDTO dto = buildRequestDTO();
         dto.setTipoMerma(null);
-        mockMvc.perform(post("/mermas/crear")
+        mockMvc.perform(post("/mermas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());

@@ -71,7 +71,7 @@ public class ProveedorRestTests {
     @Test
     void shouldGetAllProveedores() throws Exception {
         createProveedor();
-        mockMvc.perform(get("/proveedores/all"))
+        mockMvc.perform(get("/proveedores"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -93,7 +93,7 @@ public class ProveedorRestTests {
     @Test
     void shouldCreateProveedor() throws Exception {
         ProveedorRequestDTO dto = buildProveedorDTO();
-        mockMvc.perform(post("/proveedores/crear")
+        mockMvc.perform(post("/proveedores")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isCreated())
@@ -215,11 +215,11 @@ public class ProveedorRestTests {
         Proveedor proveedor = createProveedor();
         OrdenCompra orden = createOrden(proveedor);
         MockMultipartFile factura = new MockMultipartFile(
-                        "factura",
-                        "factura.pdf",
-                        MediaType.APPLICATION_PDF_VALUE,
-                        "contenido pdf".getBytes()
-                );
+                "factura",
+                "factura.pdf",
+                MediaType.APPLICATION_PDF_VALUE,
+                "contenido pdf".getBytes()
+        );
 
         mockMvc.perform(multipart("/proveedores/ordenes/{id}/factura",
                         orden.getOrdenId())

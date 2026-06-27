@@ -32,7 +32,7 @@ public class EventosRestTests {
     @Autowired
     private EventoService eventoService;
 
-    private EventoRequestDTO buildEventoRequestDto(){
+    private EventoRequestDTO buildEventoRequestDto() {
         EventoRequestDTO dto = new EventoRequestDTO();
         dto.setName("Juan");
         dto.setLastName("Perez");
@@ -47,24 +47,26 @@ public class EventosRestTests {
         dto.setMarketingAccepted(false);
         return dto;
     }
+
     @Test
-    void shouldCreateEvento() throws Exception{
+    void shouldCreateEvento() throws Exception {
         EventoRequestDTO evento = buildEventoRequestDto();
-        mockMvc.perform(post("/eventos/crear")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(evento)))
+        mockMvc.perform(post("/eventos")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(evento)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.email").value("juan@test.com"))
                 .andExpect(jsonPath("$.name").value("Juan"))
                 .andExpect(jsonPath("$.attendees").value(50));
     }
+
     @Test
     void shouldFindEventoById() throws Exception {
 
         EventoRequestDTO dto = buildEventoRequestDto();
 
-        String response = mockMvc.perform(post("/eventos/crear")
+        String response = mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -79,16 +81,17 @@ public class EventosRestTests {
                 .andExpect(jsonPath("$.id").value(saved.getId()))
                 .andExpect(jsonPath("$.email").value("juan@test.com"));
     }
+
     @Test
     void shouldReturnAllEventos() throws Exception {
 
         EventoRequestDTO dto = buildEventoRequestDto();
 
-        mockMvc.perform(post("/eventos/crear")
+        mockMvc.perform(post("/eventos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)));
 
-        mockMvc.perform(get("/eventos/all")
+        mockMvc.perform(get("/eventos")
                         .param("page", "0")
                         .param("size", "10")
                         .param("sort", "createdAt,desc"))
@@ -102,7 +105,7 @@ public class EventosRestTests {
 
         EventoRequestDTO dto = buildEventoRequestDto();
 
-        String response = mockMvc.perform(post("/eventos/crear")
+        String response = mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andReturn()
@@ -125,100 +128,109 @@ public class EventosRestTests {
                 .andExpect(jsonPath("$.status")
                         .value("PENDIENTE"));
     }
+
     @Test
     void shouldReturn404WhenEventoNotFound() throws Exception {
         mockMvc.perform(get("/eventos/999999")).andExpect(status().isNotFound());
     }
+
     @Test
     void shouldRejectInvalidEmail() throws Exception {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setEmail("invalid-email");
 
-        mockMvc.perform(post("/eventos/crear")
+        mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.email")
                         .exists());
     }
+
     @Test
     void shouldRejectBlankName() throws Exception {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setName("");
 
-        mockMvc.perform(post("/eventos/crear")
+        mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.name")
                         .exists());
     }
+
     @Test
     void shouldRejectPastDate() throws Exception {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setDate(LocalDate.now().minusDays(1));
 
-        mockMvc.perform(post("/eventos/crear")
+        mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.date")
                         .exists());
     }
+
     @Test
     void shouldRejectTooManyAttendees() throws Exception {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setAttendees(999);
 
-        mockMvc.perform(post("/eventos/crear")
+        mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.attendees")
                         .exists());
     }
+
     @Test
     void shouldRejectWhenPrivacyNotAccepted() throws Exception {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setPrivacyAccepted(false);
 
-        mockMvc.perform(post("/eventos/crear")
+        mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.privacyAccepted")
                         .exists());
     }
+
     @Test
     void shouldRejectWhenAgeNotConfirmed() throws Exception {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setAgeConfirmed(false);
 
-        mockMvc.perform(post("/eventos/crear")
+        mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.ageConfirmed")
                         .exists());
     }
+
     @Test
     void shouldRejectShortComments() throws Exception {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setComments("short");
 
-        mockMvc.perform(post("/eventos/crear")
+        mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors.comments")
                         .exists());
     }
+
     @Test
     void shouldRejectInvalidPhone() throws Exception {
         EventoRequestDTO dto = buildEventoRequestDto();
         dto.setPhone("abc123");
 
-        mockMvc.perform(post("/eventos/crear")
+        mockMvc.perform(post("/eventos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest())

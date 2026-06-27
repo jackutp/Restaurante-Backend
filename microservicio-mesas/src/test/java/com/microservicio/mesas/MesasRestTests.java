@@ -38,6 +38,7 @@ public class MesasRestTests {
     private MesaRepository mesaRepository;
 
     private CrearMesaRequestDTO crearMesaRequest;
+
     @BeforeEach
     void setUp() {
         crearMesaRequest = new CrearMesaRequestDTO();
@@ -51,7 +52,7 @@ public class MesasRestTests {
 
     @Test
     void createMesa_ShouldCreateMesa() throws Exception {
-        mockMvc.perform(post("/mesas/crear")
+        mockMvc.perform(post("/mesas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(crearMesaRequest)))
                 .andExpect(status().isCreated())
@@ -71,7 +72,7 @@ public class MesasRestTests {
                         EstadoMesa.DISPONIBLE
                 )
         );
-        mockMvc.perform(post("/mesas/crear")
+        mockMvc.perform(post("/mesas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(crearMesaRequest)))
                 .andExpect(status().isConflict())
@@ -83,7 +84,7 @@ public class MesasRestTests {
         CrearMesaRequestDTO request = new CrearMesaRequestDTO();
         request.setNumero(0);
         request.setCapacidad(4);
-        mockMvc.perform(post("/mesas/crear")
+        mockMvc.perform(post("/mesas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -92,9 +93,9 @@ public class MesasRestTests {
 
     @Test
     void getAllMesas_ShouldReturnAllMesas() throws Exception {
-         mesaRepository.save(new Mesa(4, 4, EstadoMesa.DISPONIBLE ));
-        mesaRepository.save(new Mesa( 5, 6, EstadoMesa.OCUPADO ));
-        mockMvc.perform(get("/mesas/all"))
+        mesaRepository.save(new Mesa(4, 4, EstadoMesa.DISPONIBLE));
+        mesaRepository.save(new Mesa(5, 6, EstadoMesa.OCUPADO));
+        mockMvc.perform(get("/mesas"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(5));
     }
@@ -111,7 +112,7 @@ public class MesasRestTests {
 
     @Test
     void getMesaById_ShouldReturnMesa() throws Exception {
-        Mesa mesa = mesaRepository.save(new Mesa( 20, 4, EstadoMesa.DISPONIBLE ));
+        Mesa mesa = mesaRepository.save(new Mesa(20, 4, EstadoMesa.DISPONIBLE));
         mockMvc.perform(get("/mesas/" + mesa.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.numero").value(20))
@@ -127,7 +128,7 @@ public class MesasRestTests {
 
     @Test
     void getMesaByNumero_ShouldReturnMesa() throws Exception {
-        mesaRepository.save(new Mesa( 30, 4, EstadoMesa.DISPONIBLE ));
+        mesaRepository.save(new Mesa(30, 4, EstadoMesa.DISPONIBLE));
         mockMvc.perform(get("/mesas/numero/30"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.numero").value(30));
@@ -142,7 +143,7 @@ public class MesasRestTests {
 
     @Test
     void updateEstado_ShouldUpdateMesaEstado() throws Exception {
-        Mesa mesa = mesaRepository.save(new Mesa(40, 4, EstadoMesa.DISPONIBLE ));
+        Mesa mesa = mesaRepository.save(new Mesa(40, 4, EstadoMesa.DISPONIBLE));
         ActualizarEstadoMesaRequestDTO request = new ActualizarEstadoMesaRequestDTO();
         request.setEstado(EstadoMesa.OCUPADO);
         request.setTotalActual(150.0);
@@ -179,7 +180,7 @@ public class MesasRestTests {
 
     @Test
     void updateTotal_ShouldUpdateTotal() throws Exception {
-        Mesa mesa = mesaRepository.save(new Mesa(60, 4, EstadoMesa.OCUPADO ));
+        Mesa mesa = mesaRepository.save(new Mesa(60, 4, EstadoMesa.OCUPADO));
         ActualizarTotalMesaRequestDTO request = new ActualizarTotalMesaRequestDTO();
 
         request.setTotal(250.0);
@@ -193,7 +194,7 @@ public class MesasRestTests {
 
     @Test
     void deleteMesa_ShouldDeleteMesa() throws Exception {
-        Mesa mesa = mesaRepository.save(new Mesa( 70, 4, EstadoMesa.DISPONIBLE ));
+        Mesa mesa = mesaRepository.save(new Mesa(70, 4, EstadoMesa.DISPONIBLE));
         mockMvc.perform(delete("/mesas/" + mesa.getId()))
                 .andExpect(status().isNoContent());
 
@@ -203,7 +204,7 @@ public class MesasRestTests {
 
     @Test
     void deleteMesa_ShouldReturnConflict_WhenMesaOccupied() throws Exception {
-        Mesa mesa = mesaRepository.save(new Mesa(80, 4, EstadoMesa.OCUPADO ));
+        Mesa mesa = mesaRepository.save(new Mesa(80, 4, EstadoMesa.OCUPADO));
         mockMvc.perform(delete("/mesas/" + mesa.getId()))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value("No se puede eliminar una mesa ocupada o reservada"));
@@ -211,7 +212,7 @@ public class MesasRestTests {
 
     @Test
     void updateMesa_ShouldUpdateMesa() throws Exception {
-        Mesa mesa = mesaRepository.save(new Mesa( 90, 4, EstadoMesa.DISPONIBLE));
+        Mesa mesa = mesaRepository.save(new Mesa(90, 4, EstadoMesa.DISPONIBLE));
         CrearMesaRequestDTO request = new CrearMesaRequestDTO();
         request.setNumero(91);
         request.setCapacidad(8);
