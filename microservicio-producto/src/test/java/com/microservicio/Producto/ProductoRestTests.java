@@ -36,15 +36,16 @@ public class ProductoRestTests {
                 "fake-image-content".getBytes()
         );
     }
+
     @Test
     void shouldCreateProducto() throws Exception {
         MockMultipartFile image = buildImage();
-        mockMvc.perform(multipart("/productos/crear")
-                                .file(image)
-                                .param("nombre", "Pizza Test")
-                                .param("descripcion", "Pizza familiar")
-                                .param("precio", "45.50")
-                                .param("categoria", Categoria.PLATO.name())
+        mockMvc.perform(multipart("/productos")
+                        .file(image)
+                        .param("nombre", "Pizza Test")
+                        .param("descripcion", "Pizza familiar")
+                        .param("precio", "45.50")
+                        .param("categoria", Categoria.PLATO.name())
                 )
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.productoid").exists())
@@ -56,7 +57,7 @@ public class ProductoRestTests {
     void shouldFindProductoById() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos/crear")
+                        multipart("/productos")
                                 .file(image)
                                 .param("nombre", "Hamburguesa")
                                 .param("descripcion", "Doble carne")
@@ -84,7 +85,7 @@ public class ProductoRestTests {
                         .param("precio", "20")
                         .param("categoria", Categoria.PLATO.name())
         );
-        mockMvc.perform(get("/productos/all"))
+        mockMvc.perform(get("/productos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isArray());
     }
@@ -129,7 +130,7 @@ public class ProductoRestTests {
     void shouldUpdateProducto() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos/crear")
+                        multipart("/productos")
                                 .file(image)
                                 .param("nombre", "Original")
                                 .param("descripcion", "Original Desc")
@@ -171,7 +172,7 @@ public class ProductoRestTests {
     void shouldUpdateStock() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos/crear")
+                        multipart("/productos")
                                 .file(image)
                                 .param("nombre", "Stock Test")
                                 .param("descripcion", "Descripcion")
@@ -201,7 +202,7 @@ public class ProductoRestTests {
     void shouldDeleteProducto() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos/crear")
+                        multipart("/productos")
                                 .file(image)
                                 .param("nombre", "Eliminar")
                                 .param("descripcion", "Descripcion")
@@ -221,7 +222,7 @@ public class ProductoRestTests {
     void shouldUpdateImagen() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos/crear")
+                        multipart("/productos")
                                 .file(image)
                                 .param("nombre", "Imagen")
                                 .param("descripcion", "Descripcion")
@@ -235,11 +236,11 @@ public class ProductoRestTests {
         ProductoDTO saved = objectMapper.readValue(response, ProductoDTO.class);
 
         MockMultipartFile newImage = new MockMultipartFile(
-                        "imagen",
-                        "new.jpg",
-                        MediaType.IMAGE_JPEG_VALUE,
-                        "new-image".getBytes()
-                );
+                "imagen",
+                "new.jpg",
+                MediaType.IMAGE_JPEG_VALUE,
+                "new-image".getBytes()
+        );
 
         mockMvc.perform(
                         multipart("/productos/" + saved.getProductoid() + "/imagen")
@@ -256,7 +257,7 @@ public class ProductoRestTests {
     void shouldDeleteImagen() throws Exception {
         MockMultipartFile image = buildImage();
         String response = mockMvc.perform(
-                        multipart("/productos/crear")
+                        multipart("/productos")
                                 .file(image)
                                 .param("nombre", "Imagen Delete")
                                 .param("descripcion", "Descripcion")

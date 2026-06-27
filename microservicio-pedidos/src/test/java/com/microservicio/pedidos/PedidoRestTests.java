@@ -25,6 +25,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("tests")
@@ -66,7 +67,7 @@ public class PedidoRestTests {
     void getAllPedidos_ShouldReturnOk() throws Exception {
         when(pedidoService.getAllPedidos()).thenReturn(List.of(pedidoResponse));
 
-        mockMvc.perform(get("/pedidos/all"))
+        mockMvc.perform(get("/pedidos"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].ordenId").value("ORD-123ABC"))
@@ -111,7 +112,7 @@ public class PedidoRestTests {
         when(pedidoService.crearPedido(any(CrearPedidoRequestDTO.class)))
                 .thenReturn(pedidoResponse);
 
-        mockMvc.perform(post("/pedidos/crear")
+        mockMvc.perform(post("/pedidos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -126,7 +127,7 @@ public class PedidoRestTests {
         request.setMesaNumero(0);
         request.setItems(List.of());
 
-        mockMvc.perform(post("/pedidos/crear")
+        mockMvc.perform(post("/pedidos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
@@ -190,7 +191,7 @@ public class PedidoRestTests {
     @Test
     void eliminarPedido_ShouldReturnNoContent() throws Exception {
         doNothing().when(pedidoService).eliminarPedido(1L);
-        mockMvc.perform(delete("/pedidos/1")) .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/pedidos/1")).andExpect(status().isNoContent());
         verify(pedidoService).eliminarPedido(1L);
     }
 
