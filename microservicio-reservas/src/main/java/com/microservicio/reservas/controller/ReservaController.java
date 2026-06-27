@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,13 +20,13 @@ public class ReservaController {
     @Autowired
     private ReservaService reservaService;
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<ReservaResponseDTO> crearReserva(@Valid @RequestBody CrearReservaRequestDTO request) {
         ReservaResponseDTO reserva = reservaService.crearReserva(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(reserva);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<ReservaResponseDTO>> listarTodas() {
         return ResponseEntity.ok(reservaService.listarTodas());
     }

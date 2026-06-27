@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,11 +19,11 @@ import java.util.Map;
 @RequestMapping("/mermas")
 public class MermaController {
     @Autowired
-    private  MermaServiceRead mermaRead;
+    private MermaServiceRead mermaRead;
     @Autowired
-    private  MermaServiceWrite mermaWrite;
+    private MermaServiceWrite mermaWrite;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(mermaRead.findAll());
     }
@@ -48,7 +49,7 @@ public class MermaController {
         return ResponseEntity.ok(mermaRead.getInsumos());
     }
 
-    @PostMapping("/crear")
+    @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody MermaRequestDTO mermaDTO) {
         MermaDTO saved = mermaWrite.save(mermaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);

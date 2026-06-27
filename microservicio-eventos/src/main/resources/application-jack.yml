@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    write:
+      jdbc-url: jdbc:postgresql://localhost:5433/eventos_db
+      username: postgres
+      password: admin
+      driver-class-name: org.postgresql.Driver
+    read:
+      #jdbc-url: jdbc:postgresql://localhost:5433/eventos_db
+      jdbc-url: jdbc:postgresql://localhost:5433/eventos_db
+      username: postgres
+      password: admin
+      driver-class-name: org.postgresql.Driver
