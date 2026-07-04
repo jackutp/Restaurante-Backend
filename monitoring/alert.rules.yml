@@ -1,0 +1,100 @@
+#me duele no poder poner tildes porque sino maven tiene un derrame cerebral
+groups:
+  - name: microservices
+    rules:
+      #SERVIDOR CAIDO
+      - alert: ServiceDown
+        expr: up == 0
+        #Por fines demostrativos lo ponemos en 10s, en prod sera un minuto
+        for: 10s
+        labels:
+          severity: critical
+          area: infraestructura
+        annotations:
+          summary: "{{ $labels.job }} esta caido"
+          description: "El servicio {{ $labels.job }} no ha respondido en mas de un minuto."
+      # USO ALTO DE CPU
+      - alert: HighCPUWarning
+        expr: process_cpu_usage > 0.70
+        #Por fines demostrativos lo ponemos en 10s, en prod sera dos minutos
+        for: 10s
+        labels:
+          severity: warning
+          area: infraestructura
+        annotations:
+          summary: USO ALTO DE CPU - 70%
+          description: El uso del CPU ha sobrepasado el 70%
+      - alert: HighCPUCritical
+        expr: process_cpu_usage > 0.90
+        #Por fines demostrativos lo ponemos en 10s, en prod sera dos minutos
+        for: 10s
+        labels:
+          severity: critical
+          area: infraestructura
+        annotations:
+          summary: USO ALTO DE CPU - 90%
+          description: El uso del CPU ha sobrepasado el 90%
+      # USO ALTO DE MEMORIA
+      - alert: HighMemoryWarning
+        expr: (jvm_memory_used_bytes{id="G1 Old Gen"}
+          /
+          jvm_memory_max_bytes{id="G1 Old Gen"})
+          > 0.85
+        #for: 2m
+        for: 10s
+        labels:
+          severity: warning
+          area: infraestructura
+        annotations:
+          summary: Uso alto de memoria de JVM - 85%
+          description: El uso de la memoria del JVM ha superado 85%.
+      - alert: HighMemoryCritical
+        expr: (jvm_memory_used_bytes{id="G1 Old Gen"}
+          /
+          jvm_memory_max_bytes{id="G1 Old Gen"})
+          > 0.90
+        #for: 2m
+        for: 10s
+        labels:
+          severity: critical
+          area: infraestructura
+        annotations:
+          summary: Uso alto de memoria de JVM - 90%
+          description: El uso de la memoria del JVM ha superado 90%.
+      # ALTO RATIO DE ERRORES
+      - alert: HighErrorRate
+        expr: (
+          sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m]))
+          /
+          clamp_min(sum(rate(http_server_requests_seconds_count[5m])), 1)
+          ) > 0.05
+        #for: 2m
+        for: 10s
+        labels:
+          severity: critical
+          area: aplicacion
+        annotations:
+          summary: Muchos errores HTTP 500
+      # CONSULTAS MUY LENTAS
+      - alert: SlowRequests
+        expr: rate(http_server_requests_seconds_sum[5m])
+          /
+          rate(http_server_requests_seconds_count[5m])
+          > 2
+        #for: 2m
+        for: 10s
+        labels:
+          severity: warning
+          area: redes_comunicaciones
+        annotations:
+          summary: Consultas HTTP lentas
+      # Disco casi lleno D:
+      - alert: DiskAlmostFull
+        expr: (disk_free_bytes / disk_total_bytes) < 0.10
+        #for: 2m
+        for: 10s
+        labels:
+          severity: warning
+          area: infraestructura
+        annotations:
+          summary: Consultas HTTP lentas

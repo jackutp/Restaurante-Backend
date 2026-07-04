@@ -1,0 +1,15 @@
+Cuando se monte inicialmente el backend de monitorio (stack otel-lgtm) se debe correr el siguiente commando:
+docker run --name otel-lgtm \
+  --add-host=host.docker.internal:host-gateway \
+  -p 3000:3000 \
+  -p 4317:4317 \
+  -p 4318:4318 \
+  -v "$(pwd)/prometheus-mini.yml:/otel-lgtm/prometheus/prometheus.yml:Z" \
+  -v "$(pwd)/alert-rules.yml:/otel-lgtm/prometheus/alert-rules.yml:Z" \
+  -v "$(pwd)/alertmanager.yml:/otel-lgtm/prometheus/alertmanager.yml:Z" \
+  -ti grafana/otel-lgtm
+
+Una vez montado por primera vez solo es necesario escribir
+-   docker stop otel-lgtm.
+Asimismo, para volverlo a iniciar solo es necesario escribir:
+-   docker start otel-lgtm
