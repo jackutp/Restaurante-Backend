@@ -12,29 +12,29 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     static_configs:
       - targets:
-          - host.docker.internal:8762
+          - localhost:8762
   - job_name: 'gateway-gestion'
     metrics_path: /actuator/prometheus
     static_configs:
       - targets:
-          - host.docker.internal:8091
+          - localhost:8091
   - job_name: 'cambios-gestion'
     metrics_path: /actuator/prometheus
     static_configs:
       - targets:
-          - host.docker.internal:8109
+          - localhost:8109
   - job_name: 'solicitudes-gestion'
     metrics_path: /actuator/prometheus
     static_configs:
       - targets:
-          - host.docker.internal:8081
+          - localhost:8081
   - job_name: 'usuarios-gestion'
     metrics_path: /actuator/prometheus
     static_configs:
       - targets:
-          - host.docker.internal:8221
+          - localhost:8221
   - job_name: 'incidentes'
     metrics_path: /actuator/prometheus
     static_configs:
       - targets:
-          - host.docker.internal:8004
+          - localhost:8004
