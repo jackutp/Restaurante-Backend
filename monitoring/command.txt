@@ -1,0 +1,3 @@
+Para que esta parte funcione se tiene o que descargar las imagenes docker (NO USAR LA IMAGEN OTEL-LGTM. NO TE DEJA CONFIGURAR PROMETHEUS O ALERTMANAGER).
+En serio, ahorraos el mal trago que yo tuve que pasar. He gastado mucho maldito tiempo intentando que esa cosa funcione.
+En fin, cuando ya lo tenga instalado mediante una instalaicón en sus sistemas o usando los cokers agregan los archivos de esta carpeta.

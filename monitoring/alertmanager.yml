@@ -1,0 +1,14 @@
+global:
+  smtp_smarthost: smtp.office365.com:587
+  smtp_from: le-bon-gout@outlook.com
+  smtp_auth_username: le-bon-gout@outlook.com
+  smtp_auth_password: ${CONTRASEÑA}
+route:
+  receiver: incidentes
+
+receivers:
+  - name: incidentes
+    email_configs:
+      - to: u22238193@utp.edu.pe
+    webhook_configs:
+      - url: http://localhost:8004/api/incidentes/alert
