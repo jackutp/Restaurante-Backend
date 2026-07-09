@@ -10,25 +10,28 @@ import com.microservicio.eventos.dto.EventoStatusUpdateDTO;
 import com.microservicio.eventos.Exceptions.EventoException;
 import com.microservicio.eventos.Mapper.EventoMapper;
 import com.microservicio.eventos.Repositories.EventoRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class EventoService {
 
     @Autowired
-    private  EventoRepository eventoRepository;
+    private EventoRepository eventoRepository;
     @Autowired
-    private  EventoMapper eventoMapper;
+    private EventoMapper eventoMapper;
 
     // Validar fecha (hoy + 3 meses máximo)
-   @Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     private void validateEventDate(LocalDate date) {
         LocalDate today = LocalDate.now();
         LocalDate maxDate = today.plusMonths(3);
@@ -66,9 +69,7 @@ public class EventoService {
 
         // Guardar
         EventoRequest savedEvento = eventoRepository.save(evento);
-
-        // TODO: Enviar notificaciones (email, etc.)
-
+        log.info("Nuevo evento registrado para la fecha {}", dto.getDate());
         return eventoMapper.toResponseDTO(savedEvento);
     }
 
@@ -86,6 +87,7 @@ public class EventoService {
                 .orElseThrow(() -> new ResourceNotFoundException("Evento no encontrado con ID: " + id));
         return eventoMapper.toResponseDTO(evento);
     }
+
     // Actualizar evento
     @Transactional
     public EventoResponseDTO updateEventoStatus(Long id, EventoStatusUpdateDTO updateDTO) {
@@ -95,7 +97,9 @@ public class EventoService {
         try {
             EventoStatus newStatus = EventoStatus.valueOf(updateDTO.getStatus());
             evento.setStatus(newStatus);
+            log.info("Se cambió el estado del evento {} a STATUS={}", id, newStatus);
         } catch (IllegalArgumentException e) {
+            log.error("No se pudo cambiar el estado del evento {}", id);
             throw new EventoException("Estado inválido. Use: PENDIENTE, RECIBIDO o CANCELADO");
         }
 

@@ -16,16 +16,19 @@ import com.microservicio.pedidos.dto.CrearPedidoCocinaRequestDTO;
 import com.microservicio.pedidos.dto.ItemCocinaRequestDTO;
 import com.microservicio.pedidos.service.feign.CocinaFeignClient;
 import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class PedidoService {
     private final PedidoRepository pedidoRepository;
     private final PedidoItemRepository pedidoItemRepository;
@@ -47,12 +50,15 @@ public class PedidoService {
         this.productoFeignClient = productoFeignClient;
         this.cocinaFeignClient = cocinaFeignClient;
     }
+
     private String generarOrdenId() {
-        return "ORD-" + UUID.randomUUID().toString().substring(0,12).toUpperCase();
+        return "ORD-" + UUID.randomUUID().toString().substring(0, 12).toUpperCase();
     }
+
     private String obtenerHoraActual() {
         return LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
     }
+
     @Transactional
     public PedidoResponseDTO crearPedido(CrearPedidoRequestDTO request) {
         // 1. VALIDAR STOCK
@@ -107,6 +113,7 @@ public class PedidoService {
         enviarPedidoACocina(ordenId, request.getMesaNumero(), hora, request.getItems());
         return pedidoMapper.toResponseDTO(savedPedido);
     }
+
     // COCINA ENVIAR
     private void enviarPedidoACocina(String ordenId, Integer mesaNumero, String hora, List<PedidoItemRequestDTO> items) {
         try {
@@ -132,6 +139,7 @@ public class PedidoService {
             throw new ExternalServiceException("Error al enviar a cocina " + e.getMessage());
         }
     }
+
     private void actualizarMesa(Integer numeroMesa, double total, String ordenId) {
         try {
             System.out.println("Enviando a mesa " + numeroMesa + " - Total: " + total);
@@ -142,7 +150,7 @@ public class PedidoService {
             estadoRequest.setOrdenActualId(ordenId);
             mesaFeignClient.actualizarEstadoMesa(numeroMesa, estadoRequest);
 
-                    System.out.println("Mesa actualizada correctamente");
+            System.out.println("Mesa actualizada correctamente");
         } catch (FeignException e) {
             throw new ExternalServiceException("Error al actualizar mesa" + numeroMesa + ": " + e.getMessage());
         }
@@ -159,18 +167,21 @@ public class PedidoService {
             throw new ExternalServiceException("Error al liberar mesa" + numeroMesa + ": " + e.getMessage());
         }
     }
+
     @Transactional(readOnly = true)
     public List<PedidoResponseDTO> getAllPedidos() {
         return pedidoRepository.findAll().stream()
                 .map(pedidoMapper::toResponseDTO)
                 .collect(Collectors.toList());
     }
+
     @Transactional(readOnly = true)
     public PedidoResponseDTO getPedidoById(Long id) {
         Pedido pedido = pedidoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido no encontrado con ID: " + id));
         return pedidoMapper.toResponseDTO(pedido);
     }
+
     @Transactional(readOnly = true)
     public PedidoResponseDTO getPedidoByOrdenId(String ordenId) {
         Pedido pedido = pedidoRepository.findByOrdenId(ordenId)
@@ -229,6 +240,7 @@ public class PedidoService {
         liberarMesa(pedido.getMesaNumero());
         pedidoRepository.delete(pedido);
     }
+
     private void descontarStock(List<PedidoItemRequestDTO> items) {
         for (PedidoItemRequestDTO item : items) {
             try {
@@ -282,6 +294,7 @@ public class PedidoService {
         metricas.setProductosTop(productosTop);
         return metricas;
     }
+
     @Transactional
     public PedidoResponseDTO actualizarEstadoPorOrdenId(String ordenId, ActualizarEstadoRequestDTO request) {
         Pedido pedido = pedidoRepository.findByOrdenId(ordenId)

@@ -7,30 +7,35 @@ import com.microservicio.reservas.entity.Reserva;
 import com.microservicio.reservas.exception.ResourceNotFoundException;
 import com.microservicio.reservas.mapper.ReservaMapper;
 import com.microservicio.reservas.repository.ReservaRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class ReservaService {
 
     @Autowired
-    private  ReservaRepository reservaRepository;
+    private ReservaRepository reservaRepository;
     @Autowired
-    private  ReservaMapper reservaMapper;
+    private ReservaMapper reservaMapper;
     @Autowired
-    private  TokenService tokenService;
+    private TokenService tokenService;
 
     @Transactional
     public ReservaResponseDTO crearReserva(CrearReservaRequestDTO request) {
+        log.info("Creando reserva para {} el {} a las {} para {} personas", request.nombre(), request.fecha(), request.hora(), request.personas());
         Reserva reserva = reservaMapper.toEntity(request);
         reserva.setCodigo(tokenService.generarCodigoReserva());
         reserva.setEstado(EstadoReserva.PENDIENTE);
 
         Reserva saved = reservaRepository.save(reserva);
+        log.info("Reserva {} creada correctamente con código {}", saved.getId(), saved.getCodigo());
         return reservaMapper.toResponseDTO(saved);
     }
 
@@ -78,6 +83,7 @@ public class ReservaService {
 
     @Transactional
     public ReservaResponseDTO actualizarEstado(Long id, EstadoReserva nuevoEstado) {
+        log.info("Actualizando estado de la reserva {} a {}", id, nuevoEstado);
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada con ID: " + id));
 

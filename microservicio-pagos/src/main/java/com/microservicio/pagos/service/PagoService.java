@@ -13,6 +13,7 @@ import com.microservicio.pagos.service.feign.MesaFeignClient;
 import com.microservicio.pagos.service.feign.PedidoFeignClient;
 import com.microservicio.pagos.utils.NumeracionComprobanteUtil;
 import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
+@Slf4j
 public class PagoService {
     @Autowired
     private PagoRepository pagoRepository;
@@ -43,19 +45,24 @@ public class PagoService {
 
     @Transactional
     public ProcesarPagoResponseDTO procesarPago(ProcesarPagoRequestDTO request) {
+        log.info("Procesando pago de la mesa {} con el total {} mediante", request.getMesaNumero(), request.getTotal(), request.getMetodo());
         // 1. Guardar pago
         MetodoPago metodo = MetodoPago.valueOf(request.getMetodo());
         Pago pago = new Pago(request.getOrdenId(), request.getMesaNumero(),
                 request.getTotal(), metodo);
         pago = pagoRepository.save(pago);
+        log.info("Se procesó el pago {} correctamente para la orden", pago.getId(), pago.getOrdenId());
         // 2. Generar comprobante
+        log.info("Generando comprobante tipo {} para la orden {}", request.getTipoComprobante(), request.getOrdenId());
         ComprobanteResponseDTO comprobanteDTO = null;
         if (request.getTipoComprobante() != null) {
             comprobanteDTO = generarComprobante(request);
         }
         // 3. Liberar mesa (cambiar a DISPONIBLE y total = 0)
+        log.info("Libarando mesa {}", request.getMesaNumero());
         liberarMesa(request.getMesaNumero());
         // 4. Actualizar estado del pedido a COMPLETADO
+        log.info("Actualizando pedido {} a COMPLETADO", request.getOrdenId());
         actualizarEstadoPedido(request.getOrdenId());
         // 5. Construir respuesta
         ProcesarPagoResponseDTO response = new ProcesarPagoResponseDTO();
@@ -66,23 +73,29 @@ public class PagoService {
         response.setMetodo(pago.getMetodo().toString());
         response.setEstado(pago.getEstado());
         response.setComprobante(comprobanteDTO);
+        log.info("Pago procesado correctamente. Orden={}, Mesa={}, Pago={}", pago.getOrdenId(), pago.getMesaNumero(), pago.getId());
         return response;
     }
 
     private ComprobanteResponseDTO generarComprobante(ProcesarPagoRequestDTO request) {
         String tipo = request.getTipoComprobante();
+        log.info("Generando comprobante {} para la orden {}", tipo, request.getOrdenId());
         String numeroCompleto = numeracionUtil.generarNumeroComprobante(tipo);
+        log.info("Número generado: {}", numeroCompleto);
         String serie = numeroCompleto.substring(0, 4);
         Integer correlativo = numeracionUtil.obtenerCorrelativo(serie);
         // Generar PDF
+        log.info("Generando PDF del comprobante {}", numeroCompleto);
         byte[] pdfBytes = pdfGeneratorService.generarComprobantePdf(
                 tipo, numeroCompleto, request.getMesaNumero(),
                 request.getTotal(), request.getRuc(), request.getRazonSocial()
         );
         String pdfKey;
+        log.info("Subiendo comprobante {} a S3", numeroCompleto);
         try {
             pdfKey = storageService.uploadBytes(pdfBytes, numeroCompleto + ".pdf", "application/pdf");
         } catch (IOException e) {
+            log.error("Error subiendo comprobante {}", numeroCompleto);
             throw new FileStorageException("No se pudo subir el PDF a S3");
         }
         // Guardar comprobante en BD
@@ -99,6 +112,7 @@ public class PagoService {
         comprobante.setPdfUrl(pdfKey);
         comprobante.setCreatedAt(LocalDateTime.now());
         comprobante = comprobanteRepository.save(comprobante);
+        log.info("Comprobante {} registrado", numeroCompleto);
         ComprobanteResponseDTO response = new ComprobanteResponseDTO();
         response.setId(comprobante.getId());
         response.setTipo(comprobante.getTipo());
@@ -110,6 +124,7 @@ public class PagoService {
 
     @Transactional
     private void liberarMesa(Integer numeroMesa) {
+        log.info("Liberando mesa {}", numeroMesa);
         try {
             // Cambiar estado a DISPONIBLE
             Map<String, Object> estadoRequest = new HashMap<>();
@@ -121,8 +136,9 @@ public class PagoService {
             Map<String, Double> totalRequest = new HashMap<>();
             totalRequest.put("total", 0.0);
             mesaFeignClient.resetearTotal(numeroMesa, totalRequest);
-            System.out.println("✅ Mesa " + numeroMesa + " liberada correctamente");
+            log.info("✅ Mesa " + numeroMesa + " liberada correctamente");
         } catch (FeignException e) {
+            log.error("No fue posible liberar la mesa {}", numeroMesa);
             throw new ExternalServiceException("No se pudo liberar la mesa: Servicio no disponible");
         }
     }
@@ -139,12 +155,14 @@ public class PagoService {
 
     @Transactional
     private void actualizarEstadoPedido(String ordenId) {
+        log.info("Actualizando pedido {} a COMPLETADO", ordenId);
         try {
             Map<String, String> request = new HashMap<>();
             request.put("estado", "COMPLETADO");
             pedidoFeignClient.actualizarEstadoPedido(ordenId, request);
-            System.out.println("✅ Pedido " + ordenId + " marcado como COMPLETADO");
+            log.info("✅ Pedido " + ordenId + " marcado como COMPLETADO");
         } catch (FeignException e) {
+            log.error("No se pudo actualizar el pedido {}", ordenId);
             throw new ExternalServiceException("Error al actualizar pedido: " + ordenId + ": Servicio no disponible");
         }
     }
@@ -199,6 +217,7 @@ public class PagoService {
                 metricas.setOcupacionPorcentaje(0.0);
             }
         } catch (DataAccessException e) {
+            log.error("Error generando métricas");
             throw new MetricsGenerationException("Error generando métricas", e);
         }
         return metricas;
