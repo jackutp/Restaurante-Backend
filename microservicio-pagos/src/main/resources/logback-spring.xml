@@ -1,0 +1,29 @@
+<configuration>
+    <springProperty scope="context" name="applicationName" source="spring.application.name"/>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %-5level [%thread] %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="LOKI"
+              class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>https://loki-production-af95.up.railway.app/loki/api/v1/push</url>
+            <reconnectDelay>1000</reconnectDelay>
+        </http>
+        <structuredMetaData>off</structuredMetaData>
+        <message>
+            <pattern>%d %-5level [%thread] %logger - %msg%n</pattern>
+        </message>
+        <labels>
+            app=${applicationName}
+            service=${applicationName}
+            env=production
+            system=restaurante
+        </labels>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOKI"/>
+    </root>
+</configuration>
