@@ -1,16 +1,14 @@
-ARG MODULE=microservice-eventos
-FROM eclipse-temurin:25-jdk as builder
+FROM eclipse-temurin:25-jdk AS builder
 WORKDIR /app
-ARG MODULE=microservice-eventos
-COPY ${MODULE} /app/${MODULE}
+COPY .mvn .mvn
+COPY mvnw .
 COPY pom.xml .
-#RUN ./mvnw clean package -DskipTests
-RUN chmod +x /app/${MODULE}/mvnw && /app/${MODULE}/mvnw -f /app/${MODULE}/pom.xml clean package -DskipTests
+COPY microservicio-eventos/pom.xml microservicio-eventos/pom.xml
 
+RUN chmod +x mvnw
+COPY . .
+RUN ./mvnw package -DskipTests -pl microservicio-eventos -am
 FROM eclipse-temurin:25-jre
-ARG MODULE=microservice-eventos
 WORKDIR /app
-COPY --from=builder /app/${MODULE}/target/*.jar app.jar
-#COPY ${MODULE}/target/*.jar app.jar
-
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+COPY --from=builder /app/microservicio-eventos/target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]

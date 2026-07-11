@@ -23,7 +23,7 @@ public class ProductoController {
     private ProductoServiceRead productoRead;
 
     // GET: Listar todos los productos
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<ProductoDTO>> getAllProductos() {
         return ResponseEntity.ok(productoRead.findAll());
     }
@@ -56,7 +56,7 @@ public class ProductoController {
     }
 
     // Crear producto con imagen
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE, value = "/crear")
     public ResponseEntity<?> createProducto(
             @RequestParam("nombre") String nombre,
             @RequestParam("descripcion") String descripcion,

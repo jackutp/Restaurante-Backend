@@ -25,7 +25,7 @@ public class InsumoController {
     private InsumoServiceWrite insumoWrite;
 
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<?> getAll() {
         return ResponseEntity.ok(insumoRead.findAll());
     }
@@ -71,7 +71,7 @@ public class InsumoController {
         return ResponseEntity.ok(insumoRead.findOutOfStock());
     }
 
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<?> create(@Valid @RequestBody InsumoRequestDTO insumoDTO) {
         try {
             InsumoDTO saved = insumoWrite.save(insumoDTO);

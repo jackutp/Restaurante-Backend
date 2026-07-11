@@ -17,7 +17,7 @@ import java.util.List;
 public class MesaController {
     private final MesaService mesaService;
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<MesaResponseDTO>> getAllMesas() {
         return ResponseEntity.ok(mesaService.getAllMesas());
     }
@@ -37,7 +37,7 @@ public class MesaController {
         return ResponseEntity.ok(mesaService.getMesaByNumero(numero));
     }
 
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<MesaResponseDTO> createMesa(@Valid @RequestBody CrearMesaRequestDTO request) {
         MesaResponseDTO newMesa = mesaService.createMesa(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newMesa);

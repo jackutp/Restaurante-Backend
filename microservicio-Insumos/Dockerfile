@@ -1,16 +1,14 @@
-ARG MODULE=microservice-Insumos
-FROM eclipse-temurin:25-jdk as builder
+FROM eclipse-temurin:25-jdk AS builder
 WORKDIR /app
-ARG MODULE=microservice-Insumos
-COPY ${MODULE} /app/${MODULE}
+COPY .mvn .mvn
+COPY mvnw .
 COPY pom.xml .
-#RUN ./mvnw clean package -DskipTests
-RUN chmod +x /app/${MODULE}/mvnw && /app/${MODULE}/mvnw -f /app/${MODULE}/pom.xml clean package -DskipTests
+COPY microservicio-Insumos/pom.xml microservicio-Insumos/pom.xml
 
+RUN chmod +x mvnw
+COPY . .
+RUN ./mvnw package -DskipTests -pl microservicio-Insumos -am
 FROM eclipse-temurin:25-jre
-ARG MODULE=microservice-Insumos
 WORKDIR /app
-COPY --from=builder /app/${MODULE}/target/*.jar app.jar
-#COPY ${MODULE}/target/*.jar app.jar
-
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+COPY --from=builder /app/microservicio-Insumos/target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]

@@ -1,16 +1,14 @@
-ARG MODULE=microservicio-reservas
-FROM eclipse-temurin:25-jdk as builder
+FROM eclipse-temurin:25-jdk AS builder
 WORKDIR /app
-ARG MODULE=-microservicio-reservas
-COPY ${MODULE} /app/${MODULE}
+COPY .mvn .mvn
+COPY mvnw .
 COPY pom.xml .
-#RUN ./mvnw clean package -DskipTests
-RUN chmod +x /app/${MODULE}/mvnw && /app/${MODULE}/mvnw -f /app/${MODULE}/pom.xml clean package -DskipTests
+COPY microservicio-reservas/pom.xml microservicio-reservas/pom.xml
 
+RUN chmod +x mvnw
+COPY . .
+RUN ./mvnw package -DskipTests -pl microservicio-reservas -am
 FROM eclipse-temurin:25-jre
-ARG MODULE=microservicio-reservas
 WORKDIR /app
-COPY --from=builder /app/${MODULE}/target/*.jar app.jar
-#COPY ${MODULE}/target/*.jar app.jar
-
-ENTRYPOINT ["java","-jar","/app/app.jar"]
+COPY --from=builder /app/microservicio-reservas/target/*.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]

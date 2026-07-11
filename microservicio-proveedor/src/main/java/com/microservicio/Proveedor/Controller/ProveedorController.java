@@ -34,7 +34,7 @@ public class ProveedorController {
     private ProveedorServiceWrite proveedorWrite;
     // ============ PROVEEDORES CRUD ============
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<?> getAllProveedores() {
         return ResponseEntity.ok(proveedorRead.findAll());
     }
@@ -45,7 +45,7 @@ public class ProveedorController {
         return ResponseEntity.ok(proveedor);
     }
 
-    @PostMapping
+    @PostMapping("/crear")
     public ResponseEntity<?> createProveedor(@Valid @RequestBody ProveedorRequestDTO proveedorDTO) {
         ProveedorDTO saved = proveedorWrite.save(proveedorDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);

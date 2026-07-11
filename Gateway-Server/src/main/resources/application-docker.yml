@@ -12,7 +12,7 @@ spring:
             cors-configurations:
               '[/**]':
                 allowed-origin-patterns:
-                  - "${FRONTEND_URL}"
+                  - "https://le-bon-gout-prod.vercel.app/"
                   - "http://localhost:3000"
                 allowed-methods:
                   - GET
@@ -57,7 +57,7 @@ spring:
               filters:
                 - StripPrefix=1
             - id: microservice-user
-              uri: lb://microservice-user
+              uri: lb://microservicio-users
               predicates:
                 - Path=/api/usuarios/**
               filters:
@@ -66,7 +66,32 @@ spring:
               uri: lb://microservicio-reservas
               predicates:
                 - Path=/api/reservas/**
-
+              filters:
+                - StripPrefix=1
+            - id: microservice-cocina
+              uri: lb://microservicio-cocina
+              predicates:
+                - Path=/api/cocina/**
+              filters:
+                - StripPrefix=1
+            - id: microservice-mesas
+              uri: lb://microservicio-mesas
+              predicates:
+                - Path=/api/mesas/**
+              filters:
+                - StripPrefix=1
+            - id: microservice-pedidos
+              uri: lb://microservicio-pedidos
+              predicates:
+                - Path=/api/pedidos/**
+              filters:
+                - StripPrefix=1
+            - id: microservice-pagos
+              uri: lb://microservicio-pagos
+              predicates:
+                - Path=/api/pagos/**
+              filters:
+                - StripPrefix=1
             - id: microservicio-eventos
               uri: lb://microservicio-eventos
               predicates:
